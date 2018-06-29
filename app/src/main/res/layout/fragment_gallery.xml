@@ -1,14 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/constraintLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".tabs.GalleryFragment">
+    android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/gallery_recycler"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="갤러리 탭" />
-
-</FrameLayout>
+        android:layout_height="match_parent" />
+</android.support.constraint.ConstraintLayout>

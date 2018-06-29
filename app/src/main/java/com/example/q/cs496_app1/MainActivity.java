@@ -11,16 +11,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-
-import android.widget.TextView;
 
 import com.example.q.cs496_app1.tabs.ContactFragment;
-import com.example.q.cs496_app1.tabs.GalleryFragment;
+import com.example.q.cs496_app1.tabs.gallery.GalleryFragment;
 import com.example.q.cs496_app1.tabs.ThirdFragment;
 
 public class MainActivity extends AppCompatActivity {
