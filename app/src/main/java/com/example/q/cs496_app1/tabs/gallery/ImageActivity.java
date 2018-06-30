@@ -46,7 +46,8 @@ public class ImageActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    private int index;
+    private static int index;
+    private static MyImage myImage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +59,7 @@ public class ImageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         index = intent.getIntExtra("INDEX", 0);
+        myImage = (MyImage) intent.getSerializableExtra("IMAGE");
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -133,9 +135,8 @@ public class ImageActivity extends AppCompatActivity {
                 }
             };
 
-            int i = getArguments().getInt("INDEX");
-            Images images = new Images();
-            Glide.with(getActivity()).load(images.image_ids[i]).asBitmap().into(target);
+            int idx = getArguments().getInt("INDEX");
+            Glide.with(getActivity()).load(myImage.getImageID(idx)).asBitmap().into(target);
             return rootView;
         }
     }
@@ -159,8 +160,7 @@ public class ImageActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            Images images = new Images();
-            return images.image_ids.length;//galleryList.size();
+            return myImage.getSize();//galleryList.size();
         }
     }
 }

@@ -22,12 +22,12 @@ import java.util.ArrayList;
 import static android.content.ContentValues.TAG;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
-    private ArrayList<MyImage> galleryList;
+    private MyImage myImage;
     private Context context;
 
-    public ImageAdapter(Context context, ArrayList<MyImage> galleryList) {
+    public ImageAdapter(Context context, MyImage myImage) {
         this.context = context;
-        this.galleryList = galleryList;
+        this.myImage = myImage;
     }
 
     @Override
@@ -38,10 +38,10 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ImageAdapter.ViewHolder viewHolder, final int i) {
-        viewHolder.title.setText(galleryList.get(i).getImageTitle());
+        viewHolder.title.setText("사진 " + String.valueOf(myImage.getImageID(i)));
 //        viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
 //        viewHolder.img.setImageResource((galleryList.get(i).getImageID()));
-        Glide.with(context).load(galleryList.get(i).getImageID()).centerCrop().into(viewHolder.img);
+        Glide.with(context).load(myImage.getImageID(i)).centerCrop().into(viewHolder.img);
 
         viewHolder.img.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,7 +50,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                 Intent imageIntent = new Intent(context, ImageActivity.class);
 
                 imageIntent.putExtra("INDEX", i);
-
+                imageIntent.putExtra("IMAGE", myImage);
 //                Bundle args = new Bundle();
 //                args.putSerializable("images", galleryList);
                 // imageIntent.putExtra("BUNDLE", args);
@@ -63,7 +63,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return galleryList.size();
+        return myImage.getSize();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
