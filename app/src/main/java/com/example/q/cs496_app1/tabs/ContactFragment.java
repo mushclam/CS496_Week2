@@ -11,9 +11,15 @@ import android.view.ViewGroup;
 
 import com.example.q.cs496_app1.ContactAdapter;
 import com.example.q.cs496_app1.ContactItem;
+import com.example.q.cs496_app1.ContactJsonRead;
 import com.example.q.cs496_app1.R;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -85,10 +91,12 @@ public class ContactFragment extends Fragment {
 
         ArrayList items = new ArrayList<>();
 
-        items.add(new ContactItem(R.drawable.ic_launcher_foreground, "foreground"));
-        items.add(new ContactItem(R.drawable.ic_launcher_background, "background"));
-        items.add(new ContactItem(R.drawable.ic_launcher_foreground, "foreground1"));
-        items.add(new ContactItem(R.drawable.ic_launcher_background, "background1"));
+        // testing of Json reading
+        
+        items.add(this.LoadJson().get(0));
+        items.add(this.LoadJson().get(1));
+
+        //to here
 
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
@@ -97,6 +105,25 @@ public class ContactFragment extends Fragment {
         recyclerView.setAdapter(Adapter);
 
         return view;
+    }
+
+    public List<ContactItem> LoadJson() {
+        String json;
+        List<ContactItem> itemList;
+        try {
+            InputStream is = getActivity().getAssets().open("test.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        Gson gson = new Gson();
+        itemList = gson.fromJson(json, new TypeToken<List<ContactItem>>(){}.getType());
+        return itemList;
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event
