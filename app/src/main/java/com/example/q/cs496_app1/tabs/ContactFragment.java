@@ -1,14 +1,19 @@
 package com.example.q.cs496_app1.tabs;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.q.cs496_app1.ContactAdapter;
+import com.example.q.cs496_app1.ContactItem;
 import com.example.q.cs496_app1.R;
+
+import java.util.ArrayList;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,6 +32,12 @@ public class ContactFragment extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
+
+    Context mContext;
+
+    RecyclerView recyclerView;
+    RecyclerView.Adapter Adapter;
+    RecyclerView.LayoutManager layoutManager;
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -65,7 +76,27 @@ public class ContactFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_contact, container, false);
+        View view = inflater.inflate(R.layout.fragment_contact, container, false);
+
+        mContext = getActivity();
+
+        recyclerView = (RecyclerView)view.findViewById(R.id.recyclerView);
+        recyclerView.setHasFixedSize(true);
+
+        ArrayList items = new ArrayList<>();
+
+        items.add(new ContactItem(R.drawable.ic_launcher_foreground, "foreground"));
+        items.add(new ContactItem(R.drawable.ic_launcher_background, "background"));
+        items.add(new ContactItem(R.drawable.ic_launcher_foreground, "foreground1"));
+        items.add(new ContactItem(R.drawable.ic_launcher_background, "background1"));
+
+        layoutManager = new LinearLayoutManager(mContext);
+        recyclerView.setLayoutManager(layoutManager);
+
+        Adapter = new ContactAdapter(mContext, items);
+        recyclerView.setAdapter(Adapter);
+
+        return view;
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event
