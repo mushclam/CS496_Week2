@@ -114,11 +114,12 @@ public class ContactFragment extends Fragment {
                     @Override
                     public void onItemClick(View view, int position) {
                         int itemPosition = recyclerView.getChildLayoutPosition(view);
-                        String item = contactList.get(itemPosition).getName();
+                        ContactItem item = contactList.get(itemPosition);
                         // push up name of selected item
-                        Toast.makeText(mContext, item, Toast.LENGTH_LONG).show();
+                        Toast.makeText(mContext, item.getName(), Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(mContext, ContactActivity.class);
-                        intent.putExtra("text", String.valueOf(item));
+                        intent.putExtra("name", String.valueOf(item.getName()));
+                        intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
                         startActivity(intent);
                     }
 

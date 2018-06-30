@@ -11,8 +11,11 @@ public class ContactActivity extends Activity {
         setContentView(R.layout.activity_contact);
 
         Intent intent = new Intent(this.getIntent());
-        String s = intent.getStringExtra("text");
-        TextView textView = (TextView)findViewById(R.id.ind_name);
-        textView.setText(s);
+        String name = intent.getStringExtra("name");
+        String phoneNumber = intent.getStringExtra("phoneNumber");
+        TextView tvName = (TextView)findViewById(R.id.ind_name);
+        TextView tvPhoneNumber = (TextView)findViewById(R.id.ind_phoneNumber);
+        tvName.setText(name);
+        tvPhoneNumber.setText(phoneNumber);
     }
 }
