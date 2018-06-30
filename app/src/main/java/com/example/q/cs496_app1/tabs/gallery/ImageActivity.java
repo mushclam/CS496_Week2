@@ -21,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.q.cs496_app1.R;
 
 import java.util.ArrayList;
@@ -62,7 +63,7 @@ public class ImageActivity extends AppCompatActivity {
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(index);
-        
+
 //        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
 //        fab.setOnClickListener(new View.OnClickListener() {
 //            @Override
@@ -121,7 +122,8 @@ public class ImageActivity extends AppCompatActivity {
             ImageView fullImage = (ImageView) rootView.findViewById(R.id.full_image);
             int i = getArguments().getInt("INDEX");
             Images images = new Images();
-            fullImage.setImageResource(images.image_ids[i]);
+            // fullImage.setImageResource(images.image_ids[i]);
+            Glide.with(getActivity()).load(images.image_ids[i]).into(fullImage);
             return rootView;
         }
     }

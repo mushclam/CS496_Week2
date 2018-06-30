@@ -13,6 +13,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.q.cs496_app1.R;
 
 import java.io.Serializable;
@@ -38,8 +39,9 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     @Override
     public void onBindViewHolder(ImageAdapter.ViewHolder viewHolder, final int i) {
         viewHolder.title.setText(galleryList.get(i).getImageTitle());
-        viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        viewHolder.img.setImageResource((galleryList.get(i).getImageID()));
+//        viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+//        viewHolder.img.setImageResource((galleryList.get(i).getImageID()));
+        Glide.with(context).load(galleryList.get(i).getImageID()).centerCrop().into(viewHolder.img);
 
         viewHolder.img.setOnClickListener(new View.OnClickListener() {
             @Override
