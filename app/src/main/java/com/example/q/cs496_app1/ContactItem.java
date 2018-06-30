@@ -2,18 +2,24 @@ package com.example.q.cs496_app1;
 
 public class ContactItem {
     int image;
-    String imageTitle;
+    String name;
+    String phoneNumber;
 
-    public ContactItem(int image, String imageTitle) {
+    public ContactItem(int image, String name, String phoneNumber) {
         this.image = image;
-        this.imageTitle = imageTitle;
+        this.name = name;
+        this.phoneNumber = phoneNumber;
     }
 
     public int getImage() {
         return image;
     }
 
-    public String getImageTitle() {
-        return imageTitle;
+    public String getName() {
+        return name;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
     }
 }

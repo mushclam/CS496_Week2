@@ -3,15 +3,18 @@ package com.example.q.cs496_app1.tabs;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.example.q.cs496_app1.ContactAdapter;
 import com.example.q.cs496_app1.ContactItem;
 import com.example.q.cs496_app1.R;
+import com.example.q.cs496_app1.RecyclerItemClickListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -88,6 +91,9 @@ public class ContactFragment extends Fragment {
         recyclerView = (RecyclerView)view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
 
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mContext, new LinearLayoutManager(mContext).getOrientation());
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
         ArrayList items = new ArrayList<>();
 
         // Add Contact item to ArrayList
@@ -97,6 +103,19 @@ public class ContactFragment extends Fragment {
         }
 
         //to here
+//        recyclerView.addOnItemTouchListener(
+//                new RecyclerItemClickListener(mContext, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+//                    @Override
+//                    public void onItemClick(View view, int position) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onLongItemClick(View view, int position) {
+//
+//                    }
+//                })
+//        );
 
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);

@@ -1,14 +1,17 @@
 [
   {
     "image" : 2131165284,
-    "imageTitle" : "foreground"
+    "name" : "foreground",
+    "phoneNumber" : "010-1111-1111"
   },
   {
     "image" : 2131165283,
-    "imageTitle" : "background"
+    "name" : "background",
+    "phoneNumber" : "010-2222-2222"
   },
   {
     "image" : 2131165284,
-    "imageTitle" : "Testing"
+    "name" : "Testing",
+    "phoneNumber" : "010-3333-3333"
   }
 ]
