@@ -1,6 +1,7 @@
 package com.example.q.cs496_app1.tabs.gallery;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,7 +23,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.q.cs496_app1.R;
+import com.example.q.cs496_app1.TouchImageView;
 
 import java.util.ArrayList;
 
@@ -119,11 +123,19 @@ public class ImageActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_image, container, false);
-            ImageView fullImage = (ImageView) rootView.findViewById(R.id.full_image);
+
+            // https://stackoverflow.com/questions/43639971/i-used-glide-library-to-load-image-into-imageview-and-i-dont-know-how-to-make-i
+            final TouchImageView fullImage = (TouchImageView) rootView.findViewById(R.id.full_image);
+            SimpleTarget target = new SimpleTarget<Bitmap>() {
+                @Override
+                public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
+                    fullImage.setImageBitmap(bitmap);
+                }
+            };
+
             int i = getArguments().getInt("INDEX");
             Images images = new Images();
-            // fullImage.setImageResource(images.image_ids[i]);
-            Glide.with(getActivity()).load(images.image_ids[i]).into(fullImage);
+            Glide.with(getActivity()).load(images.image_ids[i]).asBitmap().into(target);
             return rootView;
         }
     }

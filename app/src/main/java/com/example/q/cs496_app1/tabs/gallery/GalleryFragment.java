@@ -69,7 +69,7 @@ public class GalleryFragment extends Fragment {
         RecyclerView galleryRecyclerView = (RecyclerView) view.findViewById(R.id.gallery_recycler);
         galleryRecyclerView.setHasFixedSize(true);
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(),2);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(),3);
         galleryRecyclerView.setLayoutManager(layoutManager);
         galleryRecyclerView.scrollToPosition(0);
 
