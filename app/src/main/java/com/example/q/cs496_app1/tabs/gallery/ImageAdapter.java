@@ -2,6 +2,7 @@ package com.example.q.cs496_app1.tabs.gallery;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -16,18 +17,21 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.q.cs496_app1.R;
 
+import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
-    private MyImage myImage;
+//    private MyImage myImage;
     private Context context;
+    private ArrayList<Uri> images_uri;
 
-    public ImageAdapter(Context context, MyImage myImage) {
+    public ImageAdapter(Context context, ArrayList<Uri> uris) {
         this.context = context;
-        this.myImage = myImage;
+        this.images_uri = uris;
+//        this.myImage = myImage;
     }
 
     @Override
@@ -38,10 +42,12 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
     @Override
     public void onBindViewHolder(ImageAdapter.ViewHolder viewHolder, final int i) {
-        viewHolder.title.setText("사진 " + String.valueOf(myImage.getImageID(i)));
+//        viewHolder.title.setText("사진 " + String.valueOf(myImage.getImageID(i)));
+        viewHolder.title.setText("사진 " + images_uri.get(i).toString());
 //        viewHolder.img.setScaleType(ImageView.ScaleType.CENTER_CROP);
 //        viewHolder.img.setImageResource((galleryList.get(i).getImageID()));
-        Glide.with(context).load(myImage.getImageID(i)).centerCrop().into(viewHolder.img);
+//        Glide.with(context).load(myImage.getImageID(i)).centerCrop().into(viewHolder.img);
+        Glide.with(context).load(new File(images_uri.get(i).getPath())).centerCrop().into(viewHolder.img);
 
         viewHolder.img.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -50,7 +56,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                 Intent imageIntent = new Intent(context, ImageActivity.class);
 
                 imageIntent.putExtra("INDEX", i);
-                imageIntent.putExtra("IMAGE", myImage);
+//                imageIntent.putExtra("IMAGE", myImage);
+                imageIntent.putExtra("IMAGE", images_uri);
 //                Bundle args = new Bundle();
 //                args.putSerializable("images", galleryList);
                 // imageIntent.putExtra("BUNDLE", args);
@@ -63,7 +70,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
     @Override
     public int getItemCount() {
-        return myImage.getSize();
+//        return myImage.getSize();
+        return images_uri.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {

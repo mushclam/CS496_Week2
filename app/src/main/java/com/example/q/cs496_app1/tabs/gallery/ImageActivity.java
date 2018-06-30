@@ -2,6 +2,7 @@ package com.example.q.cs496_app1.tabs.gallery;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +29,8 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.q.cs496_app1.R;
 import com.example.q.cs496_app1.TouchImageView;
 
+import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ImageActivity extends AppCompatActivity {
@@ -47,7 +50,8 @@ public class ImageActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private static int index;
-    private static MyImage myImage;
+//    private static MyImage myImage;
+    private static ArrayList<Uri> images_uri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +63,8 @@ public class ImageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         index = intent.getIntExtra("INDEX", 0);
-        myImage = (MyImage) intent.getSerializableExtra("IMAGE");
+//        myImage = (MyImage) intent.getSerializableExtra("IMAGE");
+        images_uri = intent.getParcelableArrayListExtra("IMAGE");
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -136,7 +141,7 @@ public class ImageActivity extends AppCompatActivity {
             };
 
             int idx = getArguments().getInt("INDEX");
-            Glide.with(getActivity()).load(myImage.getImageID(idx)).asBitmap().into(target);
+            Glide.with(getActivity()).load(new File(images_uri.get(idx).getPath())).asBitmap().into(target);
             return rootView;
         }
     }
@@ -160,7 +165,7 @@ public class ImageActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return myImage.getSize();//galleryList.size();
+            return images_uri.size();//galleryList.size();
         }
     }
 }

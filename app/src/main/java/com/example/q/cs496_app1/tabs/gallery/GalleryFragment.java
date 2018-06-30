@@ -1,8 +1,12 @@
 package com.example.q.cs496_app1.tabs.gallery;
 
+import android.content.Context;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.media.Image;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -27,6 +31,8 @@ public class GalleryFragment extends Fragment {
 
     int permsRequestCode = 200;
     String[] perms = {"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"};
+
+    ArrayList<Uri> images_uri;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -81,9 +87,10 @@ public class GalleryFragment extends Fragment {
         galleryRecyclerView.scrollToPosition(0);
 
         //ArrayList<MyImage> images = prepareData();
-        MyImage myImage = new MyImage();
-        // myImage.fetchAllImages(getActivity());
-        ImageAdapter galleryAdapter = new ImageAdapter(getActivity(), myImage);
+//        MyImage myImage = new MyImage();
+//        myImage.fetchAllImages(getActivity());
+        fetchAllImages();
+        ImageAdapter galleryAdapter = new ImageAdapter(getActivity(), images_uri);
         galleryRecyclerView.setAdapter(galleryAdapter);
         galleryRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -97,6 +104,37 @@ public class GalleryFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void fetchAllImages() {
+        // DATA는 이미지 파일의 스트림 데이터 경로를 나타냅니다.
+        String[] projection = { MediaStore.Images.Media.DATA };
+
+        Cursor imageCursor = getActivity().getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, // 이미지 컨텐트 테이블
+                projection, // DATA를 출력
+                null,       // 모든 개체 출력
+                null,
+                null);      // 정렬 안 함
+
+        ArrayList<Uri> result = new ArrayList<>(imageCursor.getCount());
+        int dataColumnIndex = imageCursor.getColumnIndex(projection[0]);
+
+        if (imageCursor == null) {
+            // Error 발생
+
+        } else if (imageCursor.moveToFirst()) {
+            do {
+                String filePath = imageCursor.getString(dataColumnIndex);
+                Uri imageUri = Uri.parse(filePath);
+                result.add(imageUri);
+            } while(imageCursor.moveToNext());
+        } else {
+            // imageCursor가 비었습니다.
+        }
+        imageCursor.close();
+
+        this.images_uri = result;
     }
 
     private boolean checkPermission() {
