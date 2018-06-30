@@ -23,14 +23,6 @@ import java.util.ArrayList;
  * create an instance of this fragment.
  */
 public class GalleryFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -38,20 +30,10 @@ public class GalleryFragment extends Fragment {
         // Required empty public constructor
     }
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GalleryFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static GalleryFragment newInstance(String param1, String param2) {
+    public static GalleryFragment newInstance() {
         GalleryFragment fragment = new GalleryFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,50 +41,19 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
+//        if (getArguments() != null) {
+//
+//        }
     }
 
-    private final String image_titles[] = {
-            "고양이1",
-            "고양이2",
-            "고양이3",
-            "고양이4",
-            "고양이5",
-            "고양이6",
-            "고양이7",
-            "고양이8",
-            "고양이9",
-            "고양이10",
-            "고양이11",
-            "고양이12",
-            "고양이13",
-    };
-
-    private final Integer image_ids[] = {
-            R.drawable.img1,
-            R.drawable.img2,
-            R.drawable.img3,
-            R.drawable.img4,
-            R.drawable.img5,
-            R.drawable.img6,
-            R.drawable.img7,
-            R.drawable.img8,
-            R.drawable.img9,
-            R.drawable.img10,
-            R.drawable.img11,
-            R.drawable.img12,
-            R.drawable.img13,
-    };
 
     private ArrayList<MyImage> prepareData() {
         ArrayList<MyImage> images = new ArrayList<>();
-        for(int i = 0; i < image_titles.length; i++) {
+        Images img = new Images();
+        for(int i = 0; i < img.image_titles.length; i++) {
             MyImage myImage = new MyImage();
-            myImage.setImageTitle(image_titles[i]);
-            myImage.setImageID(image_ids[i]);
+            myImage.setImageTitle(img.image_titles[i]);
+            myImage.setImageID(img.image_ids[i]);
             images.add(myImage);
         }
         return images;
@@ -126,8 +77,6 @@ public class GalleryFragment extends Fragment {
         ImageAdapter galleryAdapter = new ImageAdapter(getActivity(), images);
         galleryRecyclerView.setAdapter(galleryAdapter);
         galleryRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        // onClickListener for Recycler View
 
         return view;
     }

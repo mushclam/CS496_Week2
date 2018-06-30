@@ -1,6 +1,8 @@
 package com.example.q.cs496_app1.tabs.gallery;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 
 import com.example.q.cs496_app1.R;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
@@ -41,7 +44,16 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         viewHolder.img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(context, "onClick" + galleryList.get(i).getImageTitle(), Toast.LENGTH_SHORT).show();
+                // Toast.makeText(context, "onClick" + galleryList.get(i).getImageTitle(), Toast.LENGTH_SHORT).show();
+                Intent imageIntent = new Intent(context, ImageActivity.class);
+
+                imageIntent.putExtra("INDEX", i);
+
+//                Bundle args = new Bundle();
+//                args.putSerializable("images", galleryList);
+                // imageIntent.putExtra("BUNDLE", args);
+
+                context.startActivity(imageIntent);
             }
         });
     }
