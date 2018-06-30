@@ -99,7 +99,7 @@ public class GalleryFragment extends Fragment {
 
     private ArrayList<MyImage> prepareData() {
         ArrayList<MyImage> images = new ArrayList<>();
-        for(int i = 0; i< image_titles.length; i++){
+        for(int i = 0; i < image_titles.length; i++) {
             MyImage myImage = new MyImage();
             myImage.setImageTitle(image_titles[i]);
             myImage.setImageID(image_ids[i]);
@@ -115,7 +115,6 @@ public class GalleryFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
-
         RecyclerView galleryRecyclerView = (RecyclerView) view.findViewById(R.id.gallery_recycler);
         galleryRecyclerView.setHasFixedSize(true);
 
@@ -124,9 +123,11 @@ public class GalleryFragment extends Fragment {
         galleryRecyclerView.scrollToPosition(0);
 
         ArrayList<MyImage> images = prepareData();
-        ImageAdapter galleryAdapter = new ImageAdapter(images);
+        ImageAdapter galleryAdapter = new ImageAdapter(getActivity(), images);
         galleryRecyclerView.setAdapter(galleryAdapter);
         galleryRecyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        // onClickListener for Recycler View
 
         return view;
     }
