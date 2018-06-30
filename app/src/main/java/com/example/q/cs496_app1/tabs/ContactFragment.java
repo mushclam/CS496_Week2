@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 
 import com.example.q.cs496_app1.ContactAdapter;
 import com.example.q.cs496_app1.ContactItem;
-import com.example.q.cs496_app1.ContactJsonRead;
 import com.example.q.cs496_app1.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -91,10 +90,11 @@ public class ContactFragment extends Fragment {
 
         ArrayList items = new ArrayList<>();
 
-        // testing of Json reading
-        
-        items.add(this.LoadJson().get(0));
-        items.add(this.LoadJson().get(1));
+        // Add Contact item to ArrayList
+        List<ContactItem> contactList = this.LoadJson();
+        for (int i = 0; i < contactList.size(); i++) {
+            items.add(contactList.get(i));
+        }
 
         //to here
 
@@ -107,6 +107,7 @@ public class ContactFragment extends Fragment {
         return view;
     }
 
+    // Load Json file and read content. convert json string to contact list.
     public List<ContactItem> LoadJson() {
         String json;
         List<ContactItem> itemList;
