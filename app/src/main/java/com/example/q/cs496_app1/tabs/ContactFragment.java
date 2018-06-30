@@ -1,6 +1,7 @@
 package com.example.q.cs496_app1.tabs;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DividerItemDecoration;
@@ -15,6 +16,7 @@ import com.example.q.cs496_app1.ContactAdapter;
 import com.example.q.cs496_app1.ContactItem;
 import com.example.q.cs496_app1.R;
 import com.example.q.cs496_app1.RecyclerItemClickListener;
+import com.example.q.cs496_app1.ContactActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -43,6 +45,7 @@ public class ContactFragment extends Fragment {
 
     Context mContext;
 
+    // variable for recycler view.
     RecyclerView recyclerView;
     RecyclerView.Adapter Adapter;
     RecyclerView.LayoutManager layoutManager;
@@ -86,40 +89,50 @@ public class ContactFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contact, container, false);
 
+        // indicate context of fragment
         mContext = getActivity();
 
+        //link with recycler view of xml
         recyclerView = (RecyclerView)view.findViewById(R.id.recyclerView);
         recyclerView.setHasFixedSize(true);
 
+        // add divider between each list items.
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mContext, new LinearLayoutManager(mContext).getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         ArrayList items = new ArrayList<>();
 
         // Add Contact item to ArrayList
-        List<ContactItem> contactList = this.LoadJson();
+        final List<ContactItem> contactList = this.LoadJson();
         for (int i = 0; i < contactList.size(); i++) {
             items.add(contactList.get(i));
         }
 
-        //to here
-//        recyclerView.addOnItemTouchListener(
-//                new RecyclerItemClickListener(mContext, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-//                    @Override
-//                    public void onItemClick(View view, int position) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onLongItemClick(View view, int position) {
-//
-//                    }
-//                })
-//        );
+        // onClick action of recycler view
+        recyclerView.addOnItemTouchListener(
+                new RecyclerItemClickListener(mContext, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(View view, int position) {
+                        int itemPosition = recyclerView.getChildLayoutPosition(view);
+                        String item = contactList.get(itemPosition).getName();
+                        // push up name of selected item
+                        Toast.makeText(mContext, item, Toast.LENGTH_LONG).show();
+                        Intent intent = new Intent(mContext, ContactActivity.class);
+                        intent.putExtra("text", String.valueOf(item));
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onLongItemClick(View view, int position) {
+
+                    }
+                })
+        );
 
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
 
+        // link to adapter
         Adapter = new ContactAdapter(mContext, items);
         recyclerView.setAdapter(Adapter);
 
