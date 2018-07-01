@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.q.cs496_app1.AddContactActivity;
@@ -26,6 +27,8 @@ import com.example.q.cs496_app1.RecyclerItemClickListener;
 import com.example.q.cs496_app1.ContactActivity;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,6 +65,8 @@ public class ContactFragment extends Fragment {
     FloatingActionButton fab;
 
     SwipeRefreshLayout swipeRefreshLayout;
+
+    TextView viewEmpty;
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -113,10 +118,15 @@ public class ContactFragment extends Fragment {
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mContext, new LinearLayoutManager(mContext).getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
+        viewEmpty = (TextView) view.findViewById(R.id.isEmpty);
+
         ArrayList items = new ArrayList<>();
 
         // Add Contact item to ArrayList
         final List<ContactItem> contactList = this.LoadJson();
+        if (contactList.isEmpty()) {
+            viewEmpty.setText("Any Contact isn't exist");
+        }
         Collections.sort(contactList, new ContactSorting());
         for (int i = 0; i < contactList.size(); i++) {
             items.add(contactList.get(i));

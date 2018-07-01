@@ -19,10 +19,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.q.cs496_app1.tabs.ContactFragment;
 import com.example.q.cs496_app1.tabs.GalleryFragment;
 import com.example.q.cs496_app1.tabs.ThirdFragment;
+
+import java.io.File;
+import java.io.FileInputStream;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -87,6 +91,18 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+        if (id == R.id.action_deleteContacts) {
+            try {
+                File file = new File(getFilesDir() + "/test.json");
+                if (!file.exists()){
+                    Toast.makeText(this, getFilesDir() + " + Not Exist", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, getFilesDir() + " + Exist", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return super.onOptionsItemSelected(item);
