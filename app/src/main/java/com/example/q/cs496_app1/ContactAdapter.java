@@ -3,6 +3,8 @@ package com.example.q.cs496_app1;
 import android.content.Context;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.support.v7.widget.DividerItemDecoration;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,12 +37,16 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         public ImageView image;
         public TextView phoneNumber;
 
+        public LinearLayout expandMenu;
+
         public ViewHolder(View view) {
             super(view);
             allMenu = (RelativeLayout)view.findViewById(R.id.allMenu);
             name = (TextView)view.findViewById(R.id.name);
             image = (ImageView)view.findViewById(R.id.image);
             phoneNumber = (TextView)view.findViewById(R.id.phoneNumber);
+
+            expandMenu = (LinearLayout)view.findViewById(R.id.expand_menu);
         }
     }
 

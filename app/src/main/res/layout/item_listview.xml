@@ -11,11 +11,14 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:divider="@drawable/horizontal_divider"
+        android:orientation="vertical"
+        android:showDividers="middle">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginBottom="0dp">
 
             <ImageView
                 android:id="@+id/image"
@@ -51,29 +54,34 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginTop="5dp"
-            android:visibility="gone"
-            android:orientation="horizontal">
+            android:divider="@drawable/vertical_divider"
+            android:orientation="horizontal"
+            android:showDividers="middle"
+            android:visibility="gone">
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/button_edit"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Button" />
+                android:background="@android:color/transparent"
+                android:text="Edit" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/button_delete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Button" />
+                android:background="@android:color/transparent"
+                android:text="Delete" />
 
             <Button
-                android:id="@+id/button3"
+                android:id="@+id/button_details"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Button" />
+                android:background="@android:color/transparent"
+                android:text="Details" />
         </LinearLayout>
     </LinearLayout>
 
