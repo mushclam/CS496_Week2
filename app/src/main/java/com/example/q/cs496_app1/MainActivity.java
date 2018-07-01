@@ -1,5 +1,6 @@
 package com.example.q.cs496_app1;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -46,10 +47,13 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private Fragment[] mFragments;
 
+    public static Context MAIN_CONTEXT;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MAIN_CONTEXT = this;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);

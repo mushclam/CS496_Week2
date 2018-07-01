@@ -44,6 +44,7 @@ import java.util.List;
  * Use the {@link ContactFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+
 public class ContactFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -67,6 +68,8 @@ public class ContactFragment extends Fragment {
     SwipeRefreshLayout swipeRefreshLayout;
 
     TextView viewEmpty;
+
+    public static ContactFragment CONTACT_FRAGMENT_CONTEXT;
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -109,6 +112,7 @@ public class ContactFragment extends Fragment {
 
         // indicate context of fragment
         mContext = getActivity();
+        CONTACT_FRAGMENT_CONTEXT = this;
 
         //link with recycler view of xml
         recyclerView = (RecyclerView)view.findViewById(R.id.recyclerView);
@@ -140,8 +144,8 @@ public class ContactFragment extends Fragment {
                         int itemPosition = recyclerView.getChildLayoutPosition(view);
                         ContactItem item = contactList.get(itemPosition);
                         // push up name of selected item
-                        Toast.makeText(mContext, item.getName(), Toast.LENGTH_LONG).show();
                         Intent intent = new Intent(mContext, ContactActivity.class);
+                        intent.putExtra("itemPosition", itemPosition);
                         intent.putExtra("name", String.valueOf(item.getName()));
                         intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
                         startActivity(intent);
@@ -176,10 +180,11 @@ public class ContactFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                adapter.notifyDataSetChanged();
-                FragmentTransaction ft = getFragmentManager().beginTransaction();
-                ft.detach(ContactFragment.this).attach(ContactFragment.this).commit();
-                swipeRefreshLayout.setRefreshing(false);
+                ContactFragment.this.onRefresh();
+//                adapter.notifyDataSetChanged();
+//                FragmentTransaction ft = getFragmentManager().beginTransaction();
+//                ft.detach(ContactFragment.this).attach(ContactFragment.this).commit();
+//                swipeRefreshLayout.setRefreshing(false);
             }
         });
 
@@ -272,6 +277,13 @@ public class ContactFragment extends Fragment {
         Gson gson = new Gson();
         itemList = gson.fromJson(json, new TypeToken<List<ContactItem>>(){}.getType());
         return itemList;
+    }
+
+    public void onRefresh() {
+        adapter.notifyDataSetChanged();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(ContactFragment.this).attach(ContactFragment.this).commit();
+        swipeRefreshLayout.setRefreshing(false);
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event
