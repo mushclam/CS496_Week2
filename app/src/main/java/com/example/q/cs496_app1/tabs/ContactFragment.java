@@ -286,6 +286,11 @@ public class ContactFragment extends Fragment {
         swipeRefreshLayout.setRefreshing(false);
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+    }
+
 //    // TODO: Rename method, update argument and hook method into UI event
 //    public void onButtonPressed(Uri uri) {
 //        if (mListener != null) {

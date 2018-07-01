@@ -135,4 +135,11 @@ public class MainActivity extends AppCompatActivity {
             return 3;
         }
     }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        finish();
+        startActivity(getIntent());
+    }
 }

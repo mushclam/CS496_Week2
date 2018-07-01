@@ -43,15 +43,20 @@ public class ContactActivity extends Activity {
                 intent.putExtra("name", tvName.getText());
                 intent.putExtra("phoneNumber", tvPhoneNumber.getText());
                 startActivity(intent);
-                Toast.makeText(ContactActivity.this, "Implementing", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
+    public void onStop() {
+        super.onStop();
         finish();
     }
 
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        finish();
+        startActivity(getIntent());
+    }
 }
