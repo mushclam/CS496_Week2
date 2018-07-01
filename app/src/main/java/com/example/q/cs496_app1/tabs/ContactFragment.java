@@ -3,7 +3,10 @@ package com.example.q.cs496_app1.tabs;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,6 +17,7 @@ import android.view.animation.Animation;
 import android.view.animation.Transformation;
 import android.widget.Toast;
 
+import com.example.q.cs496_app1.AddContactActivity;
 import com.example.q.cs496_app1.ContactAdapter;
 import com.example.q.cs496_app1.ContactItem;
 import com.example.q.cs496_app1.R;
@@ -49,8 +53,13 @@ public class ContactFragment extends Fragment {
 
     // variable for recycler view.
     RecyclerView recyclerView;
-    RecyclerView.Adapter Adapter;
+    RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
+
+    // variable for FAB
+    FloatingActionButton fab;
+
+    SwipeRefreshLayout swipeRefreshLayout;
 
 //    private OnFragmentInteractionListener mListener;
 
@@ -136,8 +145,48 @@ public class ContactFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // link to adapter
-        Adapter = new ContactAdapter(mContext, items);
-        recyclerView.setAdapter(Adapter);
+        adapter = new ContactAdapter(mContext, items);
+        recyclerView.setAdapter(adapter);
+
+        // Action of FAB Button
+        fab = (FloatingActionButton)view.findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getActivity(), AddContactActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                adapter.notifyDataSetChanged();
+                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                ft.detach(ContactFragment.this).attach(ContactFragment.this).commit();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        // onScroll action of recycler view
+//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
+//            @Override
+//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+//                if(dy > 0 || dy < 0 && fab.isShown()) {
+//                    fab.hide();
+//                }
+//            }
+//
+//            @Override
+//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
+//                if(newState == RecyclerView.SCROLL_STATE_IDLE) {
+//                    fab.show();
+//                }
+//                super.onScrollStateChanged(recyclerView, newState);
+//            }
+//        });
 
         return view;
     }
@@ -197,7 +246,7 @@ public class ContactFragment extends Fragment {
         String json;
         List<ContactItem> itemList;
         try {
-            InputStream is = getActivity().getAssets().open("test.json");
+            InputStream is = getActivity().openFileInput("test.json");
             int size = is.available();
             byte[] buffer = new byte[size];
             is.read(buffer);
