@@ -9,8 +9,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.animation.Transformation;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -26,12 +30,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
+        public RelativeLayout allMenu;
         public TextView name;
         public ImageView image;
         public TextView phoneNumber;
 
         public ViewHolder(View view) {
             super(view);
+            allMenu = (RelativeLayout)view.findViewById(R.id.allMenu);
             name = (TextView)view.findViewById(R.id.name);
             image = (ImageView)view.findViewById(R.id.image);
             phoneNumber = (TextView)view.findViewById(R.id.phoneNumber);
@@ -46,7 +52,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
+    public void onBindViewHolder(final ViewHolder holder, int position) {
         ContactItem item = (ContactItem)mItems.get(position);
         holder.name.setText(item.getName());
         holder.image.setImageResource(item.getImage());
@@ -69,5 +75,4 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             lastPosition = position;
         }
     }
-
 }

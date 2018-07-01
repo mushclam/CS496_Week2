@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +52,10 @@ public class ContactFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
+    private static final boolean NOT_EXPANDED = false;
+    private static final boolean EXPANDED = true;
+    private boolean isExpanded;
+
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -62,12 +67,11 @@ public class ContactFragment extends Fragment {
     RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
 
-    // variable for FAB
-    FloatingActionButton fab;
-
     SwipeRefreshLayout swipeRefreshLayout;
 
     TextView viewEmpty;
+
+    LinearLayout expandMenu;
 
     public static ContactFragment CONTACT_FRAGMENT_CONTEXT;
 
@@ -136,19 +140,33 @@ public class ContactFragment extends Fragment {
             items.add(contactList.get(i));
         }
 
+        layoutManager = new LinearLayoutManager(mContext);
+        recyclerView.setLayoutManager(layoutManager);
+
+        // link to adapter
+        adapter = new ContactAdapter(mContext, items);
+        recyclerView.setAdapter(adapter);
+
         // onClick action of recycler view
         recyclerView.addOnItemTouchListener(
                 new RecyclerItemClickListener(mContext, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
                     @Override
                     public void onItemClick(View view, int position) {
-                        int itemPosition = recyclerView.getChildLayoutPosition(view);
-                        ContactItem item = contactList.get(itemPosition);
-                        // push up name of selected item
-                        Intent intent = new Intent(mContext, ContactActivity.class);
-                        intent.putExtra("itemPosition", itemPosition);
-                        intent.putExtra("name", String.valueOf(item.getName()));
-                        intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
-                        startActivity(intent);
+//                        int itemPosition = recyclerView.getChildLayoutPosition(view);
+//                        ContactItem item = contactList.get(itemPosition);
+//                        // push up name of selected item
+//                        Intent intent = new Intent(mContext, ContactActivity.class);
+//                        intent.putExtra("itemPosition", itemPosition);
+//                        intent.putExtra("name", String.valueOf(item.getName()));
+//                        intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
+//                        startActivity(intent);
+                        if (!isExpanded) {
+                            expand(recyclerView.findContainingItemView(view).findViewById(R.id.expand_menu));
+                            isExpanded = EXPANDED;
+                        } else {
+                            collapse(recyclerView.findContainingItemView(view).findViewById(R.id.expand_menu));
+                            isExpanded = NOT_EXPANDED;
+                        }
                     }
 
                     @Override
@@ -157,13 +175,6 @@ public class ContactFragment extends Fragment {
                     }
                 })
         );
-
-        layoutManager = new LinearLayoutManager(mContext);
-        recyclerView.setLayoutManager(layoutManager);
-
-        // link to adapter
-        adapter = new ContactAdapter(mContext, items);
-        recyclerView.setAdapter(adapter);
 
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh);
 
@@ -195,6 +206,26 @@ public class ContactFragment extends Fragment {
         return view;
     }
 
+    // Load Json file and read content. convert json string to contact list.
+    public List<ContactItem> LoadJson() {
+        String json;
+        List<ContactItem> itemList;
+        try {
+            InputStream is = getActivity().openFileInput("test.json");
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+            json = new String(buffer, "UTF-8");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        Gson gson = new Gson();
+        itemList = gson.fromJson(json, new TypeToken<List<ContactItem>>(){}.getType());
+        return itemList;
+    }
+
     public static void expand(final View v) {
         v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final int targetHeight = v.getMeasuredHeight();
@@ -217,11 +248,12 @@ public class ContactFragment extends Fragment {
             }
         };
 
-        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density));
+        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density) * 4);
         v.startAnimation(a);
     }
 
     public static void collapse(final View v) {
+//        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         final int initialHeight = v.getMeasuredHeight();
 
         Animation a = new Animation() {
@@ -241,28 +273,8 @@ public class ContactFragment extends Fragment {
             }
         };
 
-        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density));
+        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density) * 4);
         v.startAnimation(a);
-    }
-
-    // Load Json file and read content. convert json string to contact list.
-    public List<ContactItem> LoadJson() {
-        String json;
-        List<ContactItem> itemList;
-        try {
-            InputStream is = getActivity().openFileInput("test.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-        Gson gson = new Gson();
-        itemList = gson.fromJson(json, new TypeToken<List<ContactItem>>(){}.getType());
-        return itemList;
     }
 
     public void onRefresh() {
