@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.example.q.cs496_app1.AddContactActivity;
 import com.example.q.cs496_app1.ContactAdapter;
 import com.example.q.cs496_app1.ContactItem;
+import com.example.q.cs496_app1.ContactSorting;
 import com.example.q.cs496_app1.R;
 import com.example.q.cs496_app1.RecyclerItemClickListener;
 import com.example.q.cs496_app1.ContactActivity;
@@ -29,6 +30,7 @@ import com.google.gson.reflect.TypeToken;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -115,6 +117,7 @@ public class ContactFragment extends Fragment {
 
         // Add Contact item to ArrayList
         final List<ContactItem> contactList = this.LoadJson();
+        Collections.sort(contactList, new ContactSorting());
         for (int i = 0; i < contactList.size(); i++) {
             items.add(contactList.get(i));
         }
