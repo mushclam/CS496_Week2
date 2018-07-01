@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private Fragment[] mFragments;
+    private FloatingActionButton fab;
 
     public static Context MAIN_CONTEXT;
 
@@ -75,6 +76,38 @@ public class MainActivity extends AppCompatActivity {
         mFragments[1] = new GalleryFragment();
         mFragments[2] = new ThirdFragment();
 
+        fab = (FloatingActionButton)findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AddContactActivity.class);
+                startActivity(intent);
+            }
+        });
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        fab.show();
+                        break;
+                    case 1:
+                        fab.hide();
+                        break;
+                    case 2:
+                        fab.hide();
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
     }
 
 

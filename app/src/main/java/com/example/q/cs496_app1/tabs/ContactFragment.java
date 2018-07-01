@@ -165,26 +165,12 @@ public class ContactFragment extends Fragment {
         adapter = new ContactAdapter(mContext, items);
         recyclerView.setAdapter(adapter);
 
-        // Action of FAB Button
-        fab = (FloatingActionButton)view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), AddContactActivity.class);
-                startActivity(intent);
-            }
-        });
-
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 ContactFragment.this.onRefresh();
-//                adapter.notifyDataSetChanged();
-//                FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                ft.detach(ContactFragment.this).attach(ContactFragment.this).commit();
-//                swipeRefreshLayout.setRefreshing(false);
             }
         });
 

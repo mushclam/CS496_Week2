@@ -26,6 +26,7 @@
                 android:hint="Please Enter Name"
                 android:textColorHint="@android:color/white"
                 android:backgroundTint="@android:color/white"
+                android:imeOptions="actionNext"
                 android:textColor="#ffffee" />
 
             <Button
