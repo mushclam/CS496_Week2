@@ -158,12 +158,12 @@ public class ContactFragment extends Fragment {
     // Load Json file and read content. convert json string to contact list.
     public List<ContactItem> LoadJson() {
         String json;
-        List<ContactItem> itemList;
+        List<ContactItem> itemList = null;
         try {
             File file = new File(mContext.getFilesDir() + "/test.json");
             if(!file.exists()) {
                 FileOutputStream fos = getActivity().openFileOutput("test.json", Context.MODE_PRIVATE);
-                fos.write(Byte.valueOf(""));
+                fos.write(Byte.valueOf("\n"));
                 fos.close();
             }
             InputStream is = getActivity().openFileInput("test.json");
@@ -174,7 +174,7 @@ public class ContactFragment extends Fragment {
             json = new String(buffer, "UTF-8");
         } catch (IOException e) {
             e.printStackTrace();
-            return null;
+            return itemList;
         }
         Gson gson = new Gson();
         itemList = gson.fromJson(json, new TypeToken<List<ContactItem>>(){}.getType());
