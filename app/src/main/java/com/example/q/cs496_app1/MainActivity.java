@@ -44,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private Fragment[] mFragments;
     private FloatingActionButton fab;
+    private FloatingActionButton fab2;
 
     public static Context MAIN_CONTEXT;
 
@@ -81,6 +82,16 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+        fab2 = (FloatingActionButton)findViewById(R.id.fab2);
+        fab2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+//                Intent intent = new Intent(MainActivity.this, AddContactActivity.class);
+//                startActivity(intent);
+            }
+        });
+
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -91,12 +102,15 @@ public class MainActivity extends AppCompatActivity {
                 switch (position) {
                     case 0:
                         fab.show();
+                        fab2.hide();
                         break;
                     case 1:
                         fab.hide();
+                        fab2.show();
                         break;
                     case 2:
                         fab.hide();
+                        fab2.hide();
                         break;
                 }
             }
