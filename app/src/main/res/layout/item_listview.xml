@@ -1,88 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/allMenu"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:focusable="true"
     android:background="?android:attr/selectableItemBackground"
-    android:id="@+id/allMenu"
-    android:padding="5dp">
+    android:clickable="true"
+    android:divider="@drawable/horizontal_divider"
+    android:focusable="true"
+    android:orientation="vertical"
+    android:showDividers="middle">
+
+    <RelativeLayout
+        android:id="@+id/upperMenu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        android:padding="5dp">
+
+        <ImageView
+            android:id="@+id/image"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="5dp"
+            android:clickable="false" />
+
+        <TextView
+            android:id="@+id/name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="5dp"
+            android:layout_toEndOf="@+id/image"
+            android:text="Name" />
+
+        <TextView
+            android:id="@+id/phoneNumber"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/image"
+            android:layout_marginBottom="5dp"
+            android:layout_toEndOf="@+id/image"
+            android:text="Phone number" />
+
+    </RelativeLayout>
 
     <LinearLayout
+        android:id="@+id/expand_menu"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@drawable/horizontal_divider"
-        android:orientation="vertical"
-        android:showDividers="middle">
+        android:layout_height="match_parent"
+        android:background="?android:attr/selectableItemBackground"
+        android:divider="@drawable/vertical_divider"
+        android:orientation="horizontal"
+        android:showDividers="middle"
+        android:visibility="gone">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginBottom="0dp">
+        <Button
+            android:id="@+id/button_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="Edit" />
 
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginRight="5dp"
-                android:clickable="false" />
+        <Button
+            android:id="@+id/button_delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="Delete" />
 
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentTop="true"
-                android:layout_marginTop="5dp"
-                android:layout_toEndOf="@+id/image"
-                android:text="Name" />
-
-            <TextView
-                android:id="@+id/phoneNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/image"
-                android:layout_marginBottom="5dp"
-                android:layout_toEndOf="@+id/image"
-                android:text="Phone number" />
-
-        </RelativeLayout>
-
-        <LinearLayout
-            android:id="@+id/expand_menu"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dp"
-            android:divider="@drawable/vertical_divider"
-            android:orientation="horizontal"
-            android:showDividers="middle"
-            android:visibility="gone">
-
-            <Button
-                android:id="@+id/button_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:text="Edit" />
-
-            <Button
-                android:id="@+id/button_delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:text="Delete" />
-
-            <Button
-                android:id="@+id/button_details"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:background="@android:color/transparent"
-                android:text="Details" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/button_details"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:text="Details" />
     </LinearLayout>
 
-</RelativeLayout>
+</LinearLayout>

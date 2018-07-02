@@ -2,6 +2,7 @@ package com.example.q.cs496_app1.tabs;
 
 import android.content.Context;
 import android.content.Intent;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.view.animation.TranslateAnimation;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +28,7 @@ import com.example.q.cs496_app1.ContactSorting;
 import com.example.q.cs496_app1.R;
 import com.example.q.cs496_app1.RecyclerItemClickListener;
 import com.example.q.cs496_app1.ContactActivity;
+import com.example.q.cs496_app1.RecyclerViewClickListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -52,9 +55,9 @@ public class ContactFragment extends Fragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
 
-    private static final boolean NOT_EXPANDED = false;
-    private static final boolean EXPANDED = true;
-    private boolean isExpanded;
+    private static final int NOT_EXPANDED = 0;
+    private static final int EXPANDED = 1;
+    private int isExpanded = NOT_EXPANDED;
 
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -70,8 +73,6 @@ public class ContactFragment extends Fragment {
     SwipeRefreshLayout swipeRefreshLayout;
 
     TextView viewEmpty;
-
-    LinearLayout expandMenu;
 
     public static ContactFragment CONTACT_FRAGMENT_CONTEXT;
 
@@ -144,37 +145,18 @@ public class ContactFragment extends Fragment {
         recyclerView.setLayoutManager(layoutManager);
 
         // link to adapter
-        adapter = new ContactAdapter(mContext, items);
+        adapter = new ContactAdapter(mContext, items, new RecyclerViewClickListener() {
+            @Override
+            public void onClicked(int position) {
+
+            }
+
+            @Override
+            public void onLongClicked(int position) {
+
+            }
+        });
         recyclerView.setAdapter(adapter);
-
-        // onClick action of recycler view
-        recyclerView.addOnItemTouchListener(
-                new RecyclerItemClickListener(mContext, recyclerView, new RecyclerItemClickListener.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(View view, int position) {
-//                        int itemPosition = recyclerView.getChildLayoutPosition(view);
-//                        ContactItem item = contactList.get(itemPosition);
-//                        // push up name of selected item
-//                        Intent intent = new Intent(mContext, ContactActivity.class);
-//                        intent.putExtra("itemPosition", itemPosition);
-//                        intent.putExtra("name", String.valueOf(item.getName()));
-//                        intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
-//                        startActivity(intent);
-                        if (!isExpanded) {
-                            expand(recyclerView.findContainingItemView(view).findViewById(R.id.expand_menu));
-                            isExpanded = EXPANDED;
-                        } else {
-                            collapse(recyclerView.findContainingItemView(view).findViewById(R.id.expand_menu));
-                            isExpanded = NOT_EXPANDED;
-                        }
-                    }
-
-                    @Override
-                    public void onLongItemClick(View view, int position) {
-
-                    }
-                })
-        );
 
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh);
 
@@ -184,24 +166,6 @@ public class ContactFragment extends Fragment {
                 ContactFragment.this.onRefresh();
             }
         });
-
-        // onScroll action of recycler view
-//        recyclerView.addOnScrollListener(new RecyclerView.OnScrollListener() {
-//            @Override
-//            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-//                if(dy > 0 || dy < 0 && fab.isShown()) {
-//                    fab.hide();
-//                }
-//            }
-//
-//            @Override
-//            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
-//                if(newState == RecyclerView.SCROLL_STATE_IDLE) {
-//                    fab.show();
-//                }
-//                super.onScrollStateChanged(recyclerView, newState);
-//            }
-//        });
 
         return view;
     }
@@ -224,57 +188,6 @@ public class ContactFragment extends Fragment {
         Gson gson = new Gson();
         itemList = gson.fromJson(json, new TypeToken<List<ContactItem>>(){}.getType());
         return itemList;
-    }
-
-    public static void expand(final View v) {
-        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final int targetHeight = v.getMeasuredHeight();
-
-        v.getLayoutParams().height = -1;
-        v.setVisibility(View.VISIBLE);
-
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                v.getLayoutParams().height = interpolatedTime == 1
-                        ? ViewGroup.LayoutParams.WRAP_CONTENT
-                        : (int) (targetHeight * interpolatedTime);
-                v.requestLayout();
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        a.setDuration((int)(targetHeight / v.getContext().getResources().getDisplayMetrics().density) * 4);
-        v.startAnimation(a);
-    }
-
-    public static void collapse(final View v) {
-//        v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        final int initialHeight = v.getMeasuredHeight();
-
-        Animation a = new Animation() {
-            @Override
-            protected void applyTransformation(float interpolatedTime, Transformation t) {
-                if(interpolatedTime == 1) {
-                    v.setVisibility(View.GONE);
-                } else {
-                    v.getLayoutParams().height = initialHeight - (int)(initialHeight * interpolatedTime);
-                    v.requestLayout();
-                }
-            }
-
-            @Override
-            public boolean willChangeBounds() {
-                return true;
-            }
-        };
-
-        a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density) * 4);
-        v.startAnimation(a);
     }
 
     public void onRefresh() {

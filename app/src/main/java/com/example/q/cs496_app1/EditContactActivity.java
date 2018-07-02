@@ -91,8 +91,6 @@ public class EditContactActivity extends Activity {
                 } catch (IOException e) {
                     Toast.makeText(EditContactActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-
-                ((ContactActivity)ContactActivity.CONTACT_CONTEXT).onStop();
                 onPause();
             }
         });
