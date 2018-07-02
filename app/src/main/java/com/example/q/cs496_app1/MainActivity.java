@@ -1,5 +1,7 @@
 package com.example.q.cs496_app1;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -14,10 +16,13 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.q.cs496_app1.tabs.ContactFragment;
 import com.example.q.cs496_app1.tabs.gallery.GalleryFragment;
 import com.example.q.cs496_app1.tabs.ThirdFragment;
+
+import java.io.File;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -36,11 +41,15 @@ public class MainActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private Fragment[] mFragments;
+    private FloatingActionButton fab;
+
+    public static Context MAIN_CONTEXT;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        MAIN_CONTEXT = this;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -62,7 +71,38 @@ public class MainActivity extends AppCompatActivity {
         mFragments[1] = new GalleryFragment();
         mFragments[2] = new ThirdFragment();
 
+        fab = (FloatingActionButton)findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, AddContactActivity.class);
+                startActivity(intent);
+            }
+        });
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
 
+            @Override
+            public void onPageSelected(int position) {
+                switch (position) {
+                    case 0:
+                        fab.show();
+                        break;
+                    case 1:
+                        fab.hide();
+                        break;
+                    case 2:
+                        fab.hide();
+                        break;
+                }
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
     }
 
 
@@ -83,6 +123,18 @@ public class MainActivity extends AppCompatActivity {
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
+        }
+        if (id == R.id.action_deleteContacts) {
+            try {
+                File file = new File(getFilesDir() + "/test.json");
+                if (!file.exists()){
+                    Toast.makeText(this, getFilesDir() + " + Not Exist", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(this, getFilesDir() + " + Exist", Toast.LENGTH_SHORT).show();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -110,5 +162,12 @@ public class MainActivity extends AppCompatActivity {
             // Show 3 total pages.
             return 3;
         }
+    }
+
+    @Override
+    public void onRestart() {
+        super.onRestart();
+        finish();
+        startActivity(getIntent());
     }
 }
