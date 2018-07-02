@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1;
+package com.example.q.cs496_app1.tabs.contact;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.example.q.cs496_app1.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

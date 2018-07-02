@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1;
+package com.example.q.cs496_app1.tabs.contact;
 
 public class ContactItem {
     int image;

@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1.tabs;
+package com.example.q.cs496_app1.tabs.contact;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -13,11 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.example.q.cs496_app1.ContactAdapter;
-import com.example.q.cs496_app1.ContactItem;
-import com.example.q.cs496_app1.ContactSorting;
 import com.example.q.cs496_app1.R;
-import com.example.q.cs496_app1.RecyclerViewClickListener;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

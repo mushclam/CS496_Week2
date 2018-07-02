@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1;
+package com.example.q.cs496_app1.tabs.contact;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -11,11 +11,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.q.cs496_app1.tabs.ContactFragment;
+import com.example.q.cs496_app1.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
-import org.w3c.dom.Text;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;

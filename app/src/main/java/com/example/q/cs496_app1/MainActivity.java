@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -18,7 +17,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.example.q.cs496_app1.tabs.ContactFragment;
+import com.example.q.cs496_app1.tabs.contact.AddContactActivity;
+import com.example.q.cs496_app1.tabs.contact.ContactFragment;
 import com.example.q.cs496_app1.tabs.gallery.GalleryFragment;
 import com.example.q.cs496_app1.tabs.ThirdFragment;
 

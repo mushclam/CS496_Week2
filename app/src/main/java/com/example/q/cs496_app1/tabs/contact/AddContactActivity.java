@@ -1,28 +1,18 @@
-package com.example.q.cs496_app1;
+package com.example.q.cs496_app1.tabs.contact;
 
-import android.Manifest;
 import android.app.Activity;
-import android.app.usage.ExternalStorageStats;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Environment;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentTransaction;
-import android.support.v4.content.ContextCompat;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.q.cs496_app1.tabs.ContactFragment;
+import com.example.q.cs496_app1.MainActivity;
+import com.example.q.cs496_app1.R;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
@@ -31,8 +21,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.util.List;
 
 public class AddContactActivity extends Activity {
