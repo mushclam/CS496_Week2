@@ -133,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(this, getFilesDir() + " + Not Exist", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(this, getFilesDir() + " + Exist", Toast.LENGTH_SHORT).show();
+                    file.delete();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
