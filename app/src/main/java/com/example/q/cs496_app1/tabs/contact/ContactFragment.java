@@ -121,7 +121,7 @@ public class ContactFragment extends Fragment {
 
         // Add Contact item to ArrayList
         final List<ContactItem> contactList = this.LoadJson();
-        if (contactList == null) {
+        if (contactList == null || contactList.isEmpty()) {
             viewEmpty.setText("Any Contact isn't exist");
         } else {
             Collections.sort(contactList, new ContactSorting());
@@ -161,7 +161,7 @@ public class ContactFragment extends Fragment {
 
     // Load Json file and read content. convert json string to contact list.
     public List<ContactItem> LoadJson() {
-        String json;
+        String json = null;
         List<ContactItem> itemList = null;
         Gson gson = new Gson();
 
@@ -169,7 +169,6 @@ public class ContactFragment extends Fragment {
             File file = new File(mContext.getFilesDir() + "/test.json");
             if(!file.exists()) {
                 FileOutputStream fos = getActivity().openFileOutput("test.json", Context.MODE_PRIVATE);
-                fos.write(Byte.valueOf("{}"));
                 fos.close();
             }
             StringBuffer data = new StringBuffer();
@@ -194,11 +193,6 @@ public class ContactFragment extends Fragment {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.detach(ContactFragment.this).attach(ContactFragment.this).commit();
         swipeRefreshLayout.setRefreshing(false);
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event

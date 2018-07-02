@@ -4,10 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.Toast;
 
 import com.example.q.cs496_app1.MainActivity;
@@ -21,9 +24,12 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AddContactActivity extends Activity {
+
+    List<ContactItem> orgList;
 
     private EditText addName;
     private EditText addPhoneNumber;
@@ -63,8 +69,11 @@ public class AddContactActivity extends Activity {
                         data.append(str + "\n");
                         str = br.readLine();
                     }
+                    orgList = gson.fromJson(data.toString(), new TypeToken<List<ContactItem>>(){}.getType());
 
-                    List<ContactItem> orgList = gson.fromJson(data.toString(), new TypeToken<List<ContactItem>>(){}.getType());
+                    if (orgList == null) {
+                        orgList = new ArrayList<ContactItem>();
+                    }
                     orgList.add(addContact);
                     String json = gson.toJson(orgList);
 
@@ -76,6 +85,7 @@ public class AddContactActivity extends Activity {
                     Toast.makeText(AddContactActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
+                ((MainActivity)MainActivity.MAIN_CONTEXT).finish();
                 Intent intent = new Intent(AddContactActivity.this, MainActivity.class);
                 startActivity(intent);
                 onPause();
