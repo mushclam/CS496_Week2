@@ -15,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,6 +23,9 @@ import android.widget.Toast;
 
 import com.example.q.cs496_app1.R;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
@@ -32,7 +36,7 @@ public class GalleryFragment extends Fragment {
     int permsRequestCode = 200;
     String[] perms = {"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"};
 
-    ArrayList<Uri> images_uri;
+    ArrayList<MyImage> images;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -86,11 +90,8 @@ public class GalleryFragment extends Fragment {
         galleryRecyclerView.setLayoutManager(layoutManager);
         galleryRecyclerView.scrollToPosition(0);
 
-        //ArrayList<MyImage> images = prepareData();
-//        MyImage myImage = new MyImage();
-//        myImage.fetchAllImages(getActivity());
         fetchAllImages();
-        ImageAdapter galleryAdapter = new ImageAdapter(getActivity(), images_uri);
+        ImageAdapter galleryAdapter = new ImageAdapter(getActivity(), images);
         galleryRecyclerView.setAdapter(galleryAdapter);
         galleryRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
@@ -108,33 +109,34 @@ public class GalleryFragment extends Fragment {
 
     private void fetchAllImages() {
         // DATA는 이미지 파일의 스트림 데이터 경로를 나타냅니다.
-        String[] projection = { MediaStore.Images.Media.DATA };
+        String[] projection = {MediaStore.Images.Media.DATA, MediaStore.Images.Media.DATE_TAKEN,
+                MediaStore.Images.Media.LONGITUDE, MediaStore.Images.Media.LATITUDE};
 
         Cursor imageCursor = getActivity().getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, // 이미지 컨텐트 테이블
-                projection, // DATA를 출력
+                projection,
                 null,       // 모든 개체 출력
                 null,
                 null);      // 정렬 안 함
 
-        ArrayList<Uri> result = new ArrayList<>(imageCursor.getCount());
-        int dataColumnIndex = imageCursor.getColumnIndex(projection[0]);
+        ArrayList<MyImage> result = new ArrayList<>(imageCursor.getCount());
 
-        if (imageCursor == null) {
-            // Error 발생
-
-        } else if (imageCursor.moveToFirst()) {
+        if (imageCursor.moveToFirst()) {
             do {
-                String filePath = imageCursor.getString(dataColumnIndex);
-                Uri imageUri = Uri.parse(filePath);
-                result.add(imageUri);
+                String filePath = imageCursor.getString(imageCursor.getColumnIndex(projection[0]));
+                long taken = imageCursor.getLong(imageCursor.getColumnIndex(projection[1]));
+                float longitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[2]));
+                float latitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[3]));
+
+                result.add(new MyImage(filePath, taken, longitude, latitude));
             } while(imageCursor.moveToNext());
         } else {
             // imageCursor가 비었습니다.
         }
         imageCursor.close();
 
-        this.images_uri = result;
+        Collections.sort(result, Collections.reverseOrder());
+        this.images = result;
     }
 
     private boolean checkPermission() {

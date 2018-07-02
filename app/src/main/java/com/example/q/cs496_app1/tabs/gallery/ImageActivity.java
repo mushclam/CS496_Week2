@@ -13,6 +13,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,9 +30,13 @@ import com.bumptech.glide.request.target.SimpleTarget;
 import com.example.q.cs496_app1.R;
 import com.example.q.cs496_app1.TouchImageView;
 
+import org.w3c.dom.Text;
+
 import java.io.File;
 import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 public class ImageActivity extends AppCompatActivity {
 
@@ -51,7 +56,7 @@ public class ImageActivity extends AppCompatActivity {
     private ViewPager mViewPager;
     private static int index;
 //    private static MyImage myImage;
-    private static ArrayList<Uri> images_uri;
+    private static ArrayList<MyImage> images;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,8 +68,7 @@ public class ImageActivity extends AppCompatActivity {
 
         Intent intent = getIntent();
         index = intent.getIntExtra("INDEX", 0);
-//        myImage = (MyImage) intent.getSerializableExtra("IMAGE");
-        images_uri = intent.getParcelableArrayListExtra("IMAGE");
+        images = intent.getParcelableArrayListExtra("IMAGE");
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -141,7 +145,15 @@ public class ImageActivity extends AppCompatActivity {
             };
 
             int idx = getArguments().getInt("INDEX");
-            Glide.with(getActivity()).load(new File(images_uri.get(idx).getPath())).asBitmap().into(target);
+            MyImage myImage = images.get(idx);
+            Glide.with(getActivity()).load(myImage.getFile()).asBitmap().into(target);
+
+            TextView description = rootView.findViewById(R.id.describe_image_view);
+
+            Date dateTaken = new Date(myImage.getDate());
+            description.setText((new SimpleDateFormat("yyyy년 MM월 dd일(E) HH시 mm분 ss초")).format(dateTaken));
+//            Log.e("날짜 ", (new SimpleDateFormat("yyyy년 MM월 dd일 HH시 mm분(E)")).format(dateTaken));
+
             return rootView;
         }
     }
@@ -165,7 +177,7 @@ public class ImageActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            return images_uri.size();//galleryList.size();
+            return images.size();
         }
     }
 }
