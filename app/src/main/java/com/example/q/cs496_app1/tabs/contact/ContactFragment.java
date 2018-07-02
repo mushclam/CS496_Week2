@@ -171,7 +171,19 @@ public class ContactFragment extends Fragment {
             byte[] buffer = new byte[size];
             is.read(buffer);
             is.close();
-            json = new String(buffer, "UTF-8");
+//            json = new String(buffer, "UTF-8");
+            json = "[\n" +
+                    "  {\n" +
+                    "    \"image\" : 2131165284,\n" +
+                    "    \"name\" : \"foreground\",\n" +
+                    "    \"phoneNumber\" : \"010-1111-1111\"\n" +
+                    "  },\n" +
+                    "  {\n" +
+                    "    \"image\" : 2131165283,\n" +
+                    "    \"name\" : \"background\",\n" +
+                    "    \"phoneNumber\" : \"010-2222-2222\"\n" +
+                    "  }" +
+                    "]";
         } catch (IOException e) {
             e.printStackTrace();
             return itemList;
