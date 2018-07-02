@@ -37,6 +37,7 @@ public class GalleryFragment extends Fragment {
     String[] perms = {"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"};
 
     ArrayList<MyImage> images;
+    ImageAdapter galleryAdapter;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -78,31 +79,22 @@ public class GalleryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
         // 권한
-        if (!checkPermission()) {
-            Toast.makeText(getActivity(), "권한 없음!", Toast.LENGTH_SHORT).show();
-            requestPermission();
+        if(!checkPermission()) {
+            requestPermission(); // 거절당했을 때 행동도 만들어야 함.
         }
+        if (checkPermission()) {
+            fetchAllImages();
+            RecyclerView galleryRecyclerView = (RecyclerView) view.findViewById(R.id.gallery_recycler);
+            galleryRecyclerView.setHasFixedSize(true);
 
-        RecyclerView galleryRecyclerView = (RecyclerView) view.findViewById(R.id.gallery_recycler);
-        galleryRecyclerView.setHasFixedSize(true);
+            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
+            galleryRecyclerView.setLayoutManager(layoutManager);
+            galleryRecyclerView.scrollToPosition(0);
 
-        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(),3);
-        galleryRecyclerView.setLayoutManager(layoutManager);
-        galleryRecyclerView.scrollToPosition(0);
-
-        fetchAllImages();
-        ImageAdapter galleryAdapter = new ImageAdapter(getActivity(), images);
-        galleryRecyclerView.setAdapter(galleryAdapter);
-        galleryRecyclerView.setItemAnimator(new DefaultItemAnimator());
-
-        FloatingActionButton fab = (FloatingActionButton) view.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+            galleryAdapter = new ImageAdapter(getActivity(), images);
+            galleryRecyclerView.setAdapter(galleryAdapter);
+            galleryRecyclerView.setItemAnimator(new DefaultItemAnimator());
+        }
 
         return view;
     }

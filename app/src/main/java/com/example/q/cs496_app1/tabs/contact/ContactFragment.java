@@ -118,13 +118,13 @@ public class ContactFragment extends Fragment {
 
         // Add Contact item to ArrayList
         final List<ContactItem> contactList = this.LoadJson();
-        if (contactList.isEmpty()) {
-            viewEmpty.setText("Any Contact isn't exist");
-        }
-        Collections.sort(contactList, new ContactSorting());
-        for (int i = 0; i < contactList.size(); i++) {
-            items.add(contactList.get(i));
-        }
+//        if (contactList.isEmpty()) {
+//            viewEmpty.setText("Any Contact isn't exist");
+//        }
+//        Collections.sort(contactList, new ContactSorting());
+//        for (int i = 0; i < contactList.size(); i++) {
+//            items.add(contactList.get(i));
+//        }
 
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
