@@ -17,6 +17,8 @@ import com.example.q.cs496_app1.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -158,6 +160,12 @@ public class ContactFragment extends Fragment {
         String json;
         List<ContactItem> itemList;
         try {
+            File file = new File(mContext.getFilesDir() + "/test.json");
+            if(!file.exists()) {
+                FileOutputStream fos = getActivity().openFileOutput("test.json", Context.MODE_PRIVATE);
+                fos.write(Byte.valueOf(""));
+                fos.close();
+            }
             InputStream is = getActivity().openFileInput("test.json");
             int size = is.available();
             byte[] buffer = new byte[size];
