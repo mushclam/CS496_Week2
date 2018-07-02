@@ -8,7 +8,7 @@
     android:divider="@drawable/horizontal_divider"
     android:focusable="true"
     android:orientation="vertical"
-    android:showDividers="middle">
+    android:showDividers="none">
 
     <RelativeLayout
         android:id="@+id/upperMenu"
@@ -50,10 +50,10 @@
         android:id="@+id/expand_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="?android:attr/selectableItemBackground"
         android:divider="@drawable/vertical_divider"
         android:orientation="horizontal"
-        android:showDividers="middle"
+        android:showDividers="none"
+        android:background="#dfdfef"
         android:visibility="gone">
 
         <Button
@@ -61,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
+            android:background="@drawable/ripple_custum_hv21"
             android:text="Edit" />
 
         <Button
@@ -69,7 +69,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
+            android:background="@drawable/ripple_custum_hv21"
             android:text="Delete" />
 
         <Button
@@ -77,7 +77,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="@android:color/transparent"
+            android:background="@drawable/ripple_custum_hv21"
             android:text="Details" />
     </LinearLayout>
 

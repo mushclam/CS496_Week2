@@ -41,14 +41,14 @@ public class EditContactActivity extends Activity {
         editPhoneNumber = (EditText)findViewById(R.id.editPhoneNumber);
         save_button = (Button)findViewById(R.id.save_button);
 
-        editPhoneNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
-
         orgName = intent.getStringExtra("name");
         orgPhoneNumber = intent.getStringExtra("phoneNumber");
         itemPosition = intent.getIntExtra("itemPosition", 0);
 
         editName.setText(orgName);
         editPhoneNumber.setText(orgPhoneNumber);
+
+        editPhoneNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
         save_button.setOnClickListener(new View.OnClickListener() {
             @Override
