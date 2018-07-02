@@ -17,10 +17,13 @@ import com.example.q.cs496_app1.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -118,12 +121,13 @@ public class ContactFragment extends Fragment {
 
         // Add Contact item to ArrayList
         final List<ContactItem> contactList = this.LoadJson();
-        if (contactList.isEmpty()) {
+        if (contactList == null) {
             viewEmpty.setText("Any Contact isn't exist");
-        }
-        Collections.sort(contactList, new ContactSorting());
-        for (int i = 0; i < contactList.size(); i++) {
-            items.add(contactList.get(i));
+        } else {
+            Collections.sort(contactList, new ContactSorting());
+            for (int i = 0; i < contactList.size(); i++) {
+                items.add(contactList.get(i));
+            }
         }
 
         layoutManager = new LinearLayoutManager(mContext);
@@ -159,38 +163,30 @@ public class ContactFragment extends Fragment {
     public List<ContactItem> LoadJson() {
         String json;
         List<ContactItem> itemList = null;
+        Gson gson = new Gson();
+
         try {
             File file = new File(mContext.getFilesDir() + "/test.json");
             if(!file.exists()) {
                 FileOutputStream fos = getActivity().openFileOutput("test.json", Context.MODE_PRIVATE);
-                fos.write(Byte.valueOf("\n"));
+                fos.write(Byte.valueOf("{}"));
                 fos.close();
             }
-            InputStream is = getActivity().openFileInput("test.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-//            json = new String(buffer, "UTF-8");
-            json = "[\n" +
-                    "  {\n" +
-                    "    \"image\" : 2131165284,\n" +
-                    "    \"name\" : \"foreground\",\n" +
-                    "    \"phoneNumber\" : \"010-1111-1111\"\n" +
-                    "  },\n" +
-                    "  {\n" +
-                    "    \"image\" : 2131165283,\n" +
-                    "    \"name\" : \"background\",\n" +
-                    "    \"phoneNumber\" : \"010-2222-2222\"\n" +
-                    "  }" +
-                    "]";
+            StringBuffer data = new StringBuffer();
+            FileInputStream fis = getActivity().openFileInput("test.json");
+            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+            String str = br.readLine();
+            while (str != null) {
+                data.append(str + "\n");
+                str = br.readLine();
+            }
+
+            itemList = gson.fromJson(data.toString(), new TypeToken<List<ContactItem>>(){}.getType());
+            return itemList;
         } catch (IOException e) {
             e.printStackTrace();
-            return itemList;
+            return null;
         }
-        Gson gson = new Gson();
-        itemList = gson.fromJson(json, new TypeToken<List<ContactItem>>(){}.getType());
-        return itemList;
     }
 
     public void onRefresh() {
