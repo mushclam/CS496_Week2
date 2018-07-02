@@ -30,6 +30,7 @@
             android:screenOrientation="portrait" />
         <activity android:name=".tabs.contact.EditContactActivity"
             android:screenOrientation="portrait" />
+        <activity android:name=".CameraActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

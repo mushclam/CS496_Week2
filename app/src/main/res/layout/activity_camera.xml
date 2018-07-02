@@ -15,8 +15,9 @@
         android:id="@+id/imgClose"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="right|top"
-        android:background="@android:drawable/ic_menu_close_clear_cancel"
+        android:layout_gravity="center|bottom"
+        android:layout_marginBottom="20dp"
+        android:foreground="@android:drawable/ic_menu_camera"
         android:padding="20dp"/>
 
 </FrameLayout>

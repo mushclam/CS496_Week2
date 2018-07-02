@@ -19,6 +19,8 @@ import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -31,8 +33,8 @@ public class CameraActivity extends Activity {
 
     private static final int MY_PERMISSION_CAMERA = 300;
 
-    Button buttonCapture;
-    ImageView preview;
+    ImageButton buttonCapture;
+    FrameLayout preview;
 
     String mCurrentPhotoPath;
 
@@ -44,8 +46,8 @@ public class CameraActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
-        buttonCapture = (Button) findViewById(R.id.button_edit);
-        preview = (ImageView) findViewById(R.id.camera_view);
+        buttonCapture = (ImageButton) findViewById(R.id.imgClose);
+        preview = (FrameLayout) findViewById(R.id.camera_view);
 
         buttonCapture.setOnClickListener(new View.OnClickListener() {
             @Override
