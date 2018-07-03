@@ -3,6 +3,11 @@ package com.example.q.cs496_app1;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
+import android.os.Vibrator;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
@@ -18,6 +23,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.q.cs496_app1.tabs.contact.AddContactActivity;
@@ -26,6 +32,7 @@ import com.example.q.cs496_app1.tabs.gallery.GalleryFragment;
 import com.example.q.cs496_app1.tabs.third.ThirdFragment;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,6 +53,18 @@ public class MainActivity extends AppCompatActivity {
     private Fragment[] mFragments;
     private FloatingActionButton fab;
     private FloatingActionButton fab2;
+
+    private SensorManager mSensorManager = null;
+    private SensorEventListener mAccLis;
+    private Sensor mAccelerometerSensor = null;
+
+    private TextView xyzView;
+    private boolean accOn;
+    private long detectedTime;
+
+    private Vibrator vibrator;
+
+    private double[] Xs, Zs;
 
     public static Context MAIN_CONTEXT;
 
@@ -93,6 +112,22 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        accOn = false;
+
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        mAccLis = new AccelerometerListener();
+
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+
+        //xyzView = view.findViewById(R.id.xyz_view);
+
+        Xs = new double[20];
+        Zs = new double[20];
+        Arrays.fill(Xs, 0);
+        Arrays.fill(Zs, 0);
+
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
@@ -108,10 +143,16 @@ public class MainActivity extends AppCompatActivity {
                     case 1:
                         fab.hide();
                         fab2.show();
+
+                        mSensorManager.unregisterListener(mAccLis);
+
                         break;
                     case 2:
                         fab.hide();
                         fab2.hide();
+
+                        mSensorManager.registerListener(mAccLis, mAccelerometerSensor, SensorManager.SENSOR_DELAY_UI);
+
                         break;
                 }
             }
@@ -242,6 +283,137 @@ public class MainActivity extends AppCompatActivity {
 
             // other 'case' lines to check for other
             // permissions this app might request
+        }
+    }
+
+    public boolean isLeft(double[] Xs) {
+        double avgX = (Xs[0] + Xs[1] + Xs[2] + Xs[3] + Xs[4]) / 5.0;
+        int firstX = 20;
+        int secondX;
+        for(int i=5; i<20; i++) {
+            if(Xs[i] < avgX - 20) {
+                firstX = i;
+            }
+            if(Xs[i] > avgX + 60) {
+                secondX = i;
+                if(firstX < secondX) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public boolean isRight(double[] Xs) {
+        double avgX = (Xs[0] + Xs[1] + Xs[2] + Xs[3] + Xs[4]) / 5.0;
+        int firstX = 20;
+        int secondX;
+        for(int i=5; i<20; i++) {
+            if(Xs[i] > avgX + 10) {
+                firstX = i;
+            }
+            if(Xs[i] < avgX - 30) {
+                secondX = i;
+                if(firstX < secondX) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public boolean isBack(double[] Zs) {
+        double avgZ = (Zs[0] + Zs[1] + Zs[2] + Zs[3] + Zs[4]) / 5.0;
+        int firstZ = 20;
+        int secondZ;
+        for(int i=5; i<20; i++) {
+            if(Zs[i] < avgZ - 15) {
+                firstZ = i;
+            }
+            if(Zs[i] > avgZ + 40) {
+                secondZ = i;
+                if(firstZ < secondZ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    public boolean isFront(double[] Zs) {
+        double avgZ = (Zs[0] + Zs[1] + Zs[2] + Zs[3] + Zs[4]) / 5.0;
+        int firstZ = 20;
+        int secondZ;
+        for(int i=5; i<20; i++) {
+            if(Zs[i] > avgZ + 10) {
+                firstZ = i;
+            }
+            if(Zs[i] < avgZ - 30) {
+                secondZ = i;
+                if(firstZ < secondZ) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private class AccelerometerListener implements SensorEventListener {
+
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+
+            double x = event.values[0];
+            double y = event.values[1];
+            double z = event.values[2];
+
+            for(int i=0; i<19; i++) {
+                Xs[i] = Xs[i+1];
+                Zs[i] = Zs[i+1];
+            }
+
+            Xs[19] = x;
+            Zs[19] = z;
+
+
+            if(System.currentTimeMillis() - detectedTime > 1000) {
+                ThirdFragment thirdFragment = (ThirdFragment) mFragments[2];
+
+                if(isLeft(Xs)) {
+                    vibrator.vibrate(10);
+                    Toast.makeText(getApplicationContext(), "Left shake detected", Toast.LENGTH_SHORT).show();
+                    Log.e("잡힘 ", "왼쪽");
+                    detectedTime = System.currentTimeMillis();
+
+                    thirdFragment.view.game.move(3);
+                }
+                else if(isRight(Xs)) {
+                    vibrator.vibrate(10);
+                    Toast.makeText(getApplicationContext(), "Right shake detected", Toast.LENGTH_SHORT).show();
+                    Log.e("잡힘 ", "오른쪽");
+                    detectedTime = System.currentTimeMillis();
+
+                    thirdFragment.view.game.move(1);
+                }
+                else if(isBack(Zs)) {
+                    vibrator.vibrate(10);
+                    Toast.makeText(getApplicationContext(), "Back shake detected", Toast.LENGTH_SHORT).show();
+                    Log.e("잡힘 ", "뒤쪽");
+                    detectedTime = System.currentTimeMillis();
+
+                    thirdFragment.view.game.move(0);
+                }
+                else if(isFront(Zs)) {
+                    vibrator.vibrate(10);
+                    Toast.makeText(getApplicationContext(), "Front shake detected", Toast.LENGTH_SHORT).show();
+                    Log.e("잡힘 ", "앞쪽");
+                    detectedTime = System.currentTimeMillis();
+
+                    thirdFragment.view.game.move(2);
+                }
+            }
+        }
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
         }
     }
 }
