@@ -26,6 +26,7 @@ import android.widget.Toast;
 import com.example.q.cs496_app1.R;
 import com.example.q.cs496_app1.tabs.contact.ContactFragment;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -129,7 +130,8 @@ public class GalleryFragment extends Fragment {
                 float longitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[2]));
                 float latitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[3]));
 
-                result.add(new MyImage(filePath, taken, longitude, latitude));
+                if(new File(filePath).exists())
+                    result.add(new MyImage(filePath, taken, longitude, latitude));
             } while(imageCursor.moveToNext());
         } else {
             // imageCursor가 비었습니다.
@@ -160,17 +162,12 @@ public class GalleryFragment extends Fragment {
         ActivityCompat.requestPermissions(getActivity(), perms, permsRequestCode);
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        switch (requestCode) {
-//            case 20:
-////                boolean locationAccepted = grantResults[0]==PackageManager.PERMISSION_GRANTED;
-////                boolean cameraAccepted = grantResults[1]==PackageManager.PERMISSION_GRANTED;
-//
-//                break;
-//        }
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e("DEBUG", "onResume of LoginFragment");
 
+    }
 //    // TODO: Rename method, update argument and hook method into UI event
 //    public void onButtonPressed(Uri uri) {
 //        if (mListener != null) {

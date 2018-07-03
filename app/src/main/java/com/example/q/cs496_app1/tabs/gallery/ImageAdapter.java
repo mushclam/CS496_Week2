@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Parcelable;
 import android.os.Vibrator;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
@@ -77,11 +78,17 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                     {
                         // GalleryFragment.onRefresh();
 
-                        if (new File(myImage.getFilePath()).getAbsoluteFile().delete()) {
-                            Log.e("-->", "file Deleted :");
-                            callBroadCast();
-                        } else {
-                            Log.e("-->", "file not Deleted :");
+                        File fdelete = myImage.getFile();
+                        if (fdelete.exists()) {
+                            if (fdelete.delete()) {
+                                Log.e("-->", "file Deleted :" + fdelete.getAbsolutePath());
+                                callBroadCast();
+                            } else {
+                                Log.e("-->", "file not Deleted :" + fdelete.getAbsolutePath());
+                            }
+                        }
+                        else {
+                            Log.e("-->", "file 없음 :" + fdelete.getAbsolutePath());
                         }
                     }
                 };
