@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.q.cs496_app1">
 
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- android:maxSdkVersion="18" /> -->
+    <uses-permission android:name="android.permission.VIBRATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -15,24 +19,27 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.intent.action.MEDIA_MOUNTED" />
+                <data android:scheme="file" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".tabs.gallery.ImageActivity"
             android:label="@string/title_activity_image"
-            android:theme="@style/AppTheme.NoActionBar">
-        </activity>
-        <activity android:name=".tabs.contact.ContactActivity"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
+        <activity
+            android:name=".tabs.contact.ContactActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".tabs.contact.AddContactActivity"
+        <activity
+            android:name=".tabs.contact.AddContactActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".tabs.contact.EditContactActivity"
+        <activity
+            android:name=".tabs.contact.EditContactActivity"
             android:screenOrientation="portrait" />
+        <activity
+            android:name=".tabs.gallery.DialogActivity"
+            android:theme="@android:style/Theme.Dialog" />
     </application>
 
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-        <!--android:maxSdkVersion="18" />-->
 </manifest>

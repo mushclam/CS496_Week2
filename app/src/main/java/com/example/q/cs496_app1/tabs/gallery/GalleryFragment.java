@@ -11,7 +11,9 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +24,9 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.q.cs496_app1.R;
+import com.example.q.cs496_app1.tabs.contact.ContactFragment;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,6 +43,7 @@ public class GalleryFragment extends Fragment {
 
     ArrayList<MyImage> images;
     ImageAdapter galleryAdapter;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -54,23 +60,15 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (getArguments() != null) {
-//
-//        }
+
     }
 
 
-//    private ArrayList<MyImage> prepareData() {
-//        ArrayList<MyImage> images = new ArrayList<>();
-//        Images img = new Images();
-//        for(int i = 0; i < img.image_titles.length; i++) {
-//            MyImage myImage = new MyImage();
-//            myImage.setImageTitle(img.image_titles[i]);
-//            myImage.setImageID(img.image_ids[i]);
-//            images.add(myImage);
-//        }
-//        return images;
+//    @Override
+//    public void onResume() {
+//
 //    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -91,10 +89,22 @@ public class GalleryFragment extends Fragment {
             galleryRecyclerView.setLayoutManager(layoutManager);
             galleryRecyclerView.scrollToPosition(0);
 
-            galleryAdapter = new ImageAdapter(getActivity(), images);
+            galleryAdapter = new ImageAdapter(getActivity(), this, images);
             galleryRecyclerView.setAdapter(galleryAdapter);
             galleryRecyclerView.setItemAnimator(new DefaultItemAnimator());
         }
+
+        swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                GalleryFragment.this.onRefresh();
+            }
+        });
+
+
+
 
         return view;
     }
@@ -120,7 +130,8 @@ public class GalleryFragment extends Fragment {
                 float longitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[2]));
                 float latitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[3]));
 
-                result.add(new MyImage(filePath, taken, longitude, latitude));
+                if(new File(filePath).exists())
+                    result.add(new MyImage(filePath, taken, longitude, latitude));
             } while(imageCursor.moveToNext());
         } else {
             // imageCursor가 비었습니다.
@@ -130,6 +141,15 @@ public class GalleryFragment extends Fragment {
         Collections.sort(result, Collections.reverseOrder());
         this.images = result;
     }
+
+    public void onRefresh() {
+        fetchAllImages();
+        galleryAdapter.notifyDataSetChanged();
+        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        ft.detach(GalleryFragment.this).attach(GalleryFragment.this).commit();
+        swipeRefreshLayout.setRefreshing(false);
+    }
+
 
     private boolean checkPermission() {
         int resultR = ContextCompat.checkSelfPermission(getActivity(), READ_EXTERNAL_STORAGE);
@@ -142,17 +162,12 @@ public class GalleryFragment extends Fragment {
         ActivityCompat.requestPermissions(getActivity(), perms, permsRequestCode);
     }
 
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-//        switch (requestCode) {
-//            case 20:
-////                boolean locationAccepted = grantResults[0]==PackageManager.PERMISSION_GRANTED;
-////                boolean cameraAccepted = grantResults[1]==PackageManager.PERMISSION_GRANTED;
-//
-//                break;
-//        }
-//    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.e("DEBUG", "onResume of LoginFragment");
 
+    }
 //    // TODO: Rename method, update argument and hook method into UI event
 //    public void onButtonPressed(Uri uri) {
 //        if (mListener != null) {
