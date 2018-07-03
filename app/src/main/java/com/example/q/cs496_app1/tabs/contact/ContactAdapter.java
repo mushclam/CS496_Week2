@@ -73,7 +73,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public LinearLayout allMenu;
 
         public RelativeLayout upperMenu;
@@ -166,7 +166,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                         .create().show();
 
             } else if (v.getId() == buttonDetails.getId()) {
-                Intent intent = new Intent(context, ContactActivity.class);
+                Intent intent = new Intent(context, DetailsContactActivity.class);
                 intent.putExtra("itemPosition", itemPosition);
                 intent.putExtra("name", String.valueOf(item.getName()));
                 intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
@@ -180,6 +180,19 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             listenerRef.get().onClicked(getAdapterPosition());
         }
 
+        @Override
+        public boolean onLongClick(View view) {
+            itemPosition = getAdapterPosition();
+            ContactItem item = (ContactItem) mItems.get(itemPosition);
+            Toast.makeText(context, "Long Click Upper Menu" + itemPosition, Toast.LENGTH_SHORT).show();
+
+//            if(view.getId() == upperMenu.getId()) {
+//                Toast.makeText(context, "Long Click Upper Menu" + itemPosition, Toast.LENGTH_SHORT).show();
+//            } else {
+//                Toast.makeText(context, "Long Click where?" + itemPosition, Toast.LENGTH_SHORT).show();
+//            }
+            return true;
+        }
     }
     public static void expand(final View v) {
         v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

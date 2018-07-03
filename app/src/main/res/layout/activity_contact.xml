@@ -49,34 +49,40 @@
                 android:textSize="20sp" />
         </RelativeLayout>
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/phoneNumberLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp">
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/dis_phoneNumber"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Phone Number"
-                android:textSize="12sp" />
+                android:padding="20dp">
 
-            <TextView
-                android:id="@+id/ind_phoneNumber"
+                <TextView
+                    android:id="@+id/dis_phoneNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Phone Number"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/ind_phoneNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/dis_phoneNumber"
+                    android:text="TextView" />
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/divider"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/dis_phoneNumber"
-                android:text="TextView" />
-
-            <TextView
-                android:id="@+id/result"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/ind_phoneNumber" />
-        </RelativeLayout>
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+        </LinearLayout>
 
     </LinearLayout>
 

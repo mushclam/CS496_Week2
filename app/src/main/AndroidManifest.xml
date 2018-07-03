@@ -24,7 +24,7 @@
             android:label="@string/title_activity_image"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".tabs.contact.ContactActivity"
+        <activity android:name=".tabs.contact.DetailsContactActivity"
             android:screenOrientation="portrait" />
         <activity android:name=".tabs.contact.AddContactActivity"
             android:screenOrientation="portrait" />
