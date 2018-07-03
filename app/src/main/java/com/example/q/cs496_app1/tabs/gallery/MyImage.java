@@ -54,8 +54,11 @@ public class MyImage implements Parcelable, Comparable {
         parcel.writeFloat(latitude);
     }
 
+    public String getFilePath() {
+        return filePath;
+    }
+
     public long getDate() {
-        Log.e("ERROR ", String.valueOf(dateTaken));
         return dateTaken;
     }
 

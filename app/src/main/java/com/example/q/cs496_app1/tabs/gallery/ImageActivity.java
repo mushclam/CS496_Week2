@@ -146,7 +146,7 @@ public class ImageActivity extends AppCompatActivity {
 
             int idx = getArguments().getInt("INDEX");
             MyImage myImage = images.get(idx);
-            Glide.with(getActivity()).load(myImage.getFile()).asBitmap().placeholder(R.mipmap.ic_launcher).into(target);
+            Glide.with(getActivity()).load(myImage.getFile()).asBitmap().into(target);
 
             TextView description = rootView.findViewById(R.id.describe_image_view);
 
