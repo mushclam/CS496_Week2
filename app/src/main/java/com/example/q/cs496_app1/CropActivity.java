@@ -18,7 +18,7 @@ import android.widget.ImageView;
 
 import java.io.File;
 
-public class CropActivitiy extends Activity implements View.OnClickListener {
+public class CropActivity extends Activity implements View.OnClickListener {
 
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
@@ -43,7 +43,7 @@ public class CropActivitiy extends Activity implements View.OnClickListener {
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
-        mImageCaptureUri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), url));
+        mImageCaptureUri = Uri.fromFile(new File(getFilesDir(), url));
         intent.putExtra(MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
         intent.putExtra("return-data", true);
         startActivityForResult(intent, PICK_FROM_CAMERA);

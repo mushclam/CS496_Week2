@@ -95,10 +95,12 @@ public class MainActivity extends AppCompatActivity {
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this, "Not Implemented", Toast.LENGTH_SHORT).show();
                 checkCameraPermission();
                 Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivity(intent);
+
+                String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+
             }
         });
 
