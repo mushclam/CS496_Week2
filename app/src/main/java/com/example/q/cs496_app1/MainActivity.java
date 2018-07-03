@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,7 +23,7 @@ import android.widget.Toast;
 import com.example.q.cs496_app1.tabs.contact.AddContactActivity;
 import com.example.q.cs496_app1.tabs.contact.ContactFragment;
 import com.example.q.cs496_app1.tabs.gallery.GalleryFragment;
-import com.example.q.cs496_app1.tabs.ThirdFragment;
+import com.example.q.cs496_app1.tabs.third.ThirdFragment;
 
 import java.io.File;
 
@@ -121,6 +122,31 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        ThirdFragment thirdFragment = (ThirdFragment) mFragments[2];
+        if (keyCode == KeyEvent.KEYCODE_MENU) {
+            //Do nothing
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_DOWN) {
+            thirdFragment.view.game.move(2);
+//            view.game.move(2);
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_UP) {
+            thirdFragment.view.game.move(0);
+//            view.game.move(0);
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_LEFT) {
+            thirdFragment.view.game.move(3);
+//            view.game.move(3);
+            return true;
+        } else if (keyCode == KeyEvent.KEYCODE_DPAD_RIGHT) {
+            thirdFragment.view.game.move(1);
+//            view.game.move(1);
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
