@@ -1,8 +1,13 @@
 package com.example.q.cs496_app1.tabs.gallery;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.hardware.SensorManager;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -55,7 +60,8 @@ public class ImageActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private static int index;
-//    private static MyImage myImage;
+
+    private static MyImage imageNow;
     private static ArrayList<MyImage> images;
 
     @Override
@@ -69,6 +75,7 @@ public class ImageActivity extends AppCompatActivity {
         Intent intent = getIntent();
         index = intent.getIntExtra("INDEX", 0);
         images = intent.getParcelableArrayListExtra("IMAGE");
+        imageNow = images.get(index);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -79,13 +86,20 @@ public class ImageActivity extends AppCompatActivity {
         mViewPager.setAdapter(mSectionsPagerAdapter);
         mViewPager.setCurrentItem(index);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Toast.makeText(getApplicationContext(), String.valueOf(index+1), Toast.LENGTH_LONG).show();
-//            }
-//        });
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                imageNow = images.get(position);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
     }
 
     @Override
@@ -103,7 +117,29 @@ public class ImageActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_deleteImage) {
+            String[] projection = { MediaStore.Images.Media._ID };
+
+            // Match on the file path
+            String selection = MediaStore.Images.Media.DATA + " = ?";
+            String[] selectionArgs = new String[] { imageNow.getFilePath() };
+
+            // Query for the ID of the media matching the file path
+            Uri queryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            ContentResolver contentResolver = getContentResolver();
+            Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
+            if (c.moveToFirst()) {
+                // We found the ID. Deleting the item via the content provider will also remove the file
+                long _id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
+                Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, _id);
+                contentResolver.delete(deleteUri, null, null);
+
+                Toast.makeText(this, "사진이 지워졌습니다.", Toast.LENGTH_SHORT).show();
+            } else {
+                // File not found in media store DB
+            }
+
+            c.close();
             return true;
         }
 

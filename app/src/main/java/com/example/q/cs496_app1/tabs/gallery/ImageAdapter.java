@@ -1,9 +1,12 @@
 package com.example.q.cs496_app1.tabs.gallery;
 
 import android.app.Activity;
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -11,6 +14,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Parcelable;
 import android.os.Vibrator;
+import android.provider.MediaStore;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -37,11 +41,11 @@ import static android.content.ContentValues.TAG;
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
 //    private MyImage myImage;
     private Context context;
-    private static Fragment fragment;
+    private static GalleryFragment fragment;
     private ArrayList<MyImage> images;
 
 
-    public ImageAdapter(Context context, Fragment fragment, ArrayList<MyImage> images) {
+    public ImageAdapter(Context context, GalleryFragment fragment, ArrayList<MyImage> images) {
         this.context = context;
         this.fragment = fragment;
         this.images = images;
@@ -76,20 +80,29 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
-                        // GalleryFragment.onRefresh();
+                        // Set up the projection (we only need the ID)
+                        String[] projection = { MediaStore.Images.Media._ID };
 
-                        File fdelete = myImage.getFile();
-                        if (fdelete.exists()) {
-                            if (fdelete.delete()) {
-                                Log.e("-->", "file Deleted :" + fdelete.getAbsolutePath());
-                                callBroadCast();
-                            } else {
-                                Log.e("-->", "file not Deleted :" + fdelete.getAbsolutePath());
-                            }
+                        // Match on the file path
+                        String selection = MediaStore.Images.Media.DATA + " = ?";
+                        String[] selectionArgs = new String[] { myImage.getFilePath() };
+
+                        // Query for the ID of the media matching the file path
+                        Uri queryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                        ContentResolver contentResolver = context.getContentResolver();
+                        Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
+                        if (c.moveToFirst()) {
+                            // We found the ID. Deleting the item via the content provider will also remove the file
+                            long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
+                            Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+                            contentResolver.delete(deleteUri, null, null);
+                        } else {
+                            // File not found in media store DB
                         }
-                        else {
-                            Log.e("-->", "file 없음 :" + fdelete.getAbsolutePath());
-                        }
+
+                        c.close();
+
+                        fragment.onRefresh();
                     }
                 };
 
@@ -138,26 +151,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
             super(view);
 
             img = view.findViewById(R.id.imageView);
-        }
-    }
-
-    public void callBroadCast() {
-        if (Build.VERSION.SDK_INT >= 14) {
-            Log.e("-->", " >= 14");
-            MediaScannerConnection.scanFile(context, new String[]{Environment.getExternalStorageDirectory().toString()}, null, new MediaScannerConnection.OnScanCompletedListener() {
-                /*
-                 *   (non-Javadoc)
-                 * @see android.media.MediaScannerConnection.OnScanCompletedListener#onScanCompleted(java.lang.String, android.net.Uri)
-                 */
-                public void onScanCompleted(String path, Uri uri) {
-                    Log.e("ExternalStorage", "Scanned " + path + ":");
-                    Log.e("ExternalStorage", "-> uri=" + uri);
-                }
-            });
-        } else {
-            Log.e("-->", " < 14");
-            context.sendBroadcast(new Intent(Intent.ACTION_MEDIA_MOUNTED,
-                    Uri.parse("file://" + Environment.getExternalStorageDirectory())));
         }
     }
 }

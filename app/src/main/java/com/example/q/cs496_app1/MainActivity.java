@@ -254,7 +254,6 @@ public class MainActivity extends AppCompatActivity {
         Log.e("퍼미션", "결과 받음");
         switch (requestCode) {
             case 200: {
-                // If request is cancelled, the result arrays are empty.
                 finish();
                 if (grantResults.length > 1
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED
@@ -265,24 +264,12 @@ public class MainActivity extends AppCompatActivity {
                     overridePendingTransition( 0, 0);
                     startActivity(getIntent());
                     overridePendingTransition( 0, 0);
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-//                    galleryAdapter.notifyDataSetChanged();
-//                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                    ft.detach(GalleryFragment.this).attach(GalleryFragment.this).commit();
-
 
                 } else {
                     Log.e("퍼미션", "거절");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-
                 }
                 return;
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 

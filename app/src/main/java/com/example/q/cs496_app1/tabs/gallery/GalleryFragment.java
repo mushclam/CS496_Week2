@@ -89,7 +89,7 @@ public class GalleryFragment extends Fragment {
             galleryRecyclerView.setLayoutManager(layoutManager);
             galleryRecyclerView.scrollToPosition(0);
 
-            galleryAdapter = new ImageAdapter(getActivity(), this, images);
+            galleryAdapter = new ImageAdapter(getActivity(), GalleryFragment.this, images);
             galleryRecyclerView.setAdapter(galleryAdapter);
             galleryRecyclerView.setItemAnimator(new DefaultItemAnimator());
         }
@@ -130,8 +130,8 @@ public class GalleryFragment extends Fragment {
                 float longitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[2]));
                 float latitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[3]));
 
-                if(new File(filePath).exists())
-                    result.add(new MyImage(filePath, taken, longitude, latitude));
+//                if(new File(filePath).exists())
+                result.add(new MyImage(filePath, taken, longitude, latitude));
             } while(imageCursor.moveToNext());
         } else {
             // imageCursor가 비었습니다.

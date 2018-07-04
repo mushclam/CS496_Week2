@@ -3,8 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.example.q.cs496_app1.tabs.gallery.ImageActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_deleteImage"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="삭제"
         app:showAsAction="never" />
 </menu>
