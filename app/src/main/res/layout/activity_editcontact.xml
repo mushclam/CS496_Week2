@@ -41,32 +41,68 @@
 
         </RelativeLayout>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="10dp">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/dis_phoneNumber"
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Phone Number"
-                android:textSize="12sp" />
+                android:layout_margin="20dp">
 
-            <EditText
-                android:id="@+id/editPhoneNumber"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@+id/dis_phoneNumber"
-                android:ems="10"
-                android:hint="Enter Phone Number"
-                android:inputType="text|phone"
-                android:maxLength="13"
-                android:textSize="12sp" />
+                <TextView
+                    android:id="@+id/dis_phoneNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Phone Number"
+                    android:textSize="12sp" />
 
-        </RelativeLayout>
+                <EditText
+                    android:id="@+id/editPhoneNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/dis_phoneNumber"
+                    android:ems="10"
+                    android:hint="Enter Phone Number"
+                    android:inputType="text|phone"
+                    android:maxLength="13"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
+
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="20dp">
+
+                <TextView
+                    android:id="@+id/dis_email"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Email Address"
+                    android:textSize="12sp" />
+
+                <EditText
+                    android:id="@+id/editEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/dis_email"
+                    android:ems="10"
+                    android:hint="Enter Email Address"
+                    android:inputType="text|phone"
+                    android:textSize="12sp" />
+
+            </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 

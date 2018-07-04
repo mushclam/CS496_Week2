@@ -5,9 +5,12 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,41 +26,65 @@ import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.List;
 
-public class ContactActivity extends Activity {
+public class DetailsContactActivity extends Activity {
 
     public static Context CONTACT_CONTEXT;
 
-    TextView tvName;
-    TextView tvPhoneNumber;
     Button editButton;
     Button deleteButton;
 
-    TextView result;
+    TextView tvName;
+
+    RelativeLayout phoneNumberLayout;
+    TextView tvPhoneNumber;
+
+    RelativeLayout emailLayout;
+    TextView tvEmail;
 
     int itemPosition;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contact);
+        setContentView(R.layout.activity_detailcontact);
         CONTACT_CONTEXT = this;
 
         Intent intent = new Intent(this.getIntent());
-        String name = intent.getStringExtra("name");
-        String phoneNumber = intent.getStringExtra("phoneNumber");
+        final String name = intent.getStringExtra("name");
+        final String phoneNumber = intent.getStringExtra("phoneNumber");
+        final String email = intent.getStringExtra("email");
         itemPosition = intent.getIntExtra("itemPosition", 0);
 
         tvName = (TextView)findViewById(R.id.ind_name);
         tvPhoneNumber = (TextView)findViewById(R.id.ind_phoneNumber);
+        tvEmail = (TextView)findViewById(R.id.ind_email);
+
         tvName.setText(name);
         tvPhoneNumber.setText(phoneNumber);
+        tvEmail.setText(email);
 
-        result = (TextView)findViewById(R.id.result);
+        phoneNumberLayout = (RelativeLayout)findViewById(R.id.phoneNumberLayout);
+        phoneNumberLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:" + phoneNumber));
+                startActivity(callIntent);
+            }
+        });
+
+        emailLayout = (RelativeLayout)findViewById(R.id.emailLayout);
+        emailLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Intent 0(emailIntent);
+            }
+        });
 
         editButton = (Button)findViewById(R.id.edit_button);
         editButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ContactActivity.this, EditContactActivity.class);
+                Intent intent = new Intent(DetailsContactActivity.this, EditContactActivity.class);
                 intent.putExtra("itemPosition", itemPosition);
                 intent.putExtra("name", tvName.getText());
                 intent.putExtra("phoneNumber", tvPhoneNumber.getText());
@@ -69,7 +96,7 @@ public class ContactActivity extends Activity {
         deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(ContactActivity.this);
+                AlertDialog.Builder alert = new AlertDialog.Builder(DetailsContactActivity.this);
                 alert.setMessage("Are you sure to DELETE?")
                         .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                             @Override
@@ -93,14 +120,13 @@ public class ContactActivity extends Activity {
                                     orgList.remove(itemPosition);
 
                                     String json = gson.toJson(orgList);
-                                    result.setText(json);
 
                                     FileOutputStream fos = openFileOutput("test.json", Context.MODE_PRIVATE);
                                     fos.write(json.getBytes());
                                     fos.close();
-                                    Toast.makeText(ContactActivity.this, "Delete Success", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(DetailsContactActivity.this, "Delete Success", Toast.LENGTH_SHORT).show();
                                 } catch (IOException e) {
-                                    Toast.makeText(ContactActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(DetailsContactActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
                                 onStop();
                             }
@@ -108,7 +134,7 @@ public class ContactActivity extends Activity {
                         .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Toast.makeText(ContactActivity.this, "CANCELED", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(DetailsContactActivity.this, "CANCELED", Toast.LENGTH_SHORT).show();
                             }
                         })
                         .create().show();

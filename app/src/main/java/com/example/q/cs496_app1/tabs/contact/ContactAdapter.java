@@ -3,6 +3,7 @@ package com.example.q.cs496_app1.tabs.contact;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.support.v7.app.AlertDialog;
@@ -27,11 +28,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder>{
     private Context context;
     private ArrayList mItems;
     private RecyclerViewClickListener listener;
+    private List<Integer> selectedList;
+    private final static int NOT_SELECTED = 0;
+    private final static int SELECTED = 1;
 
     private int lastPosition = -1;
 
@@ -45,12 +50,17 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_listview, parent, false);
         ViewHolder holder = new ViewHolder(v, listener);
+        selectedList = new ArrayList<>();
+        for (int i = 0; i < mItems.size(); i++) {
+            selectedList.add(0);
+        }
         return holder;
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         ContactItem item = (ContactItem)mItems.get(position);
+
         holder.name.setText(item.getName());
         holder.image.setImageResource(item.getImage());
         holder.phoneNumber.setText(item.getPhoneNumber());
@@ -73,7 +83,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         }
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public LinearLayout allMenu;
 
         public RelativeLayout upperMenu;
@@ -110,6 +120,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             buttonEdit.setOnClickListener(this);
             buttonDelete.setOnClickListener(this);
             buttonDetails.setOnClickListener(this);
+
+            upperMenu.setOnLongClickListener(this);
         }
 
         @Override
@@ -166,10 +178,11 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                         .create().show();
 
             } else if (v.getId() == buttonDetails.getId()) {
-                Intent intent = new Intent(context, ContactActivity.class);
+                Intent intent = new Intent(context, DetailsContactActivity.class);
                 intent.putExtra("itemPosition", itemPosition);
                 intent.putExtra("name", String.valueOf(item.getName()));
                 intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
+                intent.putExtra("email", String.valueOf(item.getEmail()));
 
                 context.startActivity(intent);
 
@@ -180,6 +193,31 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             listenerRef.get().onClicked(getAdapterPosition());
         }
 
+        @Override
+        public boolean onLongClick(View view) {
+            itemPosition = getAdapterPosition();
+            ContactItem item = (ContactItem) mItems.get(itemPosition);
+
+            if (selectedList.get(itemPosition) == NOT_SELECTED) {
+                if(view.getId() == upperMenu.getId()) {
+                    Toast.makeText(context, "Selected Upper Menu" + itemPosition, Toast.LENGTH_SHORT).show();
+                    selectedList.set(itemPosition, SELECTED);
+                    upperMenu.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
+                } else {
+                    Toast.makeText(context, "Select where?" + itemPosition, Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                if(view.getId() == upperMenu.getId()) {
+                    Toast.makeText(context, "UnSelected Upper Menu" + itemPosition, Toast.LENGTH_SHORT).show();
+                    selectedList.set(itemPosition, NOT_SELECTED);
+                    upperMenu.setBackgroundColor(Color.WHITE);
+                } else {
+                    Toast.makeText(context, "Long Click where?" + itemPosition, Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            return true;
+        }
     }
     public static void expand(final View v) {
         v.measure(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);

@@ -33,6 +33,8 @@ public class AddContactActivity extends Activity {
 
     private EditText addName;
     private EditText addPhoneNumber;
+    private EditText addEmail;
+
     private Button save_button;
 
     private String state;
@@ -45,6 +47,7 @@ public class AddContactActivity extends Activity {
 
         addName = (EditText)findViewById(R.id.addName);
         addPhoneNumber = (EditText)findViewById(R.id.addPhoneNumber);
+        addEmail = (EditText)findViewById(R.id.addEmail);
         save_button = (Button)findViewById(R.id.save_button);
 
         addPhoneNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
@@ -58,7 +61,9 @@ public class AddContactActivity extends Activity {
                 ContactItem addContact = new ContactItem(
                         R.drawable.ic_launcher_foreground,
                         addName.getText().toString(),
-                        addPhoneNumber.getText().toString());
+                        addPhoneNumber.getText().toString(),
+                        addEmail.getText().toString()
+                );
 
                 try {
                     StringBuffer data = new StringBuffer();
@@ -85,9 +90,6 @@ public class AddContactActivity extends Activity {
                     Toast.makeText(AddContactActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
-                ((MainActivity)MainActivity.MAIN_CONTEXT).finish();
-                Intent intent = new Intent(AddContactActivity.this, MainActivity.class);
-                startActivity(intent);
                 onPause();
 
 //                if(ContextCompat.checkSelfPermission(AddContactActivity.this,

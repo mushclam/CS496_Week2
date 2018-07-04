@@ -26,11 +26,13 @@ public class EditContactActivity extends Activity {
 
     private EditText editName;
     private EditText editPhoneNumber;
+    private EditText editEmail;
     private Button save_button;
 
     private int itemPosition;
     private String orgName;
     private String orgPhoneNumber;
+    private String orgEmail;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -40,14 +42,17 @@ public class EditContactActivity extends Activity {
 
         editName = (EditText)findViewById(R.id.editName);
         editPhoneNumber = (EditText)findViewById(R.id.editPhoneNumber);
+        editEmail = (EditText)findViewById(R.id.editEmail);
         save_button = (Button)findViewById(R.id.save_button);
 
         orgName = intent.getStringExtra("name");
         orgPhoneNumber = intent.getStringExtra("phoneNumber");
+        orgEmail = intent.getStringExtra("email");
         itemPosition = intent.getIntExtra("itemPosition", 0);
 
         editName.setText(orgName);
         editPhoneNumber.setText(orgPhoneNumber);
+        editEmail.setText(orgEmail);
 
         editPhoneNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
@@ -59,7 +64,9 @@ public class EditContactActivity extends Activity {
                 ContactItem editContact = new ContactItem(
                         R.drawable.ic_launcher_foreground,
                         editName.getText().toString(),
-                        editPhoneNumber.getText().toString());
+                        editPhoneNumber.getText().toString(),
+                        editEmail.getText().toString()
+                        );
 
                 try {
                     StringBuffer data = new StringBuffer();
@@ -92,6 +99,7 @@ public class EditContactActivity extends Activity {
                 } catch (IOException e) {
                     Toast.makeText(EditContactActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
+
                 onPause();
             }
         });

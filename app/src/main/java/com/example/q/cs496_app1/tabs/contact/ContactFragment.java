@@ -1,6 +1,7 @@
 package com.example.q.cs496_app1.tabs.contact;
 
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -25,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -57,6 +59,8 @@ public class ContactFragment extends Fragment {
     RecyclerView recyclerView;
     RecyclerView.Adapter adapter;
     RecyclerView.LayoutManager layoutManager;
+
+    ArrayList items = new ArrayList<>();
 
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -117,36 +121,22 @@ public class ContactFragment extends Fragment {
 
         viewEmpty = (TextView) view.findViewById(R.id.isEmpty);
 
-        ArrayList items = new ArrayList<>();
-
-        // Add Contact item to ArrayList
-        final List<ContactItem> contactList = this.LoadJson();
-
-        if (contactList == null || contactList.isEmpty()) {
-            viewEmpty.setText("Any Contact isn't exist");
-        } else {
-            Collections.sort(contactList, new ContactSorting());
-            for (int i = 0; i < contactList.size(); i++) {
-                items.add(contactList.get(i));
-            }
-        }
-
         layoutManager = new LinearLayoutManager(mContext);
         recyclerView.setLayoutManager(layoutManager);
 
         // link to adapter
-        adapter = new ContactAdapter(mContext, items, new RecyclerViewClickListener() {
-            @Override
-            public void onClicked(int position) {
-
-            }
-
-            @Override
-            public void onLongClicked(int position) {
-
-            }
-        });
-        recyclerView.setAdapter(adapter);
+//        adapter = new ContactAdapter(mContext, items, new RecyclerViewClickListener() {
+//            @Override
+//            public void onClicked(int position) {
+//
+//            }
+//
+//            @Override
+//            public void onLongClicked(int position) {
+//
+//            }
+//        });
+//        recyclerView.setAdapter(adapter);
 
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh);
 
@@ -160,10 +150,55 @@ public class ContactFragment extends Fragment {
         return view;
     }
 
+    private class GetContact extends AsyncTask<String, String, List<ContactItem>> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+        @Override
+        protected List<ContactItem> doInBackground(String... Params) {
+            List<ContactItem> itemList = new ArrayList<>();
+            itemList = LoadJson();
+
+            return itemList;
+        }
+
+        @Override
+        protected void onPostExecute(List<ContactItem> result) {
+            super.onPostExecute(result);
+            items = new ArrayList<>();
+            viewEmpty.setText("");
+
+            if (result == null) {
+                viewEmpty.setText("Any Contact isn't exist");
+            } else {
+                Collections.sort(result, new ContactSorting());
+                for (int i = 0; i < result.size(); i++) {
+                    items.add(result.get(i));
+                }
+            }
+
+            adapter = new ContactAdapter(mContext, items, new RecyclerViewClickListener() {
+                @Override
+                public void onClicked(int position) {
+
+                }
+
+                @Override
+                public void onLongClicked(int position) {
+
+                }
+            });
+            recyclerView.setAdapter(adapter);
+        }
+    }
+
     // Load Json file and read content. convert json string to contact list.
     public List<ContactItem> LoadJson() {
         String json = null;
-        List<ContactItem> itemList = null;
+        List<ContactItem> itemList;
         Gson gson = new Gson();
 
         try {
@@ -194,6 +229,16 @@ public class ContactFragment extends Fragment {
         FragmentTransaction ft = getFragmentManager().beginTransaction();
         ft.detach(ContactFragment.this).attach(ContactFragment.this).commit();
         swipeRefreshLayout.setRefreshing(false);
+    }
+
+    public void locationAndContactsTask() {
+        new GetContact().execute();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        locationAndContactsTask();
     }
 
 //    // TODO: Rename method, update argument and hook method into UI event

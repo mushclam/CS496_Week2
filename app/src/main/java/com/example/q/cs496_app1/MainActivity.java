@@ -215,6 +215,8 @@ public class MainActivity extends AppCompatActivity {
                 } else {
                     Toast.makeText(this, getFilesDir() + " + Exist", Toast.LENGTH_SHORT).show();
                     file.delete();
+                    ContactFragment contactFragment = (ContactFragment)mFragments[0];
+                    contactFragment.onResume();
                 }
             } catch (Exception e) {
                 e.printStackTrace();
