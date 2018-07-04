@@ -5,15 +5,18 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.q.cs496_app1.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -33,6 +36,7 @@ public class DetailsContactActivity extends Activity {
     Button editButton;
     Button deleteButton;
 
+    ImageView tvImage;
     TextView tvName;
 
     RelativeLayout phoneNumberLayout;
@@ -49,15 +53,18 @@ public class DetailsContactActivity extends Activity {
         CONTACT_CONTEXT = this;
 
         Intent intent = new Intent(this.getIntent());
+        final String image = intent.getStringExtra("image");
         final String name = intent.getStringExtra("name");
         final String phoneNumber = intent.getStringExtra("phoneNumber");
         final String email = intent.getStringExtra("email");
         itemPosition = intent.getIntExtra("itemPosition", 0);
 
+        tvImage = (ImageView)findViewById(R.id.ind_preview);
         tvName = (TextView)findViewById(R.id.ind_name);
         tvPhoneNumber = (TextView)findViewById(R.id.ind_phoneNumber);
         tvEmail = (TextView)findViewById(R.id.ind_email);
 
+        Glide.with(DetailsContactActivity.this).load(image).into(tvImage);
         tvName.setText(name);
         tvPhoneNumber.setText(phoneNumber);
         tvEmail.setText(email);
@@ -85,6 +92,7 @@ public class DetailsContactActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(DetailsContactActivity.this, EditContactActivity.class);
+                intent.putExtra("image", image);
                 intent.putExtra("itemPosition", itemPosition);
                 intent.putExtra("name", tvName.getText());
                 intent.putExtra("phoneNumber", tvPhoneNumber.getText());

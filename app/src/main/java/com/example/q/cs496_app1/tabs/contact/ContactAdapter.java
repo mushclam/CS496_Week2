@@ -3,11 +3,19 @@ package com.example.q.cs496_app1.tabs.contact;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.Matrix;
 import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
+import android.media.ExifInterface;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.q.cs496_app1.R;
 import com.google.gson.Gson;
 
@@ -61,8 +70,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     public void onBindViewHolder(final ViewHolder holder, int position) {
         ContactItem item = (ContactItem)mItems.get(position);
 
+        Glide.with(context).load(item.image).into(holder.image);
+
         holder.name.setText(item.getName());
-        holder.image.setImageResource(item.getImage());
         holder.phoneNumber.setText(item.getPhoneNumber());
         holder.image.setBackground(new ShapeDrawable(new OvalShape()));
         holder.image.setClipToOutline(true);
@@ -139,6 +149,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             } else if (v.getId() == buttonEdit.getId()) {
                 Intent intent = new Intent(context, EditContactActivity.class);
                 intent.putExtra("itemPosition", itemPosition);
+                intent.putExtra("image", String.valueOf(item.getImage()));
                 intent.putExtra("name", String.valueOf(item.getName()));
                 intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
 
@@ -180,6 +191,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             } else if (v.getId() == buttonDetails.getId()) {
                 Intent intent = new Intent(context, DetailsContactActivity.class);
                 intent.putExtra("itemPosition", itemPosition);
+                intent.putExtra("image", String.valueOf(item.getImage()));
                 intent.putExtra("name", String.valueOf(item.getName()));
                 intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
                 intent.putExtra("email", String.valueOf(item.getEmail()));
@@ -270,4 +282,37 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density) * 4);
         v.startAnimation(a);
     }
+
+    private Bitmap sendPicture(String imagePath) {
+        Log.e("PATH", imagePath);
+        ExifInterface exif = null;
+        try {
+            exif = new ExifInterface(imagePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+        int exifDegree = exifOrientationToDegrees(exifOrientation);
+
+        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
+        return rotate(bitmap, exifDegree);
+    }
+
+    private int exifOrientationToDegrees(int exifOrientation) {
+        if(exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
+            return 90;
+        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
+            return 180;
+        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
+            return 270;
+        }
+        return 0;
+    }
+
+    private Bitmap rotate(Bitmap bitmap, float degree) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
+    }
+
 }

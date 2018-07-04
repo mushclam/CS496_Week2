@@ -1,19 +1,21 @@
 package com.example.q.cs496_app1.tabs.contact;
 
+import android.support.annotation.NonNull;
+
 public class ContactItem {
-    int image;
+    String image;
     String name;
     String phoneNumber;
     String email;
 
-    public ContactItem(int image, String name, String phoneNumber, String email) {
+    public ContactItem(String image, @NonNull String name, String phoneNumber, String email) {
         this.image = image;
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.email = email;
     }
 
-    public int getImage() {
+    public String getImage() {
         return image;
     }
 
