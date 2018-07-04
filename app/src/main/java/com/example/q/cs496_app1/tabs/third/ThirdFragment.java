@@ -1,6 +1,7 @@
 package com.example.q.cs496_app1.tabs.third;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -11,11 +12,15 @@ import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.q.cs496_app1.R;
+import com.example.q.cs496_app1.tabs.gallery.ImageActivity;
 
 public class ThirdFragment extends Fragment {
 
@@ -50,6 +55,8 @@ public class ThirdFragment extends Fragment {
         mContext = getActivity();
         view = new MainView(mContext);
 
+        setHasOptionsMenu(true);
+
         SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
         view.hasSaveState = settings.getBoolean("save_state", false);
 
@@ -59,6 +66,28 @@ public class ThirdFragment extends Fragment {
             }
         }
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_gallery, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_settings_gallery:
+                Toast.makeText(getActivity(), "세팅", Toast.LENGTH_SHORT).show();
+                Intent settingIntent = new Intent(mContext, Third_Setting_Activity.class);
+
+                startActivityForResult(settingIntent, 4000);
+                return true;
+            default:
+                break;
+        }
+
+        return false;
     }
 
 
