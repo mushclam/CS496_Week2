@@ -516,7 +516,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             Bitmap savedImage = rotate(bitmap, exifDegree);
-            saveImage(rotate(bitmap, exifDegree));
+            saveImage(savedImage);
         }
     }
 
