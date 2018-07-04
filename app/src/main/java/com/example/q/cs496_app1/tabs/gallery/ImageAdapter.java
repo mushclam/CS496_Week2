@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.os.Parcelable;
 import android.os.Vibrator;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -25,6 +26,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,12 +36,13 @@ import com.example.q.cs496_app1.R;
 
 import java.io.File;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import static android.content.ContentValues.TAG;
 
 public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> {
-//    private MyImage myImage;
+    //    private MyImage myImage;
     private Context context;
     private static GalleryFragment fragment;
     private ArrayList<MyImage> images;
@@ -59,63 +62,42 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(ViewHolder viewHolder, final int i) {
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, int i) {
         final MyImage myImage = images.get(i);
 
         Glide.with(context).load(myImage.getFile()).centerCrop().into(viewHolder.img);
+        if(fragment.isSelectingMode()) {
+            viewHolder.checkBox.setVisibility(View.VISIBLE);
+            if(fragment.isSelected(i)) {
+                viewHolder.checkBox.setChecked(true);
+            } else {
+                viewHolder.checkBox.setChecked(false);
+            }
+        } else {
+            viewHolder.checkBox.setVisibility(View.GONE);
+        }
 
         viewHolder.img.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
                 final Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-
+                assert vibrator != null;
                 vibrator.vibrate(30);
 
-                DialogInterface.OnClickListener deleteListener = new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        // Set up the projection (we only need the ID)
-                        String[] projection = { MediaStore.Images.Media._ID };
+                if(!fragment.isSelectingMode()) {
+                    fragment.setSelectingMode(true);
+                    notifyDataSetChanged();
+                }
 
-                        // Match on the file path
-                        String selection = MediaStore.Images.Media.DATA + " = ?";
-                        String[] selectionArgs = new String[] { myImage.getFilePath() };
+                Log.e("LongClick Pos ", String.valueOf(viewHolder.getLayoutPosition()));
 
-                        // Query for the ID of the media matching the file path
-                        Uri queryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                        ContentResolver contentResolver = context.getContentResolver();
-                        Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
-                        if (c.moveToFirst()) {
-                            // We found the ID. Deleting the item via the content provider will also remove the file
-                            long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
-                            Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-                            contentResolver.delete(deleteUri, null, null);
-                        } else {
-                            // File not found in media store DB
-                        }
+                if(fragment.isSelected(viewHolder.getLayoutPosition())) {
+                    fragment.removeFromSelectedImages(viewHolder.getLayoutPosition());
+                } else {
+                    fragment.addToSelectedImages(viewHolder.getLayoutPosition());
+                }
 
-                        c.close();
-
-                        fragment.onRefresh(-1);
-                    }
-                };
-
-                DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        dialog.dismiss();
-                    }
-                };
-
-                new AlertDialog.Builder(context)
-                        .setTitle("사진 삭제하기")
-                        .setPositiveButton("삭제", deleteListener)
-                        .setNegativeButton("취소", cancelListener)
-                        .show();
+                notifyItemChanged(viewHolder.getLayoutPosition());
 
                 return true;
             }
@@ -124,14 +106,22 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         viewHolder.img.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.e("PATH : ", myImage.getFileName());
+                if(fragment.isSelectingMode()) {
+                    if(fragment.isSelected(viewHolder.getLayoutPosition())) {
+                        fragment.removeFromSelectedImages(viewHolder.getLayoutPosition());
+                    } else {
+                        fragment.addToSelectedImages(viewHolder.getLayoutPosition());
+                    }
 
-                Intent imageIntent = new Intent(context, ImageActivity.class);
+                    notifyItemChanged(viewHolder.getLayoutPosition());
+                } else {
+                    Intent imageIntent = new Intent(context, ImageActivity.class);
 
-                imageIntent.putExtra("INDEX", i);
-                imageIntent.putExtra("IMAGE", images);
+                    imageIntent.putExtra("INDEX", viewHolder.getLayoutPosition());
+                    imageIntent.putExtra("IMAGE", images);
 
-                fragment.getActivity().startActivityForResult(imageIntent, 3000);
+                    fragment.getActivity().startActivityForResult(imageIntent, 3000);
+                }
             }
         });
     }
@@ -143,10 +133,13 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         private ImageView img;
+        private CheckBox checkBox;
+
         public ViewHolder(View view) {
             super(view);
 
             img = view.findViewById(R.id.imageView);
+            checkBox = view.findViewById(R.id.checkBox_temp);
         }
     }
 }

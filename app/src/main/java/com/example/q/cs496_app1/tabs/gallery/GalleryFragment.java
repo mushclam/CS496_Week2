@@ -1,6 +1,9 @@
 package com.example.q.cs496_app1.tabs.gallery;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.media.Image;
@@ -15,6 +18,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -48,8 +52,11 @@ public class GalleryFragment extends Fragment {
     RecyclerView.LayoutManager layoutManager;
 
     ArrayList<MyImage> images;
+    ArrayList<Integer> selected_images;
     ImageAdapter galleryAdapter;
     SwipeRefreshLayout swipeRefreshLayout;
+
+    boolean selectingMode = false;
 
     public GalleryFragment() {
         // Required empty public constructor
@@ -69,12 +76,14 @@ public class GalleryFragment extends Fragment {
         setHasOptionsMenu(true);
 
         // 권한
-        if(!checkPermission()) {
+        if (!checkPermission()) {
             requestPermission(); // 거절당했을 때 행동도 만들어야 함.
         }
 
         images = new ArrayList<>();
-        if(checkPermission()) {
+        selected_images = new ArrayList<>();
+        selectingMode = false;
+        if (checkPermission()) {
             fetchAllImages();
         }
 
@@ -89,7 +98,7 @@ public class GalleryFragment extends Fragment {
         galleryRecyclerView.setAdapter(galleryAdapter);
         galleryRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh);
+        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -98,7 +107,7 @@ public class GalleryFragment extends Fragment {
             }
         });
 
-       //  onRefresh();
+        //  onRefresh();
 
         return view;
     }
@@ -111,9 +120,66 @@ public class GalleryFragment extends Fragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()) {
-            case R.id.action_settings_gallery:
-                Toast.makeText(getActivity(), "세팅", Toast.LENGTH_SHORT).show();
+        switch (item.getItemId()) {
+            case R.id.action_delete_gallery:
+
+                DialogInterface.OnClickListener deleteListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Set up the projection (we only need the ID)
+                        for (int i = 0; i < selected_images.size(); i++) {
+                            Integer index = selected_images.get(i);
+                            String[] projection = {MediaStore.Images.Media._ID};
+
+                            // Match on the file path
+                            String selection = MediaStore.Images.Media.DATA + " = ?";
+                            String[] selectionArgs = new String[]{images.get(index).getFilePath()};
+
+                            // Query for the ID of the media matching the file path
+                            Uri queryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                            ContentResolver contentResolver = getActivity().getContentResolver();
+                            Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
+                            if (c.moveToFirst()) {
+                                // We found the ID. Deleting the item via the content provider will also remove the file
+                                long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
+                                Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+                                contentResolver.delete(deleteUri, null, null);
+                            } else {
+                                // File not found in media store DB
+                            }
+
+                            c.close();
+                        }
+
+                        onRefresh(-1);
+                    }
+                };
+
+                DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                };
+
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("사진 삭제하기")
+                        .setPositiveButton("삭제", deleteListener)
+                        .setNegativeButton("취소", cancelListener)
+                        .show();
+
+
+                return true;
+
+            case R.id.action_all_gallery:
+                if(!isSelectingMode()) {
+                    setSelectingMode(true);
+                }
+                selected_images = new ArrayList<>();
+                for(Integer i=0; i<images.size(); i++) {
+                    addToSelectedImages(i);
+                }
+                galleryAdapter.notifyDataSetChanged();
                 return true;
             default:
                 break;
@@ -145,7 +211,7 @@ public class GalleryFragment extends Fragment {
 
 //                if(new File(filePath).exists())
                 result.add(new MyImage(filePath, taken, longitude, latitude));
-            } while(imageCursor.moveToNext());
+            } while (imageCursor.moveToNext());
         } else {
             // imageCursor가 비었습니다.
         }
@@ -156,12 +222,13 @@ public class GalleryFragment extends Fragment {
     }
 
     public void onRefresh(final int i) {
-        if(checkPermission()) {
+        if (checkPermission()) {
             fetchAllImages();
+            // selected_images = new ArrayList<>();
             galleryAdapter.notifyDataSetChanged();
             FragmentTransaction ft = getFragmentManager().beginTransaction();
             ft.detach(GalleryFragment.this).attach(GalleryFragment.this).commitAllowingStateLoss();
-            if(i>=0) {
+            if (i >= 0) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -190,6 +257,38 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+    }
+
+    public boolean isSelectingMode() {
+        return selectingMode;
+    }
+
+    public void setSelectingMode(boolean mode) {
+        selectingMode = mode;
+    }
+
+    public void addToSelectedImages(Integer i) {
+        Log.e("ADDED ", String.valueOf(i));
+        selected_images.add(i);
+    }
+
+    public void removeFromSelectedImages(Integer i) {
+        Log.e("REMOVED ", String.valueOf(i));
+        selected_images.remove(i);
+    }
+
+    public boolean isSelected(Integer i) {
+        return selected_images.contains(i);
+    }
+
+    public void onBack() {
+        if(isSelectingMode()) {
+            selected_images = new ArrayList<>();
+            setSelectingMode(false);
+            galleryAdapter.notifyDataSetChanged();
+        } else {
+            getActivity().finish();
+        }
     }
 }
 

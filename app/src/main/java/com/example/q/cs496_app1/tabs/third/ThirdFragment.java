@@ -71,14 +71,13 @@ public class ThirdFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_gallery, menu);
+        inflater.inflate(R.menu.menu_third, menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
-            case R.id.action_settings_gallery:
-                Toast.makeText(getActivity(), "세팅", Toast.LENGTH_SHORT).show();
+            case R.id.action_settings_third:
                 Intent settingIntent = new Intent(mContext, Third_Setting_Activity.class);
 
                 getActivity().startActivityForResult(settingIntent, 4000);

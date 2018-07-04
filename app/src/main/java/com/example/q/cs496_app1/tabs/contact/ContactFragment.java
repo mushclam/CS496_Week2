@@ -10,9 +10,13 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.q.cs496_app1.R;
 import com.google.gson.Gson;
@@ -107,6 +111,8 @@ public class ContactFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_contact, container, false);
 
+        setHasOptionsMenu(true);
+
         // indicate context of fragment
         mContext = getActivity();
         CONTACT_FRAGMENT_CONTEXT = this;
@@ -148,6 +154,40 @@ public class ContactFragment extends Fragment {
         });
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+        if (id == R.id.action_deleteContacts) {
+            try {
+                File file = new File(getActivity().getFilesDir() + "/test.json");
+                if (!file.exists()){
+                    Toast.makeText(getActivity(), getActivity().getFilesDir() + " + Not Exist", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), getActivity().getFilesDir() + " + Exist", Toast.LENGTH_SHORT).show();
+                    file.delete();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     private class GetContact extends AsyncTask<String, String, List<ContactItem>> {

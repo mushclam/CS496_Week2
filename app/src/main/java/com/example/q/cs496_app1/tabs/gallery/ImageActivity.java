@@ -2,6 +2,7 @@ package com.example.q.cs496_app1.tabs.gallery;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
@@ -11,6 +12,7 @@ import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.PagerAdapter;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -116,41 +118,67 @@ public class ImageActivity extends AppCompatActivity {
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_deleteImage) {
-            String[] projection = { MediaStore.Images.Media._ID };
 
-            // Match on the file path
-            String selection = MediaStore.Images.Media.DATA + " = ?";
-            String[] selectionArgs = new String[] { images.get(index).getFilePath() };
+            DialogInterface.OnClickListener deleteListener = new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    // Set up the projection (we only need the ID)
+                    String[] projection = { MediaStore.Images.Media._ID };
 
-            // Query for the ID of the media matching the file path
-            Uri queryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-            ContentResolver contentResolver = getContentResolver();
-            Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
-            if (c.moveToFirst()) {
-                // We found the ID. Deleting the item via the content provider will also remove the file
-                long _id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
-                Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, _id);
-                contentResolver.delete(deleteUri, null, null);
+                    // Match on the file path
+                    String selection = MediaStore.Images.Media.DATA + " = ?";
+                    String[] selectionArgs = new String[] { images.get(index).getFilePath() };
 
-                //
+                    // Query for the ID of the media matching the file path
+                    Uri queryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                    ContentResolver contentResolver = getContentResolver();
+                    Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
+                    if (c.moveToFirst()) {
+                        // We found the ID. Deleting the item via the content provider will also remove the file
+                        long _id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
+                        Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, _id);
+                        contentResolver.delete(deleteUri, null, null);
+
+                        //
 //                Animation animation = AnimationUtils.loadAnimation(this, R.anim.anim_move_top);
 
 
-                images.remove(index);
-                mSectionsPagerAdapter.notifyDataSetChanged();
+                        images.remove(index);
+                        mSectionsPagerAdapter.notifyDataSetChanged();
 //                mViewPager.setCurrentItem(index);
 
-                Toast.makeText(this, "사진이 지워졌습니다.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "사진이 지워졌습니다.", Toast.LENGTH_SHORT).show();
 
-            } else {
-                // File not found in media store DB
-            }
+                    } else {
+                        // File not found in media store DB
+                    }
 
-            c.close();
+                    c.close();
+                }
+            };
+
+            DialogInterface.OnClickListener cancelListener = new DialogInterface.OnClickListener()
+            {
+                @Override
+                public void onClick(DialogInterface dialog, int which)
+                {
+                    dialog.dismiss();
+                }
+            };
+
+            new AlertDialog.Builder(this)
+                    .setTitle("정말 삭제하시겠습니까?")
+                    .setPositiveButton("삭제", deleteListener)
+                    .setNegativeButton("취소", cancelListener)
+                    .show();
+
             return true;
         }
 
