@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
     <LinearLayout
@@ -50,26 +51,27 @@
         </RelativeLayout>
 
         <LinearLayout
-            android:id="@+id/phoneNumberLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
             <RelativeLayout
+                android:id="@+id/phoneNumberLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@drawable/ripple_custom_hv21"
                 android:padding="20dp">
 
                 <TextView
                     android:id="@+id/dis_phoneNumber"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Phone Number"
                     android:textSize="12sp" />
 
                 <TextView
                     android:id="@+id/ind_phoneNumber"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/dis_phoneNumber"
@@ -82,6 +84,29 @@
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider" />
+
+            <RelativeLayout
+                android:id="@+id/emailLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ripple_custom_hv21"
+                android:padding="20dp">
+
+                <TextView
+                    android:id="@+id/dis_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Email Address"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/ind_email"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_below="@+id/dis_email"
+                    android:text="TextView" />
+            </RelativeLayout>
         </LinearLayout>
 
     </LinearLayout>

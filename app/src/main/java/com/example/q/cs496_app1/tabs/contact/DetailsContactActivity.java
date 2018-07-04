@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,34 +33,50 @@ public class DetailsContactActivity extends Activity {
     Button editButton;
     Button deleteButton;
 
-    LinearLayout phoneNumberLayout;
     TextView tvName;
+
+    RelativeLayout phoneNumberLayout;
     TextView tvPhoneNumber;
+
+    RelativeLayout emailLayout;
+    TextView tvEmail;
 
     int itemPosition;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_contact);
+        setContentView(R.layout.activity_detailcontact);
         CONTACT_CONTEXT = this;
 
         Intent intent = new Intent(this.getIntent());
         final String name = intent.getStringExtra("name");
         final String phoneNumber = intent.getStringExtra("phoneNumber");
+        final String email = intent.getStringExtra("email");
         itemPosition = intent.getIntExtra("itemPosition", 0);
 
         tvName = (TextView)findViewById(R.id.ind_name);
         tvPhoneNumber = (TextView)findViewById(R.id.ind_phoneNumber);
+        tvEmail = (TextView)findViewById(R.id.ind_email);
+
         tvName.setText(name);
         tvPhoneNumber.setText(phoneNumber);
+        tvEmail.setText(email);
 
-        phoneNumberLayout = (LinearLayout)findViewById(R.id.phoneNumberLayout);
+        phoneNumberLayout = (RelativeLayout)findViewById(R.id.phoneNumberLayout);
         phoneNumberLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
                 callIntent.setData(Uri.parse("tel:" + phoneNumber));
                 startActivity(callIntent);
+            }
+        });
+
+        emailLayout = (RelativeLayout)findViewById(R.id.emailLayout);
+        emailLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+//                Intent 0(emailIntent);
             }
         });
 
