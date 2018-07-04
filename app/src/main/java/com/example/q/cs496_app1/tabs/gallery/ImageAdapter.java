@@ -71,10 +71,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
                 vibrator.vibrate(30);
 
-//                Intent dialogIntent = new Intent(context, DialogActivity.class);
-//                dialogIntent.putExtra("FILEPATH", myImage.getFilePath());
-//
-//                context.startActivity(dialogIntent);
                 DialogInterface.OnClickListener deleteListener = new DialogInterface.OnClickListener()
                 {
                     @Override
@@ -102,7 +98,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
                         c.close();
 
-                        fragment.onRefresh();
+                        fragment.onRefresh(-1);
                     }
                 };
 
@@ -135,7 +131,7 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                 imageIntent.putExtra("INDEX", i);
                 imageIntent.putExtra("IMAGE", images);
 
-                context.startActivity(imageIntent);
+                fragment.getActivity().startActivityForResult(imageIntent, 3000);
             }
         });
     }

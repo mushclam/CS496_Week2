@@ -3,10 +3,12 @@ package com.example.q.cs496_app1;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
 import android.os.Vibrator;
 import android.support.design.widget.TabLayout;
 import android.support.design.widget.FloatingActionButton;
@@ -23,6 +25,9 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,8 +63,7 @@ public class MainActivity extends AppCompatActivity {
     private SensorEventListener mAccLis;
     private Sensor mAccelerometerSensor = null;
 
-    private TextView xyzView;
-    private boolean accOn;
+    private ImageView direction_arrow;
     private long detectedTime;
 
     private Vibrator vibrator;
@@ -112,8 +116,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        accOn = false;
-
+        direction_arrow = findViewById(R.id.direction_arrow);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -249,6 +252,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if(resultCode == RESULT_OK){
+            switch (requestCode){
+                case 3000:
+                    GalleryFragment galleryFragment = (GalleryFragment) mFragments[1];
+                    galleryFragment.onRefresh(data.getIntExtra("INDEX", 0));
+                    break;
+            }
+        }
+    }
+
+    @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
         Log.e("퍼미션", "결과 받음");
@@ -365,33 +380,85 @@ public class MainActivity extends AppCompatActivity {
 
                 if(isLeft(Xs)) {
                     vibrator.vibrate(10);
-                    Toast.makeText(getApplicationContext(), "Left shake detected", Toast.LENGTH_SHORT).show();
+
                     Log.e("잡힘 ", "왼쪽");
                     detectedTime = System.currentTimeMillis();
+
+                    Animation animation = new AlphaAnimation(0, 1);
+                    animation.setDuration(700);
+                    direction_arrow.setImageResource(R.drawable.direction_left);
+                    direction_arrow.setVisibility(View.VISIBLE);
+                    direction_arrow.setAnimation(animation);
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            direction_arrow.setVisibility(View.GONE);
+                        }
+                    }, 1500);
 
                     thirdFragment.view.game.move(3);
                 }
                 else if(isRight(Xs)) {
                     vibrator.vibrate(10);
-                    Toast.makeText(getApplicationContext(), "Right shake detected", Toast.LENGTH_SHORT).show();
+
                     Log.e("잡힘 ", "오른쪽");
                     detectedTime = System.currentTimeMillis();
+
+                    Animation animation = new AlphaAnimation(0, 1);
+                    animation.setDuration(700);
+                    direction_arrow.setImageResource(R.drawable.direction_right);
+                    direction_arrow.setVisibility(View.VISIBLE);
+                    direction_arrow.setAnimation(animation);
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            direction_arrow.setVisibility(View.GONE);
+                        }
+                    }, 1500);
 
                     thirdFragment.view.game.move(1);
                 }
                 else if(isBack(Zs)) {
                     vibrator.vibrate(10);
-                    Toast.makeText(getApplicationContext(), "Back shake detected", Toast.LENGTH_SHORT).show();
+
                     Log.e("잡힘 ", "뒤쪽");
                     detectedTime = System.currentTimeMillis();
+
+                    Animation animation = new AlphaAnimation(0, 1);
+                    animation.setDuration(700);
+                    direction_arrow.setImageResource(R.drawable.direction_up);
+                    direction_arrow.setVisibility(View.VISIBLE);
+                    direction_arrow.setAnimation(animation);
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            direction_arrow.setVisibility(View.GONE);
+                        }
+                    }, 1500);
 
                     thirdFragment.view.game.move(0);
                 }
                 else if(isFront(Zs)) {
                     vibrator.vibrate(10);
-                    Toast.makeText(getApplicationContext(), "Front shake detected", Toast.LENGTH_SHORT).show();
+
                     Log.e("잡힘 ", "앞쪽");
                     detectedTime = System.currentTimeMillis();
+
+                    Animation animation = new AlphaAnimation(0, 1);
+                    animation.setDuration(700);
+                    direction_arrow.setImageResource(R.drawable.direction_down);
+                    direction_arrow.setVisibility(View.VISIBLE);
+                    direction_arrow.setAnimation(animation);
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            direction_arrow.setVisibility(View.GONE);
+                        }
+                    }, 1500);
 
                     thirdFragment.view.game.move(2);
                 }
