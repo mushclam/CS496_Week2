@@ -2,6 +2,7 @@ package com.example.q.cs496_app1;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.hardware.Sensor;
@@ -69,6 +70,7 @@ public class MainActivity extends AppCompatActivity {
     private Vibrator vibrator;
 
     private double[] Xs, Zs;
+    private int sensitivityL, sensitivityR, sensitivityU, sensitivityD;
 
     public static Context MAIN_CONTEXT;
 
@@ -154,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
                         fab.hide();
                         fab2.hide();
 
+                        resetSensitivity();
                         mSensorManager.registerListener(mAccLis, mAccelerometerSensor, SensorManager.SENSOR_DELAY_UI);
 
                         break;
@@ -253,11 +256,15 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e("onActivityResult", "result code = " + String.valueOf(resultCode) + ", request code = " + String.valueOf(requestCode));
         if(resultCode == RESULT_OK){
             switch (requestCode){
                 case 3000:
                     GalleryFragment galleryFragment = (GalleryFragment) mFragments[1];
                     galleryFragment.onRefresh(data.getIntExtra("INDEX", 0));
+                    break;
+                case 4000:
+                    resetSensitivity();
                     break;
             }
         }
@@ -288,15 +295,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void resetSensitivity() {
+
+
+        SharedPreferences sensPref = getSharedPreferences("Sensitivity", MODE_PRIVATE);
+        sensitivityL = sensPref.getInt("left", 5);
+        sensitivityR = sensPref.getInt("right", 5);
+        sensitivityU = sensPref.getInt("up", 5);
+        sensitivityD = sensPref.getInt("down", 5);
+
+        Toast.makeText(this, "민감도 설정됨\nL: " + String.valueOf(sensitivityL) +
+                "\nR: " + String.valueOf(sensitivityR) + "\nU: " + String.valueOf(sensitivityU) +
+                "\nD: " + String.valueOf(sensitivityD), Toast.LENGTH_SHORT).show();
+    }
+
     public boolean isLeft(double[] Xs) {
         double avgX = (Xs[0] + Xs[1] + Xs[2] + Xs[3] + Xs[4]) / 5.0;
         int firstX = 20;
         int secondX;
         for(int i=5; i<20; i++) {
-            if(Xs[i] < avgX - 20) {
+            if(Xs[i] < avgX - (sensitivityL * 2.8 + 5)) {
                 firstX = i;
             }
-            if(Xs[i] > avgX + 60) {
+            if(Xs[i] > avgX + (sensitivityL * 2.8 + 5) * 3) {
                 secondX = i;
                 if(firstX < secondX) {
                     return true;
@@ -310,10 +331,10 @@ public class MainActivity extends AppCompatActivity {
         int firstX = 20;
         int secondX;
         for(int i=5; i<20; i++) {
-            if(Xs[i] > avgX + 10) {
+            if(Xs[i] > avgX + (sensitivityR * 2.8 + 5)) {
                 firstX = i;
             }
-            if(Xs[i] < avgX - 30) {
+            if(Xs[i] < avgX - (sensitivityR * 2.8 + 5) * 3) {
                 secondX = i;
                 if(firstX < secondX) {
                     return true;
@@ -327,10 +348,10 @@ public class MainActivity extends AppCompatActivity {
         int firstZ = 20;
         int secondZ;
         for(int i=5; i<20; i++) {
-            if(Zs[i] < avgZ - 15) {
+            if(Zs[i] < avgZ - (sensitivityU * 2.8 + 5)) {
                 firstZ = i;
             }
-            if(Zs[i] > avgZ + 40) {
+            if(Zs[i] > avgZ + (sensitivityU * 2.8 + 5) * 3) {
                 secondZ = i;
                 if(firstZ < secondZ) {
                     return true;
@@ -344,10 +365,10 @@ public class MainActivity extends AppCompatActivity {
         int firstZ = 20;
         int secondZ;
         for(int i=5; i<20; i++) {
-            if(Zs[i] > avgZ + 10) {
+            if(Zs[i] > avgZ + (sensitivityD * 2.8 + 5)) {
                 firstZ = i;
             }
-            if(Zs[i] < avgZ - 30) {
+            if(Zs[i] < avgZ - (sensitivityD * 2.8 + 5) * 3) {
                 secondZ = i;
                 if(firstZ < secondZ) {
                     return true;
@@ -363,7 +384,6 @@ public class MainActivity extends AppCompatActivity {
         public void onSensorChanged(SensorEvent event) {
 
             double x = event.values[0];
-            // double y = event.values[1];
             double z = event.values[2];
 
             for(int i=0; i<19; i++) {
@@ -381,7 +401,7 @@ public class MainActivity extends AppCompatActivity {
                 if(isLeft(Xs)) {
                     vibrator.vibrate(10);
 
-                    Log.e("잡힘 ", "왼쪽");
+                    Log.e("흔들림 감지 ", "왼쪽");
                     detectedTime = System.currentTimeMillis();
 
                     Animation animation = new AlphaAnimation(0, 1);
@@ -402,7 +422,7 @@ public class MainActivity extends AppCompatActivity {
                 else if(isRight(Xs)) {
                     vibrator.vibrate(10);
 
-                    Log.e("잡힘 ", "오른쪽");
+                    Log.e("흔들림 감지 ", "오른쪽");
                     detectedTime = System.currentTimeMillis();
 
                     Animation animation = new AlphaAnimation(0, 1);
@@ -423,7 +443,7 @@ public class MainActivity extends AppCompatActivity {
                 else if(isBack(Zs)) {
                     vibrator.vibrate(10);
 
-                    Log.e("잡힘 ", "뒤쪽");
+                    Log.e("흔들림 감지 ", "뒤쪽");
                     detectedTime = System.currentTimeMillis();
 
                     Animation animation = new AlphaAnimation(0, 1);
@@ -444,7 +464,7 @@ public class MainActivity extends AppCompatActivity {
                 else if(isFront(Zs)) {
                     vibrator.vibrate(10);
 
-                    Log.e("잡힘 ", "앞쪽");
+                    Log.e("흔들림 감지 ", "앞쪽");
                     detectedTime = System.currentTimeMillis();
 
                     Animation animation = new AlphaAnimation(0, 1);

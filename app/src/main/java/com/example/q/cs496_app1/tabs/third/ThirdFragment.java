@@ -81,7 +81,7 @@ public class ThirdFragment extends Fragment {
                 Toast.makeText(getActivity(), "세팅", Toast.LENGTH_SHORT).show();
                 Intent settingIntent = new Intent(mContext, Third_Setting_Activity.class);
 
-                startActivityForResult(settingIntent, 4000);
+                getActivity().startActivityForResult(settingIntent, 4000);
                 return true;
             default:
                 break;

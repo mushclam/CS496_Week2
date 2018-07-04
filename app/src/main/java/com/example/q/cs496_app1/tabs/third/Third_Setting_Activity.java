@@ -1,7 +1,11 @@
 package com.example.q.cs496_app1.tabs.third;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -14,67 +18,37 @@ public class Third_Setting_Activity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_third__setting_);
 
-        final TextView tv = findViewById(R.id.test_text_view);
-        SeekBar sb_l  = findViewById(R.id.seekBar_L);
-        SeekBar sb_r  = findViewById(R.id.seekBar_R);
-        SeekBar sb_u  = findViewById(R.id.seekBar_U);
-        SeekBar sb_d  = findViewById(R.id.seekBar_D);
+        final SeekBar sb_l  = findViewById(R.id.seekBar_L);
+        final SeekBar sb_r  = findViewById(R.id.seekBar_R);
+        final SeekBar sb_u  = findViewById(R.id.seekBar_U);
+        final SeekBar sb_d  = findViewById(R.id.seekBar_D);
 
-        sb_l.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                tv.setText("onStop TrackingTouch");
-            }
+        Button button_finish = findViewById(R.id.button_finish);
 
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                tv.setText("onStart TrackingTouch");
-            }
+        SharedPreferences sensPref = getSharedPreferences("Sensitivity", MODE_PRIVATE);
 
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
-                tv.setText("onProgressChanged : " + progress);
+        sb_l.setProgress(sensPref.getInt("left", 5));
+        sb_r.setProgress(sensPref.getInt("right", 5));
+        sb_u.setProgress(sensPref.getInt("up", 5));
+        sb_d.setProgress(sensPref.getInt("down", 5));
+
+        button_finish.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedPreferences sensPref = getSharedPreferences("Sensitivity", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sensPref.edit();
+                editor.putInt("left", sb_l.getProgress());
+                editor.putInt("right", sb_r.getProgress());
+                editor.putInt("up", sb_u.getProgress());
+                editor.putInt("down", sb_d.getProgress());
+                editor.apply();
+
+                Intent resultIntent = new Intent();
+                setResult(RESULT_OK, resultIntent);
+                finish();
             }
         });
-        sb_r.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                tv.setText("onStop TrackingTouch");
-            }
 
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                tv.setText("onStart TrackingTouch");
-            }
 
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
-                tv.setText("onProgressChanged : " + progress);
-            }
-        });
-        sb_u.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                tv.setText("onStop TrackingTouch");
-            }
-
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                tv.setText("onStart TrackingTouch");
-            }
-
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
-                tv.setText("onProgressChanged : " + progress);
-            }
-        });
-        sb_d.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                tv.setText("onStop TrackingTouch");
-            }
-
-            public void onStartTrackingTouch(SeekBar seekBar) {
-                tv.setText("onStart TrackingTouch");
-            }
-
-            public void onProgressChanged(SeekBar seekBar, int progress,
-                                          boolean fromUser) {
-                tv.setText("onProgressChanged : " + progress);
-            }
-        });
     }
 }

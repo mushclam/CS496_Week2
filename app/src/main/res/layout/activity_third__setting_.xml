@@ -6,70 +6,117 @@
     android:layout_height="match_parent"
     tools:context=".tabs.third.Third_Setting_Activity">
 
-
     <TextView
-        android:id="@+id/test_text_view"
+        android:id="@+id/sensitivity_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:layout_marginBottom="32dp"
+        android:layout_marginLeft="8dp"
+        android:text="민감"
+        app:layout_constraintBottom_toTopOf="@+id/seekBar_L"
+        app:layout_constraintLeft_toLeftOf="@+id/seekBar_L" />
+
+    <TextView
+        android:id="@+id/sensitivity_info2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp"
+        android:layout_marginLeft="8dp"
+        android:text="둔감"
+        app:layout_constraintBottom_toTopOf="@+id/seekBar_L"
+        app:layout_constraintRight_toRightOf="@+id/seekBar_L" />
+
+    <TextView
+        android:id="@+id/left_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:text="Left"
+        android:layout_marginTop="150dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toLeftOf="@+id/seekBar_L" />
 
     <SeekBar
         android:id="@+id/seekBar_L"
         style="@style/Widget.AppCompat.SeekBar"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="150dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
         android:max="10"
         android:progress="5"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <TextView
+        android:id="@+id/right_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:text="Right"
+        android:layout_marginTop="48dp"
+        app:layout_constraintTop_toTopOf="@+id/left_text_view"
+        app:layout_constraintRight_toLeftOf="@+id/seekBar_R" />
 
     <SeekBar
         android:id="@+id/seekBar_R"
         style="@style/Widget.AppCompat.SeekBar"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
         android:max="10"
         android:progress="5"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar_L" />
+        app:layout_constraintTop_toTopOf="@+id/seekBar_L"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/up_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:text="Up"
+        android:layout_marginTop="48dp"
+        app:layout_constraintTop_toTopOf="@+id/right_text_view"
+        app:layout_constraintRight_toLeftOf="@+id/seekBar_U" />
 
     <SeekBar
         android:id="@+id/seekBar_U"
         style="@style/Widget.AppCompat.SeekBar"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
         android:max="10"
         android:progress="5"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar_R" />
+        app:layout_constraintTop_toTopOf="@+id/seekBar_R"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <TextView
+        android:id="@+id/down_text_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:text="Down"
+        android:layout_marginTop="48dp"
+        app:layout_constraintTop_toTopOf="@+id/up_text_view"
+        app:layout_constraintRight_toLeftOf="@+id/seekBar_D" />
 
     <SeekBar
         android:id="@+id/seekBar_D"
         style="@style/Widget.AppCompat.SeekBar"
-        android:layout_width="match_parent"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="48dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
         android:max="10"
         android:progress="5"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar_U" />
-
-    <Button
-        android:id="@+id/button_down"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Down"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/button_up"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar_D" />
-
-    <Button
-        android:id="@+id/button_up"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Up"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/button_down"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar_D" />
+        app:layout_constraintTop_toTopOf="@+id/seekBar_U"
+        app:layout_constraintRight_toRightOf="parent" />
 
     <Button
         android:id="@+id/button_finish"
@@ -79,12 +126,11 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="75dp"
         android:text="완료"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintLeft_toRightOf="@+id/button_up"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/button_up" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBar_D" />
 
 </android.support.constraint.ConstraintLayout>
