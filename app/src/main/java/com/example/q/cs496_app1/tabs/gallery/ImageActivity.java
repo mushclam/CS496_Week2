@@ -1,10 +1,16 @@
 package com.example.q.cs496_app1.tabs.gallery;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.hardware.SensorManager;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.PagerAdapter;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 
@@ -20,6 +26,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -54,8 +62,8 @@ public class ImageActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
-    private static int index;
-//    private static MyImage myImage;
+    private int index;
+
     private static ArrayList<MyImage> images;
 
     @Override
@@ -77,15 +85,23 @@ public class ImageActivity extends AppCompatActivity {
         // Set up the ViewPager with the sections adapter.
         mViewPager = (ViewPager) findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setOffscreenPageLimit(10);
         mViewPager.setCurrentItem(index);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Toast.makeText(getApplicationContext(), String.valueOf(index+1), Toast.LENGTH_LONG).show();
-//            }
-//        });
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                index= position;
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
     }
 
     @Override
@@ -103,11 +119,49 @@ public class ImageActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.action_deleteImage) {
+            String[] projection = { MediaStore.Images.Media._ID };
+
+            // Match on the file path
+            String selection = MediaStore.Images.Media.DATA + " = ?";
+            String[] selectionArgs = new String[] { images.get(index).getFilePath() };
+
+            // Query for the ID of the media matching the file path
+            Uri queryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+            ContentResolver contentResolver = getContentResolver();
+            Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
+            if (c.moveToFirst()) {
+                // We found the ID. Deleting the item via the content provider will also remove the file
+                long _id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
+                Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, _id);
+                contentResolver.delete(deleteUri, null, null);
+
+                //
+//                Animation animation = AnimationUtils.loadAnimation(this, R.anim.anim_move_top);
+
+
+                images.remove(index);
+                mSectionsPagerAdapter.notifyDataSetChanged();
+//                mViewPager.setCurrentItem(index);
+
+                Toast.makeText(this, "사진이 지워졌습니다.", Toast.LENGTH_SHORT).show();
+
+            } else {
+                // File not found in media store DB
+            }
+
+            c.close();
             return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onBackPressed() {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("INDEX", index);
+        setResult(RESULT_OK, resultIntent);
+        finish();
     }
 
     /**
@@ -179,5 +233,24 @@ public class ImageActivity extends AppCompatActivity {
         public int getCount() {
             return images.size();
         }
+
+        @Override
+        public int getItemPosition(Object object) {
+            // refresh all fragments when data set changed
+            return PagerAdapter.POSITION_NONE;
+        }
+
+//        @Override
+//        public long getItemId(int position) {
+//            // give an ID different from position when position has been changed
+//            return baseId + position;
+//        }
+//
+//        public void notifyChangeInPosition(int n) {
+//            // shift the ID returned by getItemId outside the range of all previous fragments
+//            baseId += getCount() + n;
+//        }
     }
+
+
 }

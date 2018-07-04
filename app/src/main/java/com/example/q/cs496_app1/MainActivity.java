@@ -6,12 +6,16 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+
+import android.graphics.Bitmap;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.Handler;
 import android.os.Vibrator;
 
 import android.graphics.Bitmap;
@@ -43,6 +47,10 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.widget.ImageView;
 
 import android.widget.TextView;
 import android.widget.Toast;
@@ -86,13 +94,13 @@ public class MainActivity extends AppCompatActivity {
     private SensorEventListener mAccLis;
     private Sensor mAccelerometerSensor = null;
 
-    private TextView xyzView;
-    private boolean accOn;
+    private ImageView direction_arrow;
     private long detectedTime;
 
     private Vibrator vibrator;
 
     private double[] Xs, Zs;
+    private int sensitivityL, sensitivityR, sensitivityU, sensitivityD;
 
     private String imageFilePath;
     private Uri photoUri;
@@ -142,8 +150,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        accOn = false;
-
+        direction_arrow = findViewById(R.id.direction_arrow);
 
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometerSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
@@ -181,6 +188,7 @@ public class MainActivity extends AppCompatActivity {
                         fab.hide();
                         fab2.hide();
 
+                        resetSensitivity();
                         mSensorManager.registerListener(mAccLis, mAccelerometerSensor, SensorManager.SENSOR_DELAY_UI);
 
                         break;
@@ -219,42 +227,41 @@ public class MainActivity extends AppCompatActivity {
 //        return super.onKeyDown(keyCode, event);
 //    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        if (id == R.id.action_deleteContacts) {
-            try {
-                File file = new File(getFilesDir() + "/test.json");
-                if (!file.exists()){
-                    Toast.makeText(this, getFilesDir() + " + Not Exist", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(this, getFilesDir() + " + Exist", Toast.LENGTH_SHORT).show();
-                    file.delete();
-                    ContactFragment contactFragment = (ContactFragment)mFragments[0];
-                    contactFragment.onResume();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        // Inflate the menu; this adds items to the action bar if it is present.
+//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//        return true;
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        // Handle action bar item clicks here. The action bar will
+//        // automatically handle clicks on the Home/Up button, so long
+//        // as you specify a parent activity in AndroidManifest.xml.
+//        int id = item.getItemId();
+//
+//        //noinspection SimplifiableIfStatement
+//        if (id == R.id.action_settings) {
+//            return true;
+//        }
+//        if (id == R.id.action_deleteContacts) {
+//            try {
+//                File file = new File(getFilesDir() + "/test.json");
+//                if (!file.exists()){
+//                    Toast.makeText(this, getFilesDir() + " + Not Exist", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(this, getFilesDir() + " + Exist", Toast.LENGTH_SHORT).show();
+//                    file.delete();
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        return super.onOptionsItemSelected(item);
+//    }
 
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
@@ -286,7 +293,6 @@ public class MainActivity extends AppCompatActivity {
         Log.e("퍼미션", "결과 받음");
         switch (requestCode) {
             case 200: {
-                // If request is cancelled, the result arrays are empty.
                 finish();
                 if (grantResults.length > 1
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED
@@ -297,18 +303,9 @@ public class MainActivity extends AppCompatActivity {
                     overridePendingTransition( 0, 0);
                     startActivity(getIntent());
                     overridePendingTransition( 0, 0);
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-//                    galleryAdapter.notifyDataSetChanged();
-//                    FragmentTransaction ft = getFragmentManager().beginTransaction();
-//                    ft.detach(GalleryFragment.this).attach(GalleryFragment.this).commit();
-
 
                 } else {
                     Log.e("퍼미션", "거절");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-
                 }
                 return;
             }
@@ -334,15 +331,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void resetSensitivity() {
+
+
+        SharedPreferences sensPref = getSharedPreferences("Sensitivity", MODE_PRIVATE);
+        sensitivityL = sensPref.getInt("left", 5);
+        sensitivityR = sensPref.getInt("right", 5);
+        sensitivityU = sensPref.getInt("up", 5);
+        sensitivityD = sensPref.getInt("down", 5);
+
+        Toast.makeText(this, "민감도 설정됨\nL: " + String.valueOf(sensitivityL) +
+                "\nR: " + String.valueOf(sensitivityR) + "\nU: " + String.valueOf(sensitivityU) +
+                "\nD: " + String.valueOf(sensitivityD), Toast.LENGTH_SHORT).show();
+    }
+
     public boolean isLeft(double[] Xs) {
         double avgX = (Xs[0] + Xs[1] + Xs[2] + Xs[3] + Xs[4]) / 5.0;
         int firstX = 20;
         int secondX;
         for(int i=5; i<20; i++) {
-            if(Xs[i] < avgX - 20) {
+            if(Xs[i] < avgX - (sensitivityL * 2.8 + 5)) {
                 firstX = i;
             }
-            if(Xs[i] > avgX + 60) {
+            if(Xs[i] > avgX + (sensitivityL * 2.8 + 5) * 3) {
                 secondX = i;
                 if(firstX < secondX) {
                     return true;
@@ -356,10 +367,10 @@ public class MainActivity extends AppCompatActivity {
         int firstX = 20;
         int secondX;
         for(int i=5; i<20; i++) {
-            if(Xs[i] > avgX + 10) {
+            if(Xs[i] > avgX + (sensitivityR * 2.8 + 5)) {
                 firstX = i;
             }
-            if(Xs[i] < avgX - 30) {
+            if(Xs[i] < avgX - (sensitivityR * 2.8 + 5) * 3) {
                 secondX = i;
                 if(firstX < secondX) {
                     return true;
@@ -373,10 +384,10 @@ public class MainActivity extends AppCompatActivity {
         int firstZ = 20;
         int secondZ;
         for(int i=5; i<20; i++) {
-            if(Zs[i] < avgZ - 15) {
+            if(Zs[i] < avgZ - (sensitivityU * 2.8 + 5)) {
                 firstZ = i;
             }
-            if(Zs[i] > avgZ + 40) {
+            if(Zs[i] > avgZ + (sensitivityU * 2.8 + 5) * 3) {
                 secondZ = i;
                 if(firstZ < secondZ) {
                     return true;
@@ -390,10 +401,10 @@ public class MainActivity extends AppCompatActivity {
         int firstZ = 20;
         int secondZ;
         for(int i=5; i<20; i++) {
-            if(Zs[i] > avgZ + 10) {
+            if(Zs[i] > avgZ + (sensitivityD * 2.8 + 5)) {
                 firstZ = i;
             }
-            if(Zs[i] < avgZ - 30) {
+            if(Zs[i] < avgZ - (sensitivityD * 2.8 + 5) * 3) {
                 secondZ = i;
                 if(firstZ < secondZ) {
                     return true;
@@ -409,7 +420,6 @@ public class MainActivity extends AppCompatActivity {
         public void onSensorChanged(SensorEvent event) {
 
             double x = event.values[0];
-            // double y = event.values[1];
             double z = event.values[2];
 
             for(int i=0; i<19; i++) {
@@ -426,33 +436,85 @@ public class MainActivity extends AppCompatActivity {
 
                 if(isLeft(Xs)) {
                     vibrator.vibrate(10);
-                    Toast.makeText(getApplicationContext(), "Left shake detected", Toast.LENGTH_SHORT).show();
-                    Log.e("잡힘 ", "왼쪽");
+
+                    Log.e("흔들림 감지 ", "왼쪽");
                     detectedTime = System.currentTimeMillis();
+
+                    Animation animation = new AlphaAnimation(0, 1);
+                    animation.setDuration(700);
+                    direction_arrow.setImageResource(R.drawable.direction_left);
+                    direction_arrow.setVisibility(View.VISIBLE);
+                    direction_arrow.setAnimation(animation);
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            direction_arrow.setVisibility(View.GONE);
+                        }
+                    }, 1500);
 
                     thirdFragment.view.game.move(3);
                 }
                 else if(isRight(Xs)) {
                     vibrator.vibrate(10);
-                    Toast.makeText(getApplicationContext(), "Right shake detected", Toast.LENGTH_SHORT).show();
-                    Log.e("잡힘 ", "오른쪽");
+
+                    Log.e("흔들림 감지 ", "오른쪽");
                     detectedTime = System.currentTimeMillis();
+
+                    Animation animation = new AlphaAnimation(0, 1);
+                    animation.setDuration(700);
+                    direction_arrow.setImageResource(R.drawable.direction_right);
+                    direction_arrow.setVisibility(View.VISIBLE);
+                    direction_arrow.setAnimation(animation);
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            direction_arrow.setVisibility(View.GONE);
+                        }
+                    }, 1500);
 
                     thirdFragment.view.game.move(1);
                 }
                 else if(isBack(Zs)) {
                     vibrator.vibrate(10);
-                    Toast.makeText(getApplicationContext(), "Back shake detected", Toast.LENGTH_SHORT).show();
-                    Log.e("잡힘 ", "뒤쪽");
+
+                    Log.e("흔들림 감지 ", "뒤쪽");
                     detectedTime = System.currentTimeMillis();
+
+                    Animation animation = new AlphaAnimation(0, 1);
+                    animation.setDuration(700);
+                    direction_arrow.setImageResource(R.drawable.direction_up);
+                    direction_arrow.setVisibility(View.VISIBLE);
+                    direction_arrow.setAnimation(animation);
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            direction_arrow.setVisibility(View.GONE);
+                        }
+                    }, 1500);
 
                     thirdFragment.view.game.move(0);
                 }
                 else if(isFront(Zs)) {
                     vibrator.vibrate(10);
-                    Toast.makeText(getApplicationContext(), "Front shake detected", Toast.LENGTH_SHORT).show();
-                    Log.e("잡힘 ", "앞쪽");
+
+                    Log.e("흔들림 감지 ", "앞쪽");
                     detectedTime = System.currentTimeMillis();
+
+                    Animation animation = new AlphaAnimation(0, 1);
+                    animation.setDuration(700);
+                    direction_arrow.setImageResource(R.drawable.direction_down);
+                    direction_arrow.setVisibility(View.VISIBLE);
+                    direction_arrow.setAnimation(animation);
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            direction_arrow.setVisibility(View.GONE);
+                        }
+                    }, 1500);
 
                     thirdFragment.view.game.move(2);
                 }
@@ -495,28 +557,41 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
-            ExifInterface exif = null;
 
-            try {
-                exif = new ExifInterface(imageFilePath);
-            } catch (IOException e) {
-                e.printStackTrace();
+        Log.e("onActivityResult", "result code = " + String.valueOf(resultCode) + ", request code = " + String.valueOf(requestCode));
+        if(resultCode == RESULT_OK){
+            switch (requestCode){
+                case 3000:
+                    GalleryFragment galleryFragment = (GalleryFragment) mFragments[1];
+                    galleryFragment.onRefresh(data.getIntExtra("INDEX", 0));
+                    break;
+                case 4000:
+                    resetSensitivity();
+                    break;
+                case REQUEST_IMAGE_CAPTURE:
+                    Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
+                    ExifInterface exif = null;
+
+                    try {
+                        exif = new ExifInterface(imageFilePath);
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
+                    int exifOrientation;
+                    int exifDegree;
+
+                    if(exif != null) {
+                        exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+                        exifDegree = exifOrientationToDegrees(exifOrientation);
+                    } else {
+                        exifDegree = 0;
+                    }
+
+                    Bitmap savedImage = rotate(bitmap, exifDegree);
+                    saveImage(rotate(bitmap, exifDegree));
+                    break;
             }
-
-            int exifOrientation;
-            int exifDegree;
-
-            if(exif != null) {
-                exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-                exifDegree = exifOrientationToDegrees(exifOrientation);
-            } else {
-                exifDegree = 0;
-            }
-
-            Bitmap savedImage = rotate(bitmap, exifDegree);
-            saveImage(rotate(bitmap, exifDegree));
         }
     }
 

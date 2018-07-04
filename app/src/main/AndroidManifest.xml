@@ -16,16 +16,17 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
-            android:theme="@style/AppTheme.NoActionBar"
-            android:screenOrientation="portrait" >
->
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar">
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.MEDIA_MOUNTED" />
+
                 <data android:scheme="file" />
             </intent-filter>
         </activity>
@@ -34,7 +35,8 @@
             android:label="@string/title_activity_image"
             android:theme="@style/AppTheme.NoActionBar"></activity>
 
-        <activity android:name=".tabs.contact.DetailsContactActivity"
+        <activity
+            android:name=".tabs.contact.DetailsContactActivity"
             android:screenOrientation="portrait" />
         <activity
             android:name=".tabs.contact.AddContactActivity"
@@ -56,6 +58,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
+
+        <activity
+            android:name=".tabs.third.Third_Setting_Activity" />
     </application>
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />

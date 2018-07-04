@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -19,6 +20,9 @@ import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -41,6 +45,8 @@ public class GalleryFragment extends Fragment {
     int permsRequestCode = 200;
     String[] perms = {"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"};
 
+    RecyclerView.LayoutManager layoutManager;
+
     ArrayList<MyImage> images;
     ImageAdapter galleryAdapter;
     SwipeRefreshLayout swipeRefreshLayout;
@@ -49,26 +55,10 @@ public class GalleryFragment extends Fragment {
         // Required empty public constructor
     }
 
-    public static GalleryFragment newInstance() {
-        GalleryFragment fragment = new GalleryFragment();
-        Bundle args = new Bundle();
-
-        fragment.setArguments(args);
-        return fragment;
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
-
-
-//    @Override
-//    public void onResume() {
-//
-//    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,37 +66,60 @@ public class GalleryFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
+        setHasOptionsMenu(true);
+
         // 권한
         if(!checkPermission()) {
             requestPermission(); // 거절당했을 때 행동도 만들어야 함.
         }
-        if (checkPermission()) {
+
+        images = new ArrayList<>();
+        if(checkPermission()) {
             fetchAllImages();
-            RecyclerView galleryRecyclerView = (RecyclerView) view.findViewById(R.id.gallery_recycler);
-            galleryRecyclerView.setHasFixedSize(true);
-
-            RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), 3);
-            galleryRecyclerView.setLayoutManager(layoutManager);
-            galleryRecyclerView.scrollToPosition(0);
-
-            galleryAdapter = new ImageAdapter(getActivity(), this, images);
-            galleryRecyclerView.setAdapter(galleryAdapter);
-            galleryRecyclerView.setItemAnimator(new DefaultItemAnimator());
         }
+
+        RecyclerView galleryRecyclerView = (RecyclerView) view.findViewById(R.id.gallery_recycler);
+        galleryRecyclerView.setHasFixedSize(true);
+
+        layoutManager = new GridLayoutManager(getActivity(), 3);
+        galleryRecyclerView.setLayoutManager(layoutManager);
+        galleryRecyclerView.scrollToPosition(0);
+
+        galleryAdapter = new ImageAdapter(getActivity(), GalleryFragment.this, images);
+        galleryRecyclerView.setAdapter(galleryAdapter);
+        galleryRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
         swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                GalleryFragment.this.onRefresh();
+                GalleryFragment.this.onRefresh(-1);
             }
         });
 
-
-
+       //  onRefresh();
 
         return view;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_gallery, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch(item.getItemId()) {
+            case R.id.action_settings_gallery:
+                Toast.makeText(getActivity(), "세팅", Toast.LENGTH_SHORT).show();
+                return true;
+            default:
+                break;
+        }
+
+        return false;
     }
 
     private void fetchAllImages() {
@@ -130,8 +143,8 @@ public class GalleryFragment extends Fragment {
                 float longitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[2]));
                 float latitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[3]));
 
-                if(new File(filePath).exists())
-                    result.add(new MyImage(filePath, taken, longitude, latitude));
+//                if(new File(filePath).exists())
+                result.add(new MyImage(filePath, taken, longitude, latitude));
             } while(imageCursor.moveToNext());
         } else {
             // imageCursor가 비었습니다.
@@ -142,12 +155,24 @@ public class GalleryFragment extends Fragment {
         this.images = result;
     }
 
-    public void onRefresh() {
-        fetchAllImages();
-        galleryAdapter.notifyDataSetChanged();
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
-        ft.detach(GalleryFragment.this).attach(GalleryFragment.this).commit();
-        swipeRefreshLayout.setRefreshing(false);
+    public void onRefresh(final int i) {
+        if(checkPermission()) {
+            fetchAllImages();
+            galleryAdapter.notifyDataSetChanged();
+            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            ft.detach(GalleryFragment.this).attach(GalleryFragment.this).commitAllowingStateLoss();
+            if(i>=0) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        layoutManager.scrollToPosition(i);
+                    }
+                }, 100);
+
+                Log.e("스크롤? ", String.valueOf(i));
+            }
+            swipeRefreshLayout.setRefreshing(false);
+        }
     }
 
 
@@ -165,49 +190,6 @@ public class GalleryFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        Log.e("DEBUG", "onResume of LoginFragment");
-
     }
-//    // TODO: Rename method, update argument and hook method into UI event
-//    public void onButtonPressed(Uri uri) {
-//        if (mListener != null) {
-//            mListener.onFragmentInteraction(uri);
-//        }
-//    }
-//
-//    @Override
-//    public void onAttach(Context context) {
-//        super.onAttach(context);
-//        if (context instanceof OnFragmentInteractionListener) {
-//            mListener = (OnFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
-//
-//    @Override
-//    public void onDetach() {
-//        super.onDetach();
-//        mListener = null;
-//    }
-//
-//    /**
-//     * This interface must be implemented by activities that contain this
-//     * fragment to allow an interaction in this fragment to be communicated
-//     * to the activity and potentially other fragments contained in that
-//     * activity.
-//     * <p>
-//     * See the Android Training lesson <a href=
-//     * "http://developer.android.com/training/basics/fragments/communicating.html"
-//     * >Communicating with Other Fragments</a> for more information.
-//     */
-//    public interface OnFragmentInteractionListener {
-//        // TODO: Update argument type and name
-//        void onFragmentInteraction(Uri uri);
-//    }
-
-
-
 }
 
