@@ -16,6 +16,14 @@
             android:layout_height="180dp"
             android:background="#122451">
 
+            <ImageView
+                android:id="@+id/ind_preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:tint="#ff000000"
+                app:tintMode="multiply" />
+
             <Button
                 android:id="@+id/edit_button"
                 android:layout_width="70dp"

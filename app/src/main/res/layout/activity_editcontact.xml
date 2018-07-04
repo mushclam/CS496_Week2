@@ -13,6 +13,12 @@
             android:layout_height="180dp"
             android:background="#122451">
 
+            <ImageView
+                android:id="@+id/editPreview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop" />
+
             <EditText
                 android:id="@+id/editName"
                 android:layout_width="wrap_content"
@@ -38,6 +44,19 @@
                 android:background="@android:color/transparent"
                 android:text="Save"
                 android:textColor="@android:color/white" />
+
+            <ImageButton
+                android:id="@+id/edit_profile"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentEnd="true"
+                android:background="@android:color/transparent"
+                android:padding="20dp"
+                android:scaleX="0.7"
+                android:scaleY="0.7"
+                android:src="@drawable/compact_camera_48"
+                android:visibility="visible" />
 
         </RelativeLayout>
 

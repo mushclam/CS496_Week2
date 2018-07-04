@@ -527,9 +527,9 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         exifDegree = 0;
                     }
-
+                    
                     Bitmap savedImage = rotate(bitmap, exifDegree);
-                    saveImage(rotate(bitmap, exifDegree));
+                    saveImage(savedImage);
                     break;
             }
         }
