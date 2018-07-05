@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
         android:layout_marginLeft="8dp"
-        android:text="민감"
+        android:text="@string/sensitive"
         app:layout_constraintBottom_toTopOf="@+id/seekBar_L"
         app:layout_constraintLeft_toLeftOf="@+id/seekBar_L" />
 
@@ -21,8 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:layout_marginLeft="8dp"
-        android:text="둔감"
+        android:text="@string/insensitive"
         app:layout_constraintBottom_toTopOf="@+id/seekBar_L"
         app:layout_constraintRight_toRightOf="@+id/seekBar_L" />
 
@@ -30,11 +29,10 @@
         android:id="@+id/left_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:text="Left"
         android:layout_marginTop="150dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toLeftOf="@+id/seekBar_L" />
+        android:text="@string/left"
+        app:layout_constraintRight_toLeftOf="@+id/seekBar_L"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <SeekBar
         android:id="@+id/seekBar_L"
@@ -53,11 +51,10 @@
         android:id="@+id/right_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:text="Right"
         android:layout_marginTop="48dp"
-        app:layout_constraintTop_toTopOf="@+id/left_text_view"
-        app:layout_constraintRight_toLeftOf="@+id/seekBar_R" />
+        android:text="@string/right"
+        app:layout_constraintRight_toLeftOf="@+id/seekBar_R"
+        app:layout_constraintTop_toTopOf="@+id/left_text_view" />
 
     <SeekBar
         android:id="@+id/seekBar_R"
@@ -76,11 +73,10 @@
         android:id="@+id/up_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:text="Up"
         android:layout_marginTop="48dp"
-        app:layout_constraintTop_toTopOf="@+id/right_text_view"
-        app:layout_constraintRight_toLeftOf="@+id/seekBar_U" />
+        android:text="@string/up"
+        app:layout_constraintRight_toLeftOf="@+id/seekBar_U"
+        app:layout_constraintTop_toTopOf="@+id/right_text_view" />
 
     <SeekBar
         android:id="@+id/seekBar_U"
@@ -99,11 +95,10 @@
         android:id="@+id/down_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:text="Down"
         android:layout_marginTop="48dp"
-        app:layout_constraintTop_toTopOf="@+id/up_text_view"
-        app:layout_constraintRight_toLeftOf="@+id/seekBar_D" />
+        android:text="@string/down"
+        app:layout_constraintRight_toLeftOf="@+id/seekBar_D"
+        app:layout_constraintTop_toTopOf="@+id/up_text_view" />
 
     <SeekBar
         android:id="@+id/seekBar_D"
@@ -127,7 +122,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="75dp"
-        android:text="완료"
+        android:text="@string/confirm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toStartOf="parent"

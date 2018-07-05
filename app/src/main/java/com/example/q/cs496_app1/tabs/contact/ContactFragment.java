@@ -212,7 +212,7 @@ public class ContactFragment extends Fragment {
             viewEmpty.setText("");
 
             if (result == null) {
-                viewEmpty.setText("Any Contact isn't exist");
+                viewEmpty.setText(R.string.empty_contact);
             } else {
                 Collections.sort(result, new ContactSorting());
                 for (int i = 0; i < result.size(); i++) {

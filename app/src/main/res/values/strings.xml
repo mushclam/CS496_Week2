@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">CS496_App1</string>
+    <string name="app_name">MadCamp Project1</string>
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
     <string name="tab_text_3">Tab 3</string>
@@ -26,4 +26,43 @@
     <string name="continue_game">Cancel</string>
     <string name="reset_dialog_title">Reset game?</string>
     <string name="reset_dialog_message">Are you sure you wish to reset the game?</string>
+
+    <!--Contact String-->
+    <string name="name">Name</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="email_address">Email Address</string>
+    <string name="empty_contact">Any Contact isn\'t Exist</string>
+
+    <string name="save">Save</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="details">Details</string>
+
+    <string name="enter_name">Please Enter Name</string>
+    <string name="enter_phone_number">Enter Phone Number</string>
+    <string name="enter_email_address">Enter Email Address</string>
+
+    <string name="action_delete">Delete Contacts</string>
+
+    <string name="camera_permission">Camera permission not granted</string>
+    <string name="require_camera">Should require camera permission to run</string>
+
+    <string name="settings">Settings</string>
+    <string name="confirm">Confirm</string>
+    <string name="cancel">Cancel</string>
+
+    <string name="load_image">Select way to load image</string>
+    <string name="load_gallery">Gallery</string>
+    <string name="load_camera">Camera</string>
+
+    <!--Gallery String-->
+    <string name="select_all">Select All</string>
+
+    <!--2048 Setting String-->
+    <string name="sensitive">Sensitive</string>
+    <string name="insensitive">Insensitive</string>
+    <string name="left">Left</string>
+    <string name="right">Right</string>
+    <string name="up">Up</string>
+    <string name="down">Down</string>
 </resources>

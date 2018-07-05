@@ -18,37 +18,37 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
+            android:layout_height="40dp"
             android:layout_weight="1"
             android:background="?attr/colorPrimary"
             app:layout_scrollFlags="scroll|enterAlways"
             app:popupTheme="@style/AppTheme.PopupOverlay"
-            app:title="MAD캠프 공통과제1">
+            app:title="@string/app_name">
 
         </android.support.v7.widget.Toolbar>
 
         <android.support.design.widget.TabLayout
             android:id="@+id/tabs"
             android:layout_width="match_parent"
-            android:layout_height="50dp">
+            android:layout_height="wrap_content">
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:icon="@android:drawable/btn_star_big_on" />
+                android:icon="@drawable/contacts_48" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem2"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:icon="@android:drawable/ic_menu_report_image" />
+                android:icon="@drawable/stack_of_photos_48" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabItem3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:icon="@mipmap/ic_launcher_round" />
+                android:icon="@drawable/logo_2048" />
 
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>
@@ -57,7 +57,7 @@
         android:id="@+id/container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
 
 
 

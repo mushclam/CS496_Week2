@@ -31,6 +31,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.q.cs496_app1.MainActivity;
 import com.example.q.cs496_app1.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -102,18 +103,24 @@ public class EditContactActivity extends Activity {
             @Override
             public void onClick(View view) {
                 new AlertDialog.Builder(EditContactActivity.this)
-                        .setMessage("이미지를 불러올 방법을 선택하세요")
-                        .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
+                        .setMessage(R.string.load_image)
+                        .setNegativeButton(R.string.load_gallery, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 selectGallery();
                             }
                         })
-                        .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.load_camera, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                checkCameraPermission();
-                                sendTakePhotoIntent();
+                                int permissionCheck = ContextCompat.checkSelfPermission(EditContactActivity.this,
+                                        Manifest.permission.CAMERA);
+
+                                if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+                                    checkCameraPermission();
+                                } else {
+                                    sendTakePhotoIntent();
+                                }
                             }
                         })
                         .create().show();
@@ -124,7 +131,7 @@ public class EditContactActivity extends Activity {
             @Override
             public void onClick(View view) {
                 if(editName.getText().toString().equals("")) {
-                    Toast.makeText(EditContactActivity.this, "이름을 입력하세요", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditContactActivity.this, R.string.enter_name, Toast.LENGTH_SHORT).show();
                     return;
                 }
                 Gson gson = new Gson();
@@ -173,13 +180,34 @@ public class EditContactActivity extends Activity {
         });
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSION_CAMERA: {
+                for (int i = 0; i < permissions.length; i++) {
+                    String permission = permissions[i];
+                    int grantResult = grantResults[i];
+                    if (permission.equals(Manifest.permission.CAMERA)) {
+                        if(grantResult == PackageManager.PERMISSION_GRANTED) {
+                            sendTakePhotoIntent();
+                        } else {
+                            Toast.makeText(this,R.string.require_camera, Toast.LENGTH_LONG).show();
+                        }
+                    }
+                }
+            } break;
+        }
+
+    }
+
     private void checkCameraPermission() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
                 new AlertDialog.Builder(this)
-                        .setMessage("Camera permission not granted")
-                        .setNeutralButton("Settings", new DialogInterface.OnClickListener() {
+                        .setMessage(R.string.camera_permission)
+                        .setNeutralButton(R.string.settings, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -187,7 +215,7 @@ public class EditContactActivity extends Activity {
                                 startActivity(intent);
                             }
                         })
-                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 finish();
@@ -283,6 +311,7 @@ public class EditContactActivity extends Activity {
         Bitmap savedImage = rotate(bitmap, exifDegree);
         editPreview.setImageBitmap(savedImage);
         saveImage(savedImage);
+        new File(imageFilePath).delete();
         return savedImage;
     }
 
@@ -352,7 +381,7 @@ public class EditContactActivity extends Activity {
         OutputStream fout = null;
         try {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            File saveDir = new File("/sdcard/DCIM/");
+            File saveDir = new File("/sdcard/DCIM");
             if (!saveDir.exists()) { saveDir.mkdirs(); }
 
             File internalImage = new File(saveDir, "image_" + timeStamp + ".jpg");
@@ -364,6 +393,8 @@ public class EditContactActivity extends Activity {
             finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
             fout.flush();
             fout.close();
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                    Uri.parse("file://" + internalImage.getPath())));
         } catch (Exception e) {
             e.printStackTrace();
         }

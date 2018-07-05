@@ -5,7 +5,7 @@
         path="Pictures" />
     <files-path
         name="image"
-        path="/" />
+        path="/sdcard/DCIM" />
     <cache-path
         name="image"
         path="/" />

@@ -98,18 +98,24 @@ public class AddContactActivity extends Activity {
             @Override
             public void onClick(View view) {
                 new AlertDialog.Builder(AddContactActivity.this)
-                        .setMessage("이미지를 불러올 방법을 선택하세요")
-                        .setNegativeButton("Gallery", new DialogInterface.OnClickListener() {
+                        .setMessage(R.string.load_image)
+                        .setNegativeButton(R.string.load_gallery, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 selectGallery();
                             }
                         })
-                        .setPositiveButton("Camera", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.load_camera, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                checkCameraPermission();
-                                sendTakePhotoIntent();
+                                int permissionCheck = ContextCompat.checkSelfPermission(AddContactActivity.this,
+                                        Manifest.permission.CAMERA);
+
+                                if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+                                    checkCameraPermission();
+                                } else {
+                                    sendTakePhotoIntent();
+                                }
                             }
                         })
                         .create().show();
@@ -122,7 +128,7 @@ public class AddContactActivity extends Activity {
             @Override
             public void onClick(View v) {
                 if(addName.getText().toString().equals("")) {
-                    Toast.makeText(AddContactActivity.this, "이름을 입력하세요", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AddContactActivity.this, R.string.enter_name, Toast.LENGTH_SHORT).show();
                     return;
                 }
 
@@ -173,10 +179,9 @@ public class AddContactActivity extends Activity {
                     int grantResult = grantResults[i];
                     if (permission.equals(Manifest.permission.CAMERA)) {
                         if(grantResult == PackageManager.PERMISSION_GRANTED) {
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+                            sendTakePhotoIntent();
                         } else {
-                            Toast.makeText(this,"Should have camera permission to run", Toast.LENGTH_LONG).show();
+                            Toast.makeText(this,R.string.require_camera, Toast.LENGTH_LONG).show();
 //                            finish();
                         }
                     }
@@ -191,8 +196,8 @@ public class AddContactActivity extends Activity {
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
                 new AlertDialog.Builder(this)
-                        .setMessage("Camera permission not granted")
-                        .setNeutralButton("Settings", new DialogInterface.OnClickListener() {
+                        .setMessage(R.string.camera_permission)
+                        .setNeutralButton(R.string.settings, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -200,7 +205,7 @@ public class AddContactActivity extends Activity {
                                 startActivity(intent);
                             }
                         })
-                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 finish();
@@ -296,6 +301,7 @@ public class AddContactActivity extends Activity {
         Bitmap savedImage = rotate(bitmap, exifDegree);
         preview.setImageBitmap(savedImage);
         saveImage(savedImage);
+        new File(imageFilePath).delete();
         return savedImage;
     }
 
@@ -377,6 +383,8 @@ public class AddContactActivity extends Activity {
             finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
             fout.flush();
             fout.close();
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                    Uri.parse("file://" + internalImage.getPath())));
         } catch (Exception e) {
             e.printStackTrace();
         }
