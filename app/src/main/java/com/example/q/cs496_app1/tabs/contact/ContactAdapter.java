@@ -47,6 +47,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     private ArrayList mItems;
     private RecyclerViewClickListener listener;
     private static ContactFragment fragment;
+    private ArrayList<Integer> expandedItems = new ArrayList<>();
 
     private int lastPosition = -1;
 
@@ -84,6 +85,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             }
         } else {
             holder.selectingBox.setVisibility(View.GONE);
+        }
+
+        if(expandedItems.contains(position)) {
+            holder.expandMenu.setVisibility(View.VISIBLE);
+        } else {
+            holder.expandMenu.setVisibility(View.GONE);
         }
 
         setAnimation(holder.image, position);
@@ -138,7 +145,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             buttonDetails = (Button)view.findViewById(R.id.button_details);
 
             upperMenu.setOnClickListener(this);
-            selectingBox.setOnClickListener(this);
+            // selectingBox.setOnClickListener(this);
 
             buttonEdit.setOnClickListener(this);
             buttonDelete.setOnClickListener(this);
@@ -166,10 +173,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                 listenerRef.get().onClicked(getAdapterPosition());
             } else {
                 if (v.getId() == upperMenu.getId()) {
-                    if (expandMenu.getVisibility() == LinearLayout.GONE) {
+                    if (!expandedItems.contains(itemPosition)) {
                         expand(expandMenu);
-                    } else if (expandMenu.getVisibility() == LinearLayout.VISIBLE) {
+                        expandedItems.add(itemPosition);
+                    } else {
                         collapse(expandMenu);
+                        expandedItems.remove(Integer.valueOf(itemPosition));
                     }
 
                 } else if (v.getId() == buttonEdit.getId()) {

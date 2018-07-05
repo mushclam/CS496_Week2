@@ -225,9 +225,8 @@ public class MainActivity extends AppCompatActivity {
         switch (requestCode) {
             case 200: {
                 finish();
-                if (grantResults.length > 1
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED
-                        && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 
                     Log.e("퍼미션", "허용");
 

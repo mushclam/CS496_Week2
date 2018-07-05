@@ -1,5 +1,6 @@
 package com.example.q.cs496_app1.tabs.contact;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.q.cs496_app1.MainActivity;
 import com.example.q.cs496_app1.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -36,7 +38,8 @@ import java.util.Collections;
 import java.util.List;
 
 public class ContactFragment extends Fragment {
-    Context mContext;
+    // Context mContext;
+    Activity activity;
 
     // variable for recycler view.
     RecyclerView recyclerView;
@@ -77,7 +80,6 @@ public class ContactFragment extends Fragment {
         setHasOptionsMenu(true);
 
         // indicate context of fragment
-        mContext = getActivity();
         CONTACT_FRAGMENT_CONTEXT = this;
 
         //link with recycler view of xml
@@ -85,29 +87,15 @@ public class ContactFragment extends Fragment {
         recyclerView.setHasFixedSize(true);
 
         // add divider between each list items.
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mContext, new LinearLayoutManager(mContext).getOrientation());
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(activity, new LinearLayoutManager(activity).getOrientation());
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         viewEmpty = view.findViewById(R.id.isEmpty);
 
-        layoutManager = new LinearLayoutManager(mContext);
+        layoutManager = new LinearLayoutManager(activity);
         recyclerView.setLayoutManager(layoutManager);
 
-        // link to adapter
-//        adapter = new ContactAdapter(mContext, items, new RecyclerViewClickListener() {
-//            @Override
-//            public void onClicked(int position) {
-//
-//            }
-//
-//            @Override
-//            public void onLongClicked(int position) {
-//
-//            }
-//        });
-//        recyclerView.setAdapter(adapter);
-
-        swipeRefreshLayout = (SwipeRefreshLayout)view.findViewById(R.id.refresh);
+        swipeRefreshLayout = view.findViewById(R.id.refresh);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -146,12 +134,14 @@ public class ContactFragment extends Fragment {
         }
         if (id == R.id.action_deleteContacts) {
             try {
-                File file = new File(getActivity().getFilesDir() + "/test.json");
+                File file = new File(activity.getFilesDir() + "/test.json");
                 if (!file.exists()){
-                    Toast.makeText(getActivity(), getActivity().getFilesDir() + " + Not Exist", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, activity.getFilesDir() + " + Not Exist", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(getActivity(), getActivity().getFilesDir() + " + Exist", Toast.LENGTH_SHORT).show();
-                    file.delete();
+                    Toast.makeText(activity, activity.getFilesDir() + " + Exist", Toast.LENGTH_SHORT).show();
+                    if(file.delete()) {
+                        Toast.makeText(activity, activity.getFilesDir() + " + Deleted", Toast.LENGTH_SHORT).show();
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -191,7 +181,7 @@ public class ContactFragment extends Fragment {
                 }
             }
 
-            adapter = new ContactAdapter(mContext, items, new RecyclerViewClickListener() {
+            adapter = new ContactAdapter(activity, items, new RecyclerViewClickListener() {
                 @Override
                 public void onClicked(int position) {
 
@@ -213,17 +203,17 @@ public class ContactFragment extends Fragment {
         Gson gson = new Gson();
 
         try {
-            File file = new File(mContext.getFilesDir() + "/test.json");
+            File file = new File(activity.getFilesDir() + "/test.json");
             if(!file.exists()) {
-                FileOutputStream fos = getActivity().openFileOutput("test.json", Context.MODE_PRIVATE);
+                FileOutputStream fos = activity.openFileOutput("test.json", Context.MODE_PRIVATE);
                 fos.close();
             }
-            StringBuffer data = new StringBuffer();
-            FileInputStream fis = getActivity().openFileInput("test.json");
+            StringBuilder data = new StringBuilder();
+            FileInputStream fis = activity.openFileInput("test.json");
             BufferedReader br = new BufferedReader(new InputStreamReader(fis));
             String str = br.readLine();
             while (str != null) {
-                data.append(str + "\n");
+                data.append(str).append("\n");
                 str = br.readLine();
             }
 
@@ -237,7 +227,7 @@ public class ContactFragment extends Fragment {
 
     public void onRefresh() {
         adapter.notifyDataSetChanged();
-        FragmentTransaction ft = getFragmentManager().beginTransaction();
+        FragmentTransaction ft = ((MainActivity) activity).getSupportFragmentManager().beginTransaction();
         ft.detach(ContactFragment.this).attach(ContactFragment.this).commit();
         swipeRefreshLayout.setRefreshing(false);
     }
@@ -280,7 +270,16 @@ public class ContactFragment extends Fragment {
             setSelectingMode(false);
             adapter.notifyDataSetChanged();
         } else {
-            getActivity().finish();
+            activity.finish();
+        }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof Activity) {
+            activity = (Activity) context;
         }
     }
 }

@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.hardware.SensorManager;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.PagerAdapter;
@@ -228,7 +229,7 @@ public class ImageActivity extends AppCompatActivity {
 
             int idx = getArguments().getInt("INDEX");
             MyImage myImage = images.get(idx);
-            Glide.with(getActivity()).load(myImage.getFile()).asBitmap().thumbnail(0.01f).into(target);
+            Glide.with(this).load(myImage.getFile()).asBitmap().thumbnail(0.01f).into(target);
 
             TextView description = rootView.findViewById(R.id.describe_image_view);
 
@@ -246,7 +247,7 @@ public class ImageActivity extends AppCompatActivity {
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        SectionsPagerAdapter(FragmentManager fm) {
             super(fm);
         }
 
@@ -263,22 +264,9 @@ public class ImageActivity extends AppCompatActivity {
         }
 
         @Override
-        public int getItemPosition(Object object) {
+        public int getItemPosition(@NonNull Object object) {
             // refresh all fragments when data set changed
             return PagerAdapter.POSITION_NONE;
         }
-
-//        @Override
-//        public long getItemId(int position) {
-//            // give an ID different from position when position has been changed
-//            return baseId + position;
-//        }
-//
-//        public void notifyChangeInPosition(int n) {
-//            // shift the ID returned by getItemId outside the range of all previous fragments
-//            baseId += getCount() + n;
-//        }
     }
-
-
 }

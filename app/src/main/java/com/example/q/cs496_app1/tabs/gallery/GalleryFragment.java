@@ -1,5 +1,6 @@
 package com.example.q.cs496_app1.tabs.gallery;
 
+import android.app.Activity;
 import android.content.ContentResolver;
 import android.content.ContentUris;
 import android.content.Context;
@@ -11,6 +12,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
@@ -31,6 +33,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.q.cs496_app1.MainActivity;
 import com.example.q.cs496_app1.R;
 import com.example.q.cs496_app1.tabs.contact.ContactFragment;
 
@@ -45,6 +48,8 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class GalleryFragment extends Fragment {
 //    private OnFragmentInteractionListener mListener;
+
+    private Activity activity;
 
     int permsRequestCode = 200;
     String[] perms = {"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"};
@@ -68,7 +73,7 @@ public class GalleryFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
@@ -87,18 +92,18 @@ public class GalleryFragment extends Fragment {
             fetchAllImages();
         }
 
-        RecyclerView galleryRecyclerView = (RecyclerView) view.findViewById(R.id.gallery_recycler);
+        RecyclerView galleryRecyclerView = view.findViewById(R.id.gallery_recycler);
         galleryRecyclerView.setHasFixedSize(true);
 
-        layoutManager = new GridLayoutManager(getActivity(), 3);
+        layoutManager = new GridLayoutManager(activity, 3);
         galleryRecyclerView.setLayoutManager(layoutManager);
         galleryRecyclerView.scrollToPosition(0);
 
-        galleryAdapter = new ImageAdapter(getActivity(), GalleryFragment.this, images);
+        galleryAdapter = new ImageAdapter(activity, GalleryFragment.this, images);
         galleryRecyclerView.setAdapter(galleryAdapter);
         galleryRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        swipeRefreshLayout = (SwipeRefreshLayout) view.findViewById(R.id.refresh);
+        swipeRefreshLayout = view.findViewById(R.id.refresh);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -138,18 +143,22 @@ public class GalleryFragment extends Fragment {
 
                             // Query for the ID of the media matching the file path
                             Uri queryUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
-                            ContentResolver contentResolver = getActivity().getContentResolver();
+                            ContentResolver contentResolver = activity.getContentResolver();
                             Cursor c = contentResolver.query(queryUri, projection, selection, selectionArgs, null);
-                            if (c.moveToFirst()) {
-                                // We found the ID. Deleting the item via the content provider will also remove the file
-                                long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
-                                Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
-                                contentResolver.delete(deleteUri, null, null);
-                            } else {
-                                // File not found in media store DB
+                            if(c != null) {
+                                if (c.moveToFirst()) {
+                                    // We found the ID. Deleting the item via the content provider will also remove the file
+                                    long id = c.getLong(c.getColumnIndexOrThrow(MediaStore.Images.Media._ID));
+                                    Uri deleteUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+                                    contentResolver.delete(deleteUri, null, null);
+                                } else {
+                                    // File not found in media store DB
+                                    Log.e("Delete ", "File not found in media store DB");
+                                }
+
+                                c.close();
                             }
 
-                            c.close();
                         }
 
                         onRefresh(-1);
@@ -163,7 +172,7 @@ public class GalleryFragment extends Fragment {
                     }
                 };
 
-                new AlertDialog.Builder(getActivity())
+                new AlertDialog.Builder(activity)
                         .setTitle("사진 삭제하기")
                         .setPositiveButton("삭제", deleteListener)
                         .setNegativeButton("취소", cancelListener)
@@ -194,32 +203,35 @@ public class GalleryFragment extends Fragment {
         String[] projection = {MediaStore.Images.Media.DATA, MediaStore.Images.Media.DATE_TAKEN,
                 MediaStore.Images.Media.LONGITUDE, MediaStore.Images.Media.LATITUDE};
 
-        Cursor imageCursor = getActivity().getContentResolver().query(
+        Cursor imageCursor = activity.getContentResolver().query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI, // 이미지 컨텐트 테이블
                 projection,
                 null,       // 모든 개체 출력
                 null,
                 null);      // 정렬 안 함
 
-        ArrayList<MyImage> result = new ArrayList<>(imageCursor.getCount());
+        if(imageCursor != null) {
+            ArrayList<MyImage> result = new ArrayList<>(imageCursor.getCount());
 
-        if (imageCursor.moveToFirst()) {
-            do {
-                String filePath = imageCursor.getString(imageCursor.getColumnIndex(projection[0]));
-                long taken = imageCursor.getLong(imageCursor.getColumnIndex(projection[1]));
-                float longitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[2]));
-                float latitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[3]));
+            if (imageCursor.moveToFirst()) {
+                do {
+                    String filePath = imageCursor.getString(imageCursor.getColumnIndex(projection[0]));
+                    long taken = imageCursor.getLong(imageCursor.getColumnIndex(projection[1]));
+                    float longitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[2]));
+                    float latitude = imageCursor.getFloat(imageCursor.getColumnIndex(projection[3]));
 
 //                if(new File(filePath).exists())
-                result.add(new MyImage(filePath, taken, longitude, latitude));
-            } while (imageCursor.moveToNext());
-        } else {
-            // imageCursor가 비었습니다.
-        }
-        imageCursor.close();
+                    result.add(new MyImage(filePath, taken, longitude, latitude));
+                } while (imageCursor.moveToNext());
+            } else {
+                // imageCursor가 비었습니다.
+                Log.e("Fetch All Images", "ImageCursor is empty");
+            }
+            imageCursor.close();
 
-        Collections.sort(result, Collections.reverseOrder());
-        this.images = result;
+            Collections.sort(result, Collections.reverseOrder());
+            this.images = result;
+        }
     }
 
     public void onRefresh(final int i) {
@@ -227,7 +239,7 @@ public class GalleryFragment extends Fragment {
             fetchAllImages();
             // selected_images = new ArrayList<>();
             galleryAdapter.notifyDataSetChanged();
-            FragmentTransaction ft = getFragmentManager().beginTransaction();
+            FragmentTransaction ft = ((MainActivity) activity).getSupportFragmentManager().beginTransaction();
             ft.detach(GalleryFragment.this).attach(GalleryFragment.this).commitAllowingStateLoss();
             if (i >= 0) {
                 new Handler().postDelayed(new Runnable() {
@@ -245,14 +257,13 @@ public class GalleryFragment extends Fragment {
 
 
     private boolean checkPermission() {
-        int resultR = ContextCompat.checkSelfPermission(getActivity(), READ_EXTERNAL_STORAGE);
-        int resultW = ContextCompat.checkSelfPermission(getActivity(), WRITE_EXTERNAL_STORAGE);
+        int resultW = ContextCompat.checkSelfPermission(activity, WRITE_EXTERNAL_STORAGE);
 
-        return resultR == PackageManager.PERMISSION_GRANTED && resultW == PackageManager.PERMISSION_GRANTED;
+        return resultW == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermission() {
-        ActivityCompat.requestPermissions(getActivity(), perms, permsRequestCode);
+        ActivityCompat.requestPermissions(activity, perms, permsRequestCode);
     }
 
     @Override
@@ -288,8 +299,21 @@ public class GalleryFragment extends Fragment {
             setSelectingMode(false);
             galleryAdapter.notifyDataSetChanged();
         } else {
-            getActivity().finish();
+            activity.finish();
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof Activity) {
+            activity = (Activity) context;
+        }
+    }
+
+    public Activity getMainActivity() {
+        return activity;
     }
 }
 

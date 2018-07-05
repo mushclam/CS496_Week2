@@ -1,5 +1,6 @@
 package com.example.q.cs496_app1.tabs.third;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -24,7 +25,7 @@ import com.example.q.cs496_app1.tabs.gallery.ImageActivity;
 
 public class ThirdFragment extends Fragment {
 
-    private Context mContext;
+    private Activity activity;
 
     private static final String WIDTH = "width";
     private static final String HEIGHT = "height";
@@ -52,12 +53,11 @@ public class ThirdFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        mContext = getActivity();
-        view = new MainView(mContext);
+        view = new MainView(activity);
 
         setHasOptionsMenu(true);
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
         view.hasSaveState = settings.getBoolean("save_state", false);
 
         if (savedInstanceState != null) {
@@ -78,9 +78,9 @@ public class ThirdFragment extends Fragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()) {
             case R.id.action_settings_third:
-                Intent settingIntent = new Intent(mContext, Third_Setting_Activity.class);
+                Intent settingIntent = new Intent(activity, Third_Setting_Activity.class);
 
-                getActivity().startActivityForResult(settingIntent, 4000);
+                activity.startActivityForResult(settingIntent, 4000);
                 return true;
             default:
                 break;
@@ -103,7 +103,7 @@ public class ThirdFragment extends Fragment {
     }
 
     private void save() {
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
         SharedPreferences.Editor editor = settings.edit();
         Tile[][] field = view.game.grid.field;
         Tile[][] undoField = view.game.grid.undoField;
@@ -130,7 +130,7 @@ public class ThirdFragment extends Fragment {
         editor.putBoolean(CAN_UNDO, view.game.canUndo);
         editor.putInt(GAME_STATE, view.game.gameState);
         editor.putInt(UNDO_GAME_STATE, view.game.lastGameState);
-        editor.commit();
+        editor.apply();
     }
 
     public void onResume() {
@@ -142,7 +142,7 @@ public class ThirdFragment extends Fragment {
         //Stopping all animations
         view.game.aGrid.cancelAnimations();
 
-        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(mContext);
+        SharedPreferences settings = PreferenceManager.getDefaultSharedPreferences(activity);
         for (int xx = 0; xx < view.game.grid.field.length; xx++) {
             for (int yy = 0; yy < view.game.grid.field[0].length; yy++) {
                 int value = settings.getInt(xx + " " + yy, -1);
@@ -168,4 +168,14 @@ public class ThirdFragment extends Fragment {
         view.game.gameState = settings.getInt(GAME_STATE, view.game.gameState);
         view.game.lastGameState = settings.getInt(UNDO_GAME_STATE, view.game.lastGameState);
     }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        if (context instanceof Activity) {
+            activity = (Activity) context;
+        }
+    }
+
 }

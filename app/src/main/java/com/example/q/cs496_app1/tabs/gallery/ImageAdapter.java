@@ -142,9 +142,8 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
                 imageIntent.putExtra("INDEX", getLayoutPosition());
                 imageIntent.putExtra("IMAGE", images);
 
-                fragment.getActivity().startActivityForResult(imageIntent, 3000);
+                fragment.getMainActivity().startActivityForResult(imageIntent, 3000);
             }
         }
-
     }
 }
