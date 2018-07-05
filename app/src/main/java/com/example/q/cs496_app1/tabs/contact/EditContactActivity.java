@@ -92,13 +92,16 @@ public class EditContactActivity extends Activity {
         orgEmail = intent.getStringExtra("email");
         itemPosition = intent.getIntExtra("itemPosition", 0);
 
-        Glide.with(EditContactActivity.this).load(orgImage).into(editPreview);
+        if (orgImage != null) {
+//            Glide.with(EditContactActivity.this).load(orgImage).into(editPreview);
+            Bitmap bitmap = new BitmapFactory().decodeFile(orgImage);
+            editPreview.setImageBitmap(bitmap);
+            editPreview.setColorFilter(Color.argb(128,0,0,0));
+        }
         imagePath = orgImage;
         editName.setText(orgName);
         editPhoneNumber.setText(orgPhoneNumber);
         editEmail.setText(orgEmail);
-
-        editPreview.setColorFilter(Color.argb(128,0,0,0));
 
         editPhoneNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
@@ -268,7 +271,7 @@ public class EditContactActivity extends Activity {
                     new EditContactActivity.getImage(data.getData()).execute();
                 } break;
                 case CAMERA_CODE: {
-                    editPreview.setImageBitmap(processPicture());
+                    processPicture();
                 }
             }
         }
@@ -287,12 +290,13 @@ public class EditContactActivity extends Activity {
         int exifDegree = exifOrientationToDegrees(exifOrientation);
 
         Bitmap bitmap = rotate(BitmapFactory.decodeFile(imagePath), exifDegree);
-//        preview.setImageBitmap(rotate(bitmap, exifDegree));
+//        editPreview.setImageBitmap(rotate(bitmap, exifDegree));
         return bitmap;
     }
 
     private Bitmap processPicture() {
         Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
+        Log.e("IFP", imageFilePath);
         ExifInterface exif = null;
 
         try {
