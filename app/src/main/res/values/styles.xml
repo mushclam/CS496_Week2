@@ -21,4 +21,11 @@
         <item name="android:windowBackground"> @drawable/splash_background </item>
     </style>
 
+    <style name="splash">
+        <item name="android:src">@drawable/ico_2048_logo</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">24dp</item>
+        <item name="android:layout_height">24dp</item>
+    </style>
+
 </resources>
