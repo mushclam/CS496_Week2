@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.media.ExifInterface;
@@ -91,6 +92,8 @@ public class AddContactActivity extends Activity {
         addPhoneNumber = (EditText)findViewById(R.id.addPhoneNumber);
         addEmail = (EditText)findViewById(R.id.addEmail);
         save_button = (Button)findViewById(R.id.save_button);
+
+        preview.setColorFilter(Color.argb(128,0,0,0));
 
         addPhoneNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
