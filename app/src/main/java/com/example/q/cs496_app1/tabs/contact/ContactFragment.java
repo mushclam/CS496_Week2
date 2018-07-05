@@ -2,11 +2,13 @@ package com.example.q.cs496_app1.tabs.contact;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -38,7 +40,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class ContactFragment extends Fragment {
-    // Context mContext;
     Activity activity;
 
     // variable for recycler view.
@@ -133,19 +134,53 @@ public class ContactFragment extends Fragment {
             return true;
         }
         if (id == R.id.action_deleteContacts) {
-            try {
-                File file = new File(activity.getFilesDir() + "/test.json");
-                if (!file.exists()){
-                    Toast.makeText(activity, activity.getFilesDir() + " + Not Exist", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(activity, activity.getFilesDir() + " + Exist", Toast.LENGTH_SHORT).show();
-                    if(file.delete()) {
-                        Toast.makeText(activity, activity.getFilesDir() + " + Deleted", Toast.LENGTH_SHORT).show();
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            AlertDialog.Builder alert = new AlertDialog.Builder(activity);
+            alert.setMessage(R.string.alert_delete)
+                    .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Gson gson = new Gson();
+
+                            try {
+                                Collections.sort(selectedItems, Collections.reverseOrder());
+                                for(int index : selectedItems) {
+                                    items.remove(index);
+                                }
+
+                                String json = gson.toJson(items);
+
+                                FileOutputStream fos = activity
+                                        .openFileOutput("test.json", Context.MODE_PRIVATE);
+                                fos.write(json.getBytes());
+                                fos.close();
+                                Toast.makeText(activity, R.string.success_delete, Toast.LENGTH_SHORT).show();
+                            } catch (IOException e) {
+                                Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+
+                            onResume();
+                        }
+                    })
+                    .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            Toast.makeText(activity, "CANCELED", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .create().show();
+//            try {
+//                File file = new File(activity.getFilesDir() + "/test.json");
+//                if (!file.exists()){
+//                    Toast.makeText(activity, activity.getFilesDir() + " + Not Exist", Toast.LENGTH_SHORT).show();
+//                } else {
+//                    Toast.makeText(activity, activity.getFilesDir() + " + Exist", Toast.LENGTH_SHORT).show();
+//                    if(file.delete()) {
+//                        Toast.makeText(activity, activity.getFilesDir() + " + Deleted", Toast.LENGTH_SHORT).show();
+//                    }
+//                }
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -239,6 +274,8 @@ public class ContactFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        selectedItems = new ArrayList<>();
+        setSelectingMode(false);
         locationAndContactsTask();
     }
 
