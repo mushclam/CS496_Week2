@@ -5,6 +5,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -65,7 +66,8 @@ public class DetailsContactActivity extends Activity {
         tvEmail = (TextView)findViewById(R.id.ind_email);
 
         Glide.with(DetailsContactActivity.this).load(image).into(tvImage);
-        tvName.setText(name);
+        tvImage.setColorFilter(Color.argb(128,0,0,0));tvName.setText(name);
+
         tvPhoneNumber.setText(phoneNumber);
         tvEmail.setText(email);
 

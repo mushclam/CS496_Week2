@@ -23,6 +23,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.animation.Transformation;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -43,9 +44,13 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     private Context context;
     private ArrayList mItems;
     private RecyclerViewClickListener listener;
-    private List<Integer> selectedList;
+    public List<Integer> selectedList;
+
+    public int selectingMode = MODE_OFF;
     private final static int NOT_SELECTED = 0;
     private final static int SELECTED = 1;
+    private final static int MODE_OFF = 0;
+    private final static int MODE_ON = 1;
 
     private int lastPosition = -1;
 
@@ -76,6 +81,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         holder.phoneNumber.setText(item.getPhoneNumber());
         holder.image.setBackground(new ShapeDrawable(new OvalShape()));
         holder.image.setClipToOutline(true);
+        if (selectingMode == MODE_ON) {
+            holder.selectingBox.setVisibility(View.VISIBLE);
+            if(holder.upperMenu.isSelected()) {
+                holder.selectingBox.setChecked(true);
+            }
+        } else {
+            holder.selectingBox.setVisibility(View.GONE);
+        }
 
         setAnimation(holder.image, position);
     }
@@ -100,6 +113,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         public TextView name;
         public ImageView image;
         public TextView phoneNumber;
+        public CheckBox selectingBox;
 
         public LinearLayout expandMenu;
         private Button buttonEdit;
@@ -120,6 +134,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             name = (TextView)view.findViewById(R.id.name);
             image = (ImageView)view.findViewById(R.id.image);
             phoneNumber = (TextView)view.findViewById(R.id.phoneNumber);
+            selectingBox = (CheckBox)view.findViewById(R.id.selectingBox);
 
             expandMenu = (LinearLayout)view.findViewById(R.id.expand_menu);
             buttonEdit = (Button)view.findViewById(R.id.button_edit);
@@ -127,6 +142,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             buttonDetails = (Button)view.findViewById(R.id.button_details);
 
             upperMenu.setOnClickListener(this);
+            selectingBox.setOnClickListener(this);
+
             buttonEdit.setOnClickListener(this);
             buttonDelete.setOnClickListener(this);
             buttonDetails.setOnClickListener(this);
@@ -139,70 +156,78 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             itemPosition = getAdapterPosition();
             ContactItem item = (ContactItem) mItems.get(itemPosition);
 
-            if (v.getId() == upperMenu.getId()) {
-                if (expandMenu.getVisibility() == LinearLayout.GONE) {
-                    expand(expandMenu);
-                } else if (expandMenu.getVisibility() == LinearLayout.VISIBLE) {
-                    collapse(expandMenu);
+            if (selectingMode == MODE_ON) {
+                if (v.getId() == upperMenu.getId()) {
+                    selectingBox.setChecked(!selectingBox.isChecked());
+                }
+                listenerRef.get().onClicked(getAdapterPosition());
+            } else {
+                if (v.getId() == upperMenu.getId()) {
+                    if (expandMenu.getVisibility() == LinearLayout.GONE) {
+                        expand(expandMenu);
+                    } else if (expandMenu.getVisibility() == LinearLayout.VISIBLE) {
+                        collapse(expandMenu);
+                    }
+
+                } else if (v.getId() == buttonEdit.getId()) {
+                    Intent intent = new Intent(context, EditContactActivity.class);
+                    intent.putExtra("itemPosition", itemPosition);
+                    intent.putExtra("image", String.valueOf(item.getImage()));
+                    intent.putExtra("name", String.valueOf(item.getName()));
+                    intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
+
+                    context.startActivity(intent);
+
+                } else if (v.getId() == buttonDelete.getId()) {
+                    AlertDialog.Builder alert = new AlertDialog.Builder(context);
+                    alert.setMessage("Are you sure to DELETE?")
+                            .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Gson gson = new Gson();
+
+                                    try {
+                                        mItems.remove(itemPosition);
+
+                                        String json = gson.toJson(mItems);
+
+                                        FileOutputStream fos = context.getApplicationContext()
+                                                .openFileOutput("test.json", Context.MODE_PRIVATE);
+                                        fos.write(json.getBytes());
+                                        fos.close();
+                                        Toast.makeText(context, "Delete Success", Toast.LENGTH_SHORT).show();
+                                    } catch (IOException e) {
+                                        Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+
+                                    notifyDataSetChanged();
+                                }
+                            })
+                            .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    Toast.makeText(context, "CANCELED", Toast.LENGTH_SHORT).show();
+                                }
+                            })
+                            .create().show();
+
+                } else if (v.getId() == buttonDetails.getId()) {
+                    Intent intent = new Intent(context, DetailsContactActivity.class);
+                    intent.putExtra("itemPosition", itemPosition);
+                    intent.putExtra("image", String.valueOf(item.getImage()));
+                    intent.putExtra("name", String.valueOf(item.getName()));
+                    intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
+                    intent.putExtra("email", String.valueOf(item.getEmail()));
+
+                    context.startActivity(intent);
+
+                } else {
+                    Toast.makeText(context, "NOT ANY BUTTON" + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
                 }
 
-            } else if (v.getId() == buttonEdit.getId()) {
-                Intent intent = new Intent(context, EditContactActivity.class);
-                intent.putExtra("itemPosition", itemPosition);
-                intent.putExtra("image", String.valueOf(item.getImage()));
-                intent.putExtra("name", String.valueOf(item.getName()));
-                intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
-
-                context.startActivity(intent);
-
-            } else if (v.getId() == buttonDelete.getId()) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                alert.setMessage("Are you sure to DELETE?")
-                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Gson gson = new Gson();
-
-                                try {
-                                    mItems.remove(itemPosition);
-
-                                    String json = gson.toJson(mItems);
-
-                                    FileOutputStream fos = context.getApplicationContext()
-                                            .openFileOutput("test.json", Context.MODE_PRIVATE);
-                                    fos.write(json.getBytes());
-                                    fos.close();
-                                    Toast.makeText(context, "Delete Success", Toast.LENGTH_SHORT).show();
-                                } catch (IOException e) {
-                                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
-
-                                notifyDataSetChanged();
-                            }
-                        })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-                                Toast.makeText(context, "CANCELED", Toast.LENGTH_SHORT).show();
-                            }
-                        })
-                        .create().show();
-
-            } else if (v.getId() == buttonDetails.getId()) {
-                Intent intent = new Intent(context, DetailsContactActivity.class);
-                intent.putExtra("itemPosition", itemPosition);
-                intent.putExtra("image", String.valueOf(item.getImage()));
-                intent.putExtra("name", String.valueOf(item.getName()));
-                intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
-                intent.putExtra("email", String.valueOf(item.getEmail()));
-
-                context.startActivity(intent);
-
-            } else {
-                Toast.makeText(context, "NOT ANY BUTTON" + String.valueOf(getAdapterPosition()), Toast.LENGTH_SHORT).show();
+                listenerRef.get().onClicked(getAdapterPosition());
             }
 
-            listenerRef.get().onClicked(getAdapterPosition());
         }
 
         @Override
@@ -210,23 +235,14 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
             itemPosition = getAdapterPosition();
             ContactItem item = (ContactItem) mItems.get(itemPosition);
 
-            if (selectedList.get(itemPosition) == NOT_SELECTED) {
-                if(view.getId() == upperMenu.getId()) {
-                    Toast.makeText(context, "Selected Upper Menu" + itemPosition, Toast.LENGTH_SHORT).show();
-                    selectedList.set(itemPosition, SELECTED);
-                    upperMenu.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
-                } else {
-                    Toast.makeText(context, "Select where?" + itemPosition, Toast.LENGTH_SHORT).show();
-                }
-            } else {
-                if(view.getId() == upperMenu.getId()) {
-                    Toast.makeText(context, "UnSelected Upper Menu" + itemPosition, Toast.LENGTH_SHORT).show();
-                    selectedList.set(itemPosition, NOT_SELECTED);
-                    upperMenu.setBackgroundColor(Color.WHITE);
-                } else {
-                    Toast.makeText(context, "Long Click where?" + itemPosition, Toast.LENGTH_SHORT).show();
-                }
+            if (selectingMode == MODE_OFF) {
+                selectingMode = MODE_ON;
+                Log.e("SELECTED", String.valueOf(itemPosition));
+
+                selectedList.add(itemPosition);
+                notifyDataSetChanged();
             }
+            listenerRef.get().onClicked(getAdapterPosition());
 
             return true;
         }
