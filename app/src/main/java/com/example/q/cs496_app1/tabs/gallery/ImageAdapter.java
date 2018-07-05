@@ -7,6 +7,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.os.Build;
@@ -71,11 +73,14 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
             viewHolder.checkBox.setVisibility(View.VISIBLE);
             if(fragment.isSelected(i)) {
                 viewHolder.checkBox.setChecked(true);
+                viewHolder.img.setColorFilter(Color.parseColor("#979797"), PorterDuff.Mode.MULTIPLY);
             } else {
                 viewHolder.checkBox.setChecked(false);
+                viewHolder.img.setColorFilter(null);
             }
         } else {
             viewHolder.checkBox.setVisibility(View.GONE);
+            viewHolder.img.setColorFilter(null);
         }
     }
 
@@ -91,7 +96,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
 
         public ViewHolder(View view) {
             super(view);
-
 
             imageAdapter = view.findViewById(R.id.image_adapter);
             img = view.findViewById(R.id.imageView);
