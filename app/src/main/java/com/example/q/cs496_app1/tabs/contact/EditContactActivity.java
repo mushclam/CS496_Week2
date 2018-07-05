@@ -170,7 +170,7 @@ public class EditContactActivity extends Activity {
                     FileOutputStream fos = openFileOutput("test.json", Context.MODE_PRIVATE);
                     fos.write(json.getBytes());
                     fos.close();
-                    Toast.makeText(EditContactActivity.this, "Edit Success", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(EditContactActivity.this, R.string.success_edit, Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
                     Toast.makeText(EditContactActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }

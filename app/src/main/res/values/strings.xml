@@ -38,6 +38,8 @@
     <string name="delete">Delete</string>
     <string name="details">Details</string>
 
+    <string name="alert_delete">Are you sure to delete?</string>
+
     <string name="enter_name">Please Enter Name</string>
     <string name="enter_phone_number">Enter Phone Number</string>
     <string name="enter_email_address">Enter Email Address</string>
@@ -46,6 +48,9 @@
 
     <string name="camera_permission">Camera permission not granted</string>
     <string name="require_camera">Should require camera permission to run</string>
+
+    <string name="success_edit">Edit Success</string>
+    <string name="success_delete">Delete Success</string>
 
     <string name="settings">Settings</string>
     <string name="confirm">Confirm</string>

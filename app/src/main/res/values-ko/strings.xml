@@ -38,6 +38,8 @@
     <string name="delete">삭제</string>
     <string name="details">상세 정보</string>
 
+    <string name="alert_delete">정말로 삭제할까요?</string>
+
     <string name="enter_name">이름을 입력하세요</string>
     <string name="enter_phone_number">전화 번호를 입력하세요</string>
     <string name="enter_email_address">이메일을 입력하세요</string>
@@ -46,6 +48,9 @@
 
     <string name="camera_permission">카메라 권한이 허용되지 않았습니다</string>
     <string name="require_camera">실행을 위해 카메라 권한이 필요합니다</string>
+
+    <string name="success_edit">수정 성공</string>
+    <string name="success_delete">삭제 성공</string>
 
     <string name="settings">설정</string>
     <string name="confirm">확인</string>

@@ -157,8 +157,8 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
             } else if (v.getId() == buttonDelete.getId()) {
                 AlertDialog.Builder alert = new AlertDialog.Builder(context);
-                alert.setMessage("Are you sure to DELETE?")
-                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                alert.setMessage(R.string.alert_delete)
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Gson gson = new Gson();
@@ -172,7 +172,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                                             .openFileOutput("test.json", Context.MODE_PRIVATE);
                                     fos.write(json.getBytes());
                                     fos.close();
-                                    Toast.makeText(context, "Delete Success", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, R.string.success_delete, Toast.LENGTH_SHORT).show();
                                 } catch (IOException e) {
                                     Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 }
@@ -180,7 +180,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                                 notifyDataSetChanged();
                             }
                         })
-                        .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Toast.makeText(context, "CANCELED", Toast.LENGTH_SHORT).show();

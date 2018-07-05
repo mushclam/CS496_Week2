@@ -39,13 +39,12 @@
         style="@style/Widget.AppCompat.SeekBar"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
-        android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="150dp"
         android:max="10"
         android:progress="5"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/right_text_view"
