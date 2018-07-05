@@ -20,6 +20,9 @@
     <string name="for_now">For now…</string>
     <string name="endless">"Endless" Mode</string>
 
+    <!-- Splash Activity -->
+    <string name="why_not_grant">"Please grant Permission for Gallery Tab"</string>
+
     <!-- Confirmation dialog-->
     <string name="reset">Reset</string>
     <string name="continue_game">Cancel</string>
@@ -69,4 +72,5 @@
     <string name="right">Right</string>
     <string name="up">Up</string>
     <string name="down">Down</string>
+    <string name="sensitive_change">Sensitivity has changed</string>
 </resources>

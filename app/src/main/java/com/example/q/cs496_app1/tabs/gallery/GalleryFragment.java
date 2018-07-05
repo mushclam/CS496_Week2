@@ -51,9 +51,6 @@ public class GalleryFragment extends Fragment {
 
     private Activity activity;
 
-    int permsRequestCode = 200;
-    String[] perms = {"android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"};
-
     RecyclerView.LayoutManager layoutManager;
 
     ArrayList<MyImage> images;
@@ -79,11 +76,6 @@ public class GalleryFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_gallery, container, false);
 
         setHasOptionsMenu(true);
-
-        // 권한
-        if (!checkPermission()) {
-            requestPermission(); // 거절당했을 때 행동도 만들어야 함.
-        }
 
         images = new ArrayList<>();
         selected_images = new ArrayList<>();
@@ -260,10 +252,6 @@ public class GalleryFragment extends Fragment {
         int resultW = ContextCompat.checkSelfPermission(activity, WRITE_EXTERNAL_STORAGE);
 
         return resultW == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestPermission() {
-        ActivityCompat.requestPermissions(activity, perms, permsRequestCode);
     }
 
     @Override

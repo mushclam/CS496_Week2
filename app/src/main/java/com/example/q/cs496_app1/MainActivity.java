@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
         mFragments[1] = new GalleryFragment();
         mFragments[2] = new ThirdFragment();
 
-        fab = (FloatingActionButton)findViewById(R.id.fab);
+        fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-        fab2 = (FloatingActionButton)findViewById(R.id.fab2);
+        fab2 = findViewById(R.id.fab2);
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -150,8 +150,6 @@ public class MainActivity extends AppCompatActivity {
         mAccLis = new AccelerometerListener();
 
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
-        //xyzView = view.findViewById(R.id.xyz_view);
 
         Xs = new double[20];
         Zs = new double[20];
@@ -229,23 +227,6 @@ public class MainActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
         Log.e("퍼미션", "결과 받음");
         switch (requestCode) {
-            case 200: {
-                finish();
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    Log.e("퍼미션", "허용");
-
-                    overridePendingTransition( 0, 0);
-                    startActivity(getIntent());
-                    overridePendingTransition( 0, 0);
-
-                } else {
-                    Log.e("퍼미션", "거절");
-                }
-                return;
-            }
-
             case MY_PERMISSION_CAMERA: {
                 for (int i = 0; i < permissions.length; i++) {
                     String permission = permissions[i];
@@ -269,17 +250,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void resetSensitivity() {
-
-
         SharedPreferences sensPref = getSharedPreferences("Sensitivity", MODE_PRIVATE);
         sensitivityL = sensPref.getInt("left", 5);
         sensitivityR = sensPref.getInt("right", 5);
         sensitivityU = sensPref.getInt("up", 5);
         sensitivityD = sensPref.getInt("down", 5);
 
-        Toast.makeText(this, "민감도 설정됨\nL: " + String.valueOf(sensitivityL) +
-                "\nR: " + String.valueOf(sensitivityR) + "\nU: " + String.valueOf(sensitivityU) +
-                "\nD: " + String.valueOf(sensitivityD), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(this, "민감도 설정됨\nL: " + String.valueOf(sensitivityL) +
+//                "\nR: " + String.valueOf(sensitivityR) + "\nU: " + String.valueOf(sensitivityU) +
+//                "\nD: " + String.valueOf(sensitivityD), Toast.LENGTH_SHORT).show();
     }
 
     public boolean isLeft(double[] Xs) {

@@ -5,9 +5,12 @@ import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.view.accessibility.AccessibilityManager;
 import android.widget.Button;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+import android.content.Context;
 
 import com.example.q.cs496_app1.R;
 
@@ -17,6 +20,8 @@ public class Third_Setting_Activity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_third__setting_);
+
+        final Context mContext = this;
 
         final SeekBar sb_l  = findViewById(R.id.seekBar_L);
         final SeekBar sb_r  = findViewById(R.id.seekBar_R);
@@ -45,6 +50,8 @@ public class Third_Setting_Activity extends AppCompatActivity {
 
                 Intent resultIntent = new Intent();
                 setResult(RESULT_OK, resultIntent);
+
+                Toast.makeText(mContext, R.string.sensitive_change, Toast.LENGTH_SHORT).show();
                 finish();
             }
         });

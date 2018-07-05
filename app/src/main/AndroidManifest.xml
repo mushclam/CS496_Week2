@@ -47,9 +47,6 @@
         <activity
             android:name=".tabs.contact.EditContactActivity"
             android:screenOrientation="portrait" />
-        <activity
-            android:name=".tabs.gallery.DialogActivity"
-            android:theme="@android:style/Theme.Dialog" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

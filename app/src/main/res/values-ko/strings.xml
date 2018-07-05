@@ -21,6 +21,9 @@
     <string name="for_now">For now…</string>
     <string name="endless">"엔드리스" 모드</string>
 
+    <!-- Splash Activity -->
+    <string name="why_not_grant">"갤러리 탭을 보기 위해 권한을 허용해야 합니다."</string>
+
     <!-- Confirmation dialog-->
     <string name="reset">재시작</string>
     <string name="continue_game">취소</string>
@@ -70,5 +73,6 @@
     <string name="right">우</string>
     <string name="up">상</string>
     <string name="down">하</string>
+    <string name="sensitive_change">민감도가 변경되었습니다</string>
 
 </resources>
