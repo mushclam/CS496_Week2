@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.media.Image;
@@ -96,6 +97,8 @@ public class EditContactActivity extends Activity {
         editName.setText(orgName);
         editPhoneNumber.setText(orgPhoneNumber);
         editEmail.setText(orgEmail);
+
+        editPreview.setColorFilter(Color.argb(128,0,0,0));
 
         editPhoneNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
