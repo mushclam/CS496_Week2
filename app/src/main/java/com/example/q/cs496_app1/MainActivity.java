@@ -389,7 +389,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Animation animation = new AlphaAnimation(0, 1);
                     animation.setDuration(700);
-                    direction_arrow.setImageResource(R.drawable.direction_left);
+                    direction_arrow.setImageResource(R.drawable.navigation_left);
                     direction_arrow.setVisibility(View.VISIBLE);
                     direction_arrow.setAnimation(animation);
 
@@ -410,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Animation animation = new AlphaAnimation(0, 1);
                     animation.setDuration(700);
-                    direction_arrow.setImageResource(R.drawable.direction_right);
+                    direction_arrow.setImageResource(R.drawable.navigation_right);
                     direction_arrow.setVisibility(View.VISIBLE);
                     direction_arrow.setAnimation(animation);
 
@@ -431,7 +431,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Animation animation = new AlphaAnimation(0, 1);
                     animation.setDuration(700);
-                    direction_arrow.setImageResource(R.drawable.direction_up);
+                    direction_arrow.setImageResource(R.drawable.navigation_up);
                     direction_arrow.setVisibility(View.VISIBLE);
                     direction_arrow.setAnimation(animation);
 
@@ -452,7 +452,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Animation animation = new AlphaAnimation(0, 1);
                     animation.setDuration(700);
-                    direction_arrow.setImageResource(R.drawable.direction_down);
+                    direction_arrow.setImageResource(R.drawable.navigation_down);
                     direction_arrow.setVisibility(View.VISIBLE);
                     direction_arrow.setAnimation(animation);
 
