@@ -45,6 +45,7 @@
             android:layout_marginLeft="5dp"
             android:layout_toEndOf="@+id/image"
             android:text="Name"
+            android:textColor="@color/text"
             android:textSize="18dp" />
 
         <TextView
@@ -71,10 +72,10 @@
         android:id="@+id/expand_menu"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="#efefdf"
         android:divider="@drawable/vertical_divider"
         android:orientation="horizontal"
         android:showDividers="none"
-        android:background="#dfdfef"
         android:visibility="gone">
 
         <Button
@@ -83,7 +84,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/ripple_custom_hv21"
-            android:text="Edit" />
+            android:text="@string/edit" />
 
         <Button
             android:id="@+id/button_delete"
@@ -91,7 +92,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/ripple_custom_hv21"
-            android:text="Delete" />
+            android:text="@string/delete" />
 
         <Button
             android:id="@+id/button_details"
@@ -99,7 +100,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:background="@drawable/ripple_custom_hv21"
-            android:text="Details" />
+            android:text="@string/details" />
     </LinearLayout>
 
 </LinearLayout>

@@ -27,13 +27,13 @@
                 android:layout_alignParentStart="true"
                 android:layout_marginBottom="20dp"
                 android:layout_marginLeft="20dp"
-                android:ems="10"
-                android:inputType="textPersonName"
-                android:hint="Please Enter Name"
-                android:textColorHint="@android:color/white"
                 android:backgroundTint="@android:color/white"
+                android:ems="10"
+                android:hint="@string/enter_name"
                 android:imeOptions="actionNext"
-                android:textColor="#ffffee" />
+                android:inputType="textPersonName"
+                android:textColor="#ffffee"
+                android:textColorHint="@android:color/white" />
 
             <Button
                 android:id="@+id/save_button"
@@ -42,7 +42,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentTop="true"
                 android:background="@android:color/transparent"
-                android:text="Save"
+                android:text="@string/save"
                 android:textColor="@android:color/white" />
 
             <ImageButton
@@ -74,7 +74,7 @@
                     android:id="@+id/dis_phoneNumber"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Phone Number"
+                    android:text="@string/phone_number"
                     android:textSize="12sp" />
 
                 <EditText
@@ -84,7 +84,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/dis_phoneNumber"
                     android:ems="10"
-                    android:hint="Enter Phone Number"
+                    android:hint="@string/enter_phone_number"
                     android:inputType="text|phone"
                     android:maxLength="13"
                     android:textSize="12sp" />
@@ -106,7 +106,7 @@
                     android:id="@+id/dis_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Email Address"
+                    android:text="@string/email_address"
                     android:textSize="12sp" />
 
                 <EditText
@@ -116,7 +116,7 @@
                     android:layout_alignParentStart="true"
                     android:layout_below="@+id/dis_email"
                     android:ems="10"
-                    android:hint="Enter Email Address"
+                    android:hint="@string/enter_email_address"
                     android:inputType="text|phone"
                     android:textSize="12sp" />
 

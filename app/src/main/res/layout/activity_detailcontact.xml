@@ -31,7 +31,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_toStartOf="@+id/delete_button"
                 android:background="@android:color/transparent"
-                android:text="Edit"
+                android:text="@string/edit"
                 android:textColor="@android:color/white" />
 
             <Button
@@ -41,7 +41,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentTop="true"
                 android:background="@android:color/transparent"
-                android:text="Delete"
+                android:text="@string/delete"
                 android:textColor="@android:color/white" />
 
             <TextView
@@ -53,7 +53,7 @@
                 android:layout_marginStart="0dp"
                 android:paddingBottom="20dp"
                 android:paddingLeft="20dp"
-                android:text="test"
+                android:text="@string/name"
                 android:textColor="#ffffee"
                 android:textSize="20sp" />
         </RelativeLayout>
@@ -74,7 +74,7 @@
                     android:id="@+id/dis_phoneNumber"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Phone Number"
+                    android:text="@string/phone_number"
                     android:textSize="12sp" />
 
                 <TextView
@@ -104,7 +104,7 @@
                     android:id="@+id/dis_email"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Email Address"
+                    android:text="@string/email_address"
                     android:textSize="12sp" />
 
                 <TextView

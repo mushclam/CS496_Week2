@@ -132,8 +132,14 @@ public class MainActivity extends AppCompatActivity {
         fab2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                checkCameraPermission();
-                sendTakePhotoIntent();
+                int permissionCheck = ContextCompat.checkSelfPermission(MainActivity.this,
+                        Manifest.permission.CAMERA);
+
+                if (permissionCheck == PackageManager.PERMISSION_DENIED) {
+                    checkCameraPermission();
+                } else {
+                    sendTakePhotoIntent();
+                }
             }
         });
 
@@ -246,10 +252,11 @@ public class MainActivity extends AppCompatActivity {
                     int grantResult = grantResults[i];
                     if (permission.equals(Manifest.permission.CAMERA)) {
                         if(grantResult == PackageManager.PERMISSION_GRANTED) {
-                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+//                            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//                            String url = "tmp_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+                            sendTakePhotoIntent();
                         } else {
-                            Toast.makeText(this,"Should have camera permission to run", Toast.LENGTH_LONG).show();
+                            Toast.makeText(this,R.string.require_camera, Toast.LENGTH_LONG).show();
 //                            finish();
                         }
                     }
@@ -372,7 +379,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Animation animation = new AlphaAnimation(0, 1);
                     animation.setDuration(700);
-                    direction_arrow.setImageResource(R.drawable.direction_left);
+                    direction_arrow.setImageResource(R.drawable.navigation_left);
                     direction_arrow.setVisibility(View.VISIBLE);
                     direction_arrow.setAnimation(animation);
 
@@ -393,7 +400,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Animation animation = new AlphaAnimation(0, 1);
                     animation.setDuration(700);
-                    direction_arrow.setImageResource(R.drawable.direction_right);
+                    direction_arrow.setImageResource(R.drawable.navigation_right);
                     direction_arrow.setVisibility(View.VISIBLE);
                     direction_arrow.setAnimation(animation);
 
@@ -414,7 +421,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Animation animation = new AlphaAnimation(0, 1);
                     animation.setDuration(700);
-                    direction_arrow.setImageResource(R.drawable.direction_up);
+                    direction_arrow.setImageResource(R.drawable.navigation_up);
                     direction_arrow.setVisibility(View.VISIBLE);
                     direction_arrow.setAnimation(animation);
 
@@ -435,7 +442,7 @@ public class MainActivity extends AppCompatActivity {
 
                     Animation animation = new AlphaAnimation(0, 1);
                     animation.setDuration(700);
-                    direction_arrow.setImageResource(R.drawable.direction_down);
+                    direction_arrow.setImageResource(R.drawable.navigation_down);
                     direction_arrow.setVisibility(View.VISIBLE);
                     direction_arrow.setAnimation(animation);
 
@@ -462,8 +469,8 @@ public class MainActivity extends AppCompatActivity {
                 != PackageManager.PERMISSION_GRANTED) {
             if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
                 new AlertDialog.Builder(this)
-                        .setMessage("Camera permission not granted")
-                        .setNeutralButton("Settings", new DialogInterface.OnClickListener() {
+                        .setMessage(R.string.camera_permission)
+                        .setNeutralButton(R.string.settings, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
                                 Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -471,10 +478,10 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(intent);
                             }
                         })
-                        .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
+                        .setPositiveButton(R.string.confirm, new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                finish();
+//                                finish();
                             }
                         })
                         .setCancelable(false).create().show();
@@ -520,6 +527,7 @@ public class MainActivity extends AppCompatActivity {
                     
                     Bitmap savedImage = rotate(bitmap, exifDegree);
                     saveImage(savedImage);
+                    new File(imageFilePath).delete();
                     break;
             }
         }
@@ -538,6 +546,7 @@ public class MainActivity extends AppCompatActivity {
                 storageDir
         );
         imageFilePath = image.getAbsolutePath();
+        Log.e("createImageFile", imageFilePath);
         return image;
     }
 
@@ -580,7 +589,7 @@ public class MainActivity extends AppCompatActivity {
         OutputStream fout = null;
         try {
             String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            File saveDir = new File("/sdcard/DCIM/");
+            File saveDir = new File("/sdcard/DCIM");
             if (!saveDir.exists()) { saveDir.mkdirs(); }
 
             File internalImage = new File(saveDir, "image_" + timeStamp + ".jpg");
@@ -591,6 +600,8 @@ public class MainActivity extends AppCompatActivity {
             finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
             fout.flush();
             fout.close();
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                    Uri.parse("file://" + internalImage.getPath())));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,6 +5,6 @@
     <item
         android:id="@+id/action_deleteImage"
         android:orderInCategory="100"
-        android:title="삭제"
+        android:title="@string/delete"
         app:showAsAction="never" />
 </menu>
