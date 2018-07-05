@@ -75,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
 
     private Fragment[] mFragments;
     boolean isGalleryFragment = false;
+    boolean isContactFragment = true;
     private FloatingActionButton fab;
     private FloatingActionButton fab2;
 
@@ -101,28 +102,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         MAIN_CONTEXT = this;
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        // Create the adapter that will return a fragment for each of the three
-        // primary sections of the activity.
-        /*
-      The {@link android.support.v4.view.PagerAdapter} that will provide
-      fragments for each of the sections. We use a
-      {@link FragmentPagerAdapter} derivative, which will keep every
-      loaded fragment in memory. If this becomes too memory intensive, it
-      may be best to switch to a
-      {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
+
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        // Set up the ViewPager with the sections adapter.
-        /*
-      The {@link ViewPager} that will host the section contents.
-     */
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.container);
+        ViewPager mViewPager = findViewById(R.id.container);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = findViewById(R.id.tabs);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
@@ -176,12 +164,14 @@ public class MainActivity extends AppCompatActivity {
                         fab.show();
                         fab2.hide();
                         isGalleryFragment = false;
+                        isContactFragment = true;
 
                         break;
                     case 1:
                         fab.hide();
                         fab2.show();
                         isGalleryFragment = true;
+                        isContactFragment = false;
                         mSensorManager.unregisterListener(mAccLis);
 
                         break;
@@ -189,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
                         fab.hide();
                         fab2.hide();
                         isGalleryFragment = false;
+                        isContactFragment = false;
 
                         resetSensitivity();
                         mSensorManager.registerListener(mAccLis, mAccelerometerSensor, SensorManager.SENSOR_DELAY_UI);
@@ -611,6 +602,9 @@ public class MainActivity extends AppCompatActivity {
         if(isGalleryFragment) {
             GalleryFragment galleryFragment = (GalleryFragment) mFragments[1];
             galleryFragment.onBack();
+        } else if(isContactFragment) {
+            ContactFragment contactFragment = (ContactFragment) mFragments[0];
+            contactFragment.onBack();
         } else {
             finish();
         }

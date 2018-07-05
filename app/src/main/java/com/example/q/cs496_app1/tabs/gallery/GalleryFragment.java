@@ -129,6 +129,7 @@ public class GalleryFragment extends Fragment {
                         // Set up the projection (we only need the ID)
                         for (int i = 0; i < selected_images.size(); i++) {
                             Integer index = selected_images.get(i);
+
                             String[] projection = {MediaStore.Images.Media._ID};
 
                             // Match on the file path

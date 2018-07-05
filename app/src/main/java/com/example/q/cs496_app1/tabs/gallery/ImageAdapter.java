@@ -16,6 +16,7 @@ import android.os.Parcelable;
 import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
+import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -76,54 +77,6 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         } else {
             viewHolder.checkBox.setVisibility(View.GONE);
         }
-
-        viewHolder.img.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View view) {
-                final Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-                assert vibrator != null;
-                vibrator.vibrate(30);
-
-                if(!fragment.isSelectingMode()) {
-                    fragment.setSelectingMode(true);
-                    notifyDataSetChanged();
-                }
-
-                Log.e("LongClick Pos ", String.valueOf(viewHolder.getLayoutPosition()));
-
-                if(fragment.isSelected(viewHolder.getLayoutPosition())) {
-                    fragment.removeFromSelectedImages(viewHolder.getLayoutPosition());
-                } else {
-                    fragment.addToSelectedImages(viewHolder.getLayoutPosition());
-                }
-
-                notifyItemChanged(viewHolder.getLayoutPosition());
-
-                return true;
-            }
-        });
-
-        viewHolder.img.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(fragment.isSelectingMode()) {
-                    if(fragment.isSelected(viewHolder.getLayoutPosition())) {
-                        fragment.removeFromSelectedImages(viewHolder.getLayoutPosition());
-                    } else {
-                        fragment.addToSelectedImages(viewHolder.getLayoutPosition());
-                    }
-
-                    notifyItemChanged(viewHolder.getLayoutPosition());
-                } else {
-                    Intent imageIntent = new Intent(context, ImageActivity.class);
-
-                    imageIntent.putExtra("INDEX", viewHolder.getLayoutPosition());
-                    imageIntent.putExtra("IMAGE", images);
-
-                    fragment.getActivity().startActivityForResult(imageIntent, 3000);
-                }
-            }
-        });
     }
 
     @Override
@@ -131,15 +84,67 @@ public class ImageAdapter extends RecyclerView.Adapter<ImageAdapter.ViewHolder> 
         return images.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
+        private ConstraintLayout imageAdapter;
         private ImageView img;
         private CheckBox checkBox;
 
         public ViewHolder(View view) {
             super(view);
 
+
+            imageAdapter = view.findViewById(R.id.image_adapter);
             img = view.findViewById(R.id.imageView);
             checkBox = view.findViewById(R.id.checkBox_temp);
+            imageAdapter.setOnLongClickListener(this);
+            imageAdapter.setOnClickListener(this);
         }
+
+        @Override
+        public boolean onLongClick(View view) {
+            final Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            assert vibrator != null;
+            vibrator.vibrate(30);
+
+            if(!fragment.isSelectingMode()) {
+                fragment.setSelectingMode(true);
+                notifyDataSetChanged();
+            }
+
+            Log.e("LongClick Pos ", String.valueOf(getLayoutPosition()));
+
+            if(fragment.isSelected(getLayoutPosition())) {
+                fragment.removeFromSelectedImages(getLayoutPosition());
+            } else {
+                fragment.addToSelectedImages(getLayoutPosition());
+            }
+
+            notifyItemChanged(getLayoutPosition());
+
+            return true;
+        }
+
+
+
+        @Override
+        public void onClick(View view) {
+            if(fragment.isSelectingMode()) {
+                if(fragment.isSelected(getLayoutPosition())) {
+                    fragment.removeFromSelectedImages(getLayoutPosition());
+                } else {
+                    fragment.addToSelectedImages(getLayoutPosition());
+                }
+
+                notifyItemChanged(getLayoutPosition());
+            } else {
+                Intent imageIntent = new Intent(context, ImageActivity.class);
+
+                imageIntent.putExtra("INDEX", getLayoutPosition());
+                imageIntent.putExtra("IMAGE", images);
+
+                fragment.getActivity().startActivityForResult(imageIntent, 3000);
+            }
+        }
+
     }
 }

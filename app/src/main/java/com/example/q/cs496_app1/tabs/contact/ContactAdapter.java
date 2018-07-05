@@ -12,6 +12,7 @@ import android.graphics.drawable.ShapeDrawable;
 import android.graphics.drawable.shapes.OvalShape;
 import android.media.ExifInterface;
 import android.net.Uri;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.example.q.cs496_app1.R;
+import com.example.q.cs496_app1.tabs.gallery.GalleryFragment;
 import com.google.gson.Gson;
 
 import java.io.FileOutputStream;
@@ -44,30 +46,22 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
     private Context context;
     private ArrayList mItems;
     private RecyclerViewClickListener listener;
-    public List<Integer> selectedList;
-
-    public int selectingMode = MODE_OFF;
-    private final static int NOT_SELECTED = 0;
-    private final static int SELECTED = 1;
-    private final static int MODE_OFF = 0;
-    private final static int MODE_ON = 1;
+    private static ContactFragment fragment;
 
     private int lastPosition = -1;
 
-    public ContactAdapter(Context context, ArrayList mItems, RecyclerViewClickListener listener) {
+    public ContactAdapter(Context context, ArrayList mItems, RecyclerViewClickListener listener, ContactFragment fragment) {
         this.context = context;
         this.mItems = mItems;
         this.listener = listener;
+        this.fragment = fragment;
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_listview, parent, false);
         ViewHolder holder = new ViewHolder(v, listener);
-        selectedList = new ArrayList<>();
-        for (int i = 0; i < mItems.size(); i++) {
-            selectedList.add(0);
-        }
+
         return holder;
     }
 
@@ -81,10 +75,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         holder.phoneNumber.setText(item.getPhoneNumber());
         holder.image.setBackground(new ShapeDrawable(new OvalShape()));
         holder.image.setClipToOutline(true);
-        if (selectingMode == MODE_ON) {
+        if (fragment.isSelectingMode()) {
             holder.selectingBox.setVisibility(View.VISIBLE);
-            if(holder.upperMenu.isSelected()) {
+            if(fragment.isSelected(position)) {
                 holder.selectingBox.setChecked(true);
+            } else {
+                holder.selectingBox.setChecked(false);
             }
         } else {
             holder.selectingBox.setVisibility(View.GONE);
@@ -154,11 +150,18 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         @Override
         public void onClick(View v) {
             itemPosition = getAdapterPosition();
+            Log.e("OnClick ", String.valueOf(itemPosition));
             ContactItem item = (ContactItem) mItems.get(itemPosition);
 
-            if (selectingMode == MODE_ON) {
+            if (fragment.isSelectingMode()) {
                 if (v.getId() == upperMenu.getId()) {
-                    selectingBox.setChecked(!selectingBox.isChecked());
+                    if(fragment.isSelected(itemPosition)) {
+                        fragment.removeFromSelectedItems(itemPosition);
+                    } else {
+                        fragment.addToSelectedItems(itemPosition);
+                    }
+
+                    notifyItemChanged(itemPosition);
                 }
                 listenerRef.get().onClicked(getAdapterPosition());
             } else {
@@ -232,17 +235,28 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
         @Override
         public boolean onLongClick(View view) {
+            final Vibrator vibrator = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+            assert vibrator != null;
+            vibrator.vibrate(30);
+
+            Log.e("onLongClick", String.valueOf(itemPosition));
+
             itemPosition = getAdapterPosition();
-            ContactItem item = (ContactItem) mItems.get(itemPosition);
 
-            if (selectingMode == MODE_OFF) {
-                selectingMode = MODE_ON;
-                Log.e("SELECTED", String.valueOf(itemPosition));
-
-                selectedList.add(itemPosition);
+            if (!fragment.isSelectingMode()) {
+                fragment.setSelectingMode(true);
                 notifyDataSetChanged();
             }
-            listenerRef.get().onClicked(getAdapterPosition());
+
+            if(fragment.isSelected(itemPosition)) {
+                fragment.removeFromSelectedItems(itemPosition);
+            } else {
+                fragment.addToSelectedItems(itemPosition);
+            }
+
+            notifyItemChanged(itemPosition);
+
+            listenerRef.get().onClicked(itemPosition);
 
             return true;
         }
