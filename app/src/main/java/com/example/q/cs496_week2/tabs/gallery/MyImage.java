@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1.tabs.gallery;
+package com.example.q.cs496_week2.tabs.gallery;
 
 import android.os.Parcel;
 import android.os.Parcelable;

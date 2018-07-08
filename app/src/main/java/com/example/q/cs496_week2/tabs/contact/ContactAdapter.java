@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1.tabs.contact;
+package com.example.q.cs496_week2.tabs.contact;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -32,8 +32,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.q.cs496_app1.R;
-import com.example.q.cs496_app1.tabs.gallery.GalleryFragment;
+import com.example.q.cs496_week2.R;
+import com.example.q.cs496_week2.tabs.gallery.GalleryFragment;
 import com.google.gson.Gson;
 
 import java.io.FileOutputStream;

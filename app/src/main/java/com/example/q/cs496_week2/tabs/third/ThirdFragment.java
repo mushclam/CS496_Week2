@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1.tabs.third;
+package com.example.q.cs496_week2.tabs.third;
 
 import android.app.Activity;
 import android.content.Context;
@@ -20,8 +20,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.example.q.cs496_app1.R;
-import com.example.q.cs496_app1.tabs.gallery.ImageActivity;
+import com.example.q.cs496_week2.R;
+import com.example.q.cs496_week2.tabs.gallery.ImageActivity;
 
 public class ThirdFragment extends Fragment {
 

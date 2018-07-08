@@ -1,7 +1,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.q.cs496_app1.tabs.gallery.ImageActivity">
+    tools:context="com.example.q.cs496_week2.tabs.gallery.ImageActivity">
     <item
         android:id="@+id/action_deleteImage"
         android:orderInCategory="100"

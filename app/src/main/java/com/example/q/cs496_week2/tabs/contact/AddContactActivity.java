@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1.tabs.contact;
+package com.example.q.cs496_week2.tabs.contact;
 
 import android.Manifest;
 import android.app.Activity;
@@ -37,9 +37,9 @@ import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Toast;
 
-import com.example.q.cs496_app1.MainActivity;
-import com.example.q.cs496_app1.R;
-import com.example.q.cs496_app1.tabs.gallery.GalleryFragment;
+import com.example.q.cs496_week2.MainActivity;
+import com.example.q.cs496_week2.R;
+import com.example.q.cs496_week2.tabs.gallery.GalleryFragment;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 

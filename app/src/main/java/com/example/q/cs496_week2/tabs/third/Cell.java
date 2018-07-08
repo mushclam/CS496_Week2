@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1.tabs.third;
+package com.example.q.cs496_week2.tabs.third;
 
 public class Cell {
     private int x;

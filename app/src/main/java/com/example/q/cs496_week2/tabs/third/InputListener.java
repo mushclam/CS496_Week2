@@ -1,11 +1,11 @@
-package com.example.q.cs496_app1.tabs.third;
+package com.example.q.cs496_week2.tabs.third;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.view.MotionEvent;
 import android.view.View;
 
-import com.example.q.cs496_app1.R;
+import com.example.q.cs496_week2.R;
 
 public class InputListener implements View.OnTouchListener {
     private static final int SWIPE_MIN_DISTANCE = 0;

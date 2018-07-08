@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1.tabs.gallery;
+package com.example.q.cs496_week2.tabs.gallery;
 
 import android.content.ContentResolver;
 import android.content.ContentUris;
@@ -38,8 +38,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
-import com.example.q.cs496_app1.R;
-import com.example.q.cs496_app1.TouchImageView;
+import com.example.q.cs496_week2.R;
+import com.example.q.cs496_week2.TouchImageView;
 
 import org.w3c.dom.Text;
 

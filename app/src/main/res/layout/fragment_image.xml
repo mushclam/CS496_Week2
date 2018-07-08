@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".tabs.gallery.ImageActivity$PlaceholderFragment">
 
-    <com.example.q.cs496_app1.TouchImageView
+    <com.example.q.cs496_week2.TouchImageView
         android:id="@+id/full_image"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

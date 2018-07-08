@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1.tabs.contact;
+package com.example.q.cs496_week2.tabs.contact;
 
 import java.util.Comparator;
 

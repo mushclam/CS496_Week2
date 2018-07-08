@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1.tabs.gallery;
+package com.example.q.cs496_week2.tabs.gallery;
 
 import android.app.Activity;
 import android.content.ContentResolver;
@@ -35,7 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.example.q.cs496_app1.R;
+import com.example.q.cs496_week2.R;
 
 import java.io.File;
 import java.io.Serializable;

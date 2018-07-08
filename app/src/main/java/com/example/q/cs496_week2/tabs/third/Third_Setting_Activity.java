@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1.tabs.third;
+package com.example.q.cs496_week2.tabs.third;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -12,7 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.content.Context;
 
-import com.example.q.cs496_app1.R;
+import com.example.q.cs496_week2.R;
 
 public class Third_Setting_Activity extends AppCompatActivity {
 

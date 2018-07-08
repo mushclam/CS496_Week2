@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.q.cs496_app1">
+    package="com.example.q.cs496_week2">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <!-- android:maxSdkVersion="18" /> -->
@@ -50,7 +50,7 @@
 
         <provider
             android:name="android.support.v4.content.FileProvider"
-            android:authorities="com.example.q.cs496_app1"
+            android:authorities="com.example.q.cs496_week2"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data

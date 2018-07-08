@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1.tabs.third;
+package com.example.q.cs496_week2.tabs.third;
 
 public class AnimationCell extends Cell {
     public final int[] extras;

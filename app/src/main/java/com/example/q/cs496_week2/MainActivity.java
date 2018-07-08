@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1;
+package com.example.q.cs496_week2;
 
 import android.Manifest;
 import android.app.Activity;
@@ -55,10 +55,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.q.cs496_app1.tabs.contact.AddContactActivity;
-import com.example.q.cs496_app1.tabs.contact.ContactFragment;
-import com.example.q.cs496_app1.tabs.gallery.GalleryFragment;
-import com.example.q.cs496_app1.tabs.third.ThirdFragment;
+import com.example.q.cs496_week2.tabs.contact.AddContactActivity;
+import com.example.q.cs496_week2.tabs.contact.ContactFragment;
+import com.example.q.cs496_week2.tabs.gallery.GalleryFragment;
+import com.example.q.cs496_week2.tabs.third.ThirdFragment;
 
 import java.io.File;
 import java.util.Arrays;

@@ -1,4 +1,4 @@
-package com.example.q.cs496_app1.tabs.contact;
+package com.example.q.cs496_week2.tabs.contact;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,8 +22,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.q.cs496_app1.MainActivity;
-import com.example.q.cs496_app1.R;
+import com.example.q.cs496_week2.MainActivity;
+import com.example.q.cs496_week2.R;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
