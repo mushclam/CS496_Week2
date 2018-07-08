@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import static android.Manifest.permission.WRITE_CONTACTS;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 public class SplashActivity extends AppCompatActivity {
@@ -38,7 +39,8 @@ public class SplashActivity extends AppCompatActivity {
 
     private boolean checkPermission() {
         int resultW = ContextCompat.checkSelfPermission(this, WRITE_EXTERNAL_STORAGE);
-        return resultW == PackageManager.PERMISSION_GRANTED;
+        int result_contact = ContextCompat.checkSelfPermission(this, WRITE_CONTACTS);
+        return resultW == PackageManager.PERMISSION_GRANTED && result_contact == PackageManager.PERMISSION_GRANTED;
     }
 
     private void requestPermission() {

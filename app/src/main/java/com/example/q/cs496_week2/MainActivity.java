@@ -43,30 +43,14 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 
-import android.view.animation.AlphaAnimation;
-import android.view.animation.Animation;
-import android.widget.ImageView;
-
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.q.cs496_week2.tabs.contact.AddContactActivity;
 import com.example.q.cs496_week2.tabs.contact.ContactFragment;
 import com.example.q.cs496_week2.tabs.gallery.GalleryFragment;
 import com.example.q.cs496_week2.tabs.third.ThirdFragment;
-
-import java.io.File;
-import java.util.Arrays;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -79,20 +63,6 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton fab;
     private FloatingActionButton fab2;
 
-    private SensorManager mSensorManager = null;
-    private SensorEventListener mAccLis;
-    private Sensor mAccelerometerSensor = null;
-
-    private ImageView direction_arrow;
-    private long detectedTime;
-
-    private Vibrator vibrator;
-
-    private double[] Xs, Zs;
-    private int sensitivityL, sensitivityR, sensitivityU, sensitivityD;
-
-    private String imageFilePath;
-    private Uri photoUri;
     private CameraProcessing cameraProcessing;
 
     public static Context MAIN_CONTEXT;
@@ -181,30 +151,6 @@ public class MainActivity extends AppCompatActivity {
             public void onPageScrollStateChanged(int state) {
             }
         });
-    }
-
-    /**
-     * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
-     * one of the sections/tabs/pages.
-     */
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
-            return mFragments[position];
-        }
-
-        @Override
-        public int getCount() {
-            // Show 3 total pages.
-            return 3;
-        }
     }
 
     @Override

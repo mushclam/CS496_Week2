@@ -186,89 +186,15 @@ public class ContactFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-    private class GetContact extends AsyncTask<String, String, List<ContactItem>> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-
-        @Override
-        protected List<ContactItem> doInBackground(String... Params) {
-            List<ContactItem> itemList = new ArrayList<>();
-            itemList = LoadJson();
-
-            return itemList;
-        }
-
-        @Override
-        protected void onPostExecute(List<ContactItem> result) {
-            super.onPostExecute(result);
-            items = new ArrayList<>();
-            viewEmpty.setText("");
-
-            if (result == null) {
-                viewEmpty.setText(R.string.empty_contact);
-            } else {
-                Collections.sort(result, new ContactSorting());
-                for (int i = 0; i < result.size(); i++) {
-                    items.add(result.get(i));
-                }
-            }
-
-            adapter = new ContactAdapter(activity, items, new RecyclerViewClickListener() {
-                @Override
-                public void onClicked(int position) {
-
-                }
-
-                @Override
-                public void onLongClicked(int position) {
-
-                }
-            }, ContactFragment.this);
-            recyclerView.setAdapter(adapter);
-        }
-    }
-
-    // Load Json file and read content. convert json string to contact list.
-    public List<ContactItem> LoadJson() {
-        String json = null;
-        List<ContactItem> itemList;
-        Gson gson = new Gson();
-
-        try {
-            File file = new File(activity.getFilesDir() + "/test.json");
-            if(!file.exists()) {
-                FileOutputStream fos = activity.openFileOutput("test.json", Context.MODE_PRIVATE);
-                fos.close();
-            }
-            StringBuilder data = new StringBuilder();
-            FileInputStream fis = activity.openFileInput("test.json");
-            BufferedReader br = new BufferedReader(new InputStreamReader(fis));
-            String str = br.readLine();
-            while (str != null) {
-                data.append(str).append("\n");
-                str = br.readLine();
-            }
-
-            itemList = gson.fromJson(data.toString(), new TypeToken<List<ContactItem>>(){}.getType());
-            return itemList;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
 
     public void onRefresh() {
-        adapter.notifyDataSetChanged();
-        FragmentTransaction ft = ((MainActivity) activity).getSupportFragmentManager().beginTransaction();
-        ft.detach(ContactFragment.this).attach(ContactFragment.this).commit();
+        locationAndContactsTask();
         swipeRefreshLayout.setRefreshing(false);
     }
 
     public void locationAndContactsTask() {
-        new GetContact().execute();
+        new GetContactTask(activity).execute();
     }
 
     @Override
