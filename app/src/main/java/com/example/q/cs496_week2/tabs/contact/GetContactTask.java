@@ -112,6 +112,7 @@ public class GetContactTask extends AsyncTask<String, String, ArrayList<ContactT
 
                     ContactTestItem contactTestItem = new ContactTestItem(
                             id,
+                            null,
                             name,
                             phone_numbers,
                             emails,

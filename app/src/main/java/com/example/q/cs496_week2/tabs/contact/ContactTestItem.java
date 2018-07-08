@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 public class ContactTestItem implements Serializable{
     private String id;
+    private String profile;
     private String name;
     private ArrayList<Phone> phoneNumbers;
     private ArrayList<Email> emails;
@@ -12,12 +13,14 @@ public class ContactTestItem implements Serializable{
     private String starred;
 
     public ContactTestItem(String id,
+                           String profile,
                            String name,
                            ArrayList<Phone> phoneNumbers,
                            ArrayList<Email> emails,
                            String note,
                            String starred) {
         this.id = id;
+        this.profile = profile;
         this.name = name;
         this.phoneNumbers = phoneNumbers;
         this.emails = emails;
@@ -31,6 +34,14 @@ public class ContactTestItem implements Serializable{
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getProfile() {
+        return profile;
+    }
+
+    public void setProfile(String profile) {
+        this.profile = profile;
     }
 
     public String getName() {

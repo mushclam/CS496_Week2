@@ -55,7 +55,7 @@ import com.example.q.cs496_week2.tabs.third.ThirdFragment;
 public class MainActivity extends AppCompatActivity {
 
     public static final int MY_PERMISSION_CAMERA = 300;
-    public static final int REQUEST_IMAGE_CAPTURE = 400;
+    public static final int CAMERA_CODE = 400;
 
     private Fragment[] mFragments;
     boolean isGalleryFragment = false;
@@ -220,7 +220,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
                 case 4000:
                     break;
-                case REQUEST_IMAGE_CAPTURE:
+                case CAMERA_CODE:
                     cameraProcessing.resultProcessing();
                     break;
             }

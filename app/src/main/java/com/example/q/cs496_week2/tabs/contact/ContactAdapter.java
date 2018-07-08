@@ -184,9 +184,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                 } else if (v.getId() == buttonEdit.getId()) {
                     Intent intent = new Intent(context, EditContactActivity.class);
                     intent.putExtra("itemPosition", itemPosition);
-//                    intent.putExtra("image", String.valueOf(item.getImage()));
-                    intent.putExtra("name", String.valueOf(item.getName()));
-                    intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumbers().get(0).getPhoneNumber()));
+                    intent.putExtra("item", item);
 
                     context.startActivity(intent);
 
@@ -318,37 +316,4 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         a.setDuration((int)(initialHeight / v.getContext().getResources().getDisplayMetrics().density) * 4);
         v.startAnimation(a);
     }
-
-    private Bitmap sendPicture(String imagePath) {
-        Log.e("PATH", imagePath);
-        ExifInterface exif = null;
-        try {
-            exif = new ExifInterface(imagePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        int exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-        int exifDegree = exifOrientationToDegrees(exifOrientation);
-
-        Bitmap bitmap = BitmapFactory.decodeFile(imagePath);
-        return rotate(bitmap, exifDegree);
-    }
-
-    private int exifOrientationToDegrees(int exifOrientation) {
-        if(exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
-            return 90;
-        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
-            return 180;
-        } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_270) {
-            return 270;
-        }
-        return 0;
-    }
-
-    private Bitmap rotate(Bitmap bitmap, float degree) {
-        Matrix matrix = new Matrix();
-        matrix.postRotate(degree);
-        return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
-    }
-
 }

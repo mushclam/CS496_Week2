@@ -168,19 +168,6 @@ public class ContactFragment extends Fragment {
                         }
                     })
                     .create().show();
-//            try {
-//                File file = new File(activity.getFilesDir() + "/test.json");
-//                if (!file.exists()){
-//                    Toast.makeText(activity, activity.getFilesDir() + " + Not Exist", Toast.LENGTH_SHORT).show();
-//                } else {
-//                    Toast.makeText(activity, activity.getFilesDir() + " + Exist", Toast.LENGTH_SHORT).show();
-//                    if(file.delete()) {
-//                        Toast.makeText(activity, activity.getFilesDir() + " + Deleted", Toast.LENGTH_SHORT).show();
-//                    }
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
         }
 
         return super.onOptionsItemSelected(item);

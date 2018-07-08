@@ -1,57 +1,20 @@
 [
   {
-    "image" : 2131165284,
-    "name" : "foreground",
-    "phoneNumber" : "010-1111-1111"
-  },
-  {
-    "image" : 2131165283,
-    "name" : "background",
-    "phoneNumber" : "010-2222-2222"
-  },
-  {
-    "image" : 2131165284,
-    "name" : "Testing1",
-    "phoneNumber" : "010-3333-3333"
-  },
-  {
-    "image" : 2131165284,
-    "name" : "Testing2",
-    "phoneNumber" : "010-3333-3333"
-  },
-  {
-    "image" : 2131165284,
-    "name" : "Testing3",
-    "phoneNumber" : "010-3333-3333"
-  },
-  {
-    "image" : 2131165284,
-    "name" : "Testing4",
-    "phoneNumber" : "010-3333-3333"
-  },
-  {
-    "image" : 2131165284,
-    "name" : "Testing5",
-    "phoneNumber" : "010-3333-3333"
-  },
-  {
-    "image" : 2131165284,
-    "name" : "Testing6",
-    "phoneNumber" : "010-3333-3333"
-  },
-  {
-    "image" : 2131165284,
-    "name" : "Testing7",
-    "phoneNumber" : "010-3333-3333"
-  },
-  {
-    "image" : 2131165284,
-    "name" : "Testing8",
-    "phoneNumber" : "010-3333-3333"
-  },
-  {
-    "image" : 2131165284,
-    "name" : "Testing9",
-    "phoneNumber" : "010-3333-3333"
+    "id" : "",
+    "profile" : "",
+    "name" : "",
+    "phoneNumbers" : [
+      {
+        "phoneNumber" : "",
+        "dataId" : "",
+      }
+    ],
+    "emails" : [
+      {
+        "emailAddress" : "",
+        "emailType" : "",
+        "dataId" : ""
+      }
+    ]
   }
 ]

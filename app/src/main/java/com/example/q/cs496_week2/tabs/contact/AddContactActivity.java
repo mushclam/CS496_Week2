@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Camera;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
@@ -37,6 +38,7 @@ import android.widget.ImageView;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Toast;
 
+import com.example.q.cs496_week2.CameraProcessing;
 import com.example.q.cs496_week2.MainActivity;
 import com.example.q.cs496_week2.R;
 import com.example.q.cs496_week2.tabs.gallery.GalleryFragment;
@@ -57,10 +59,9 @@ import java.util.List;
 
 public class AddContactActivity extends Activity {
     private final static int MY_PERMISSION_CAMERA = 300;
-    private static final int REQUEST_IMAGE_CAPTURE = 400;
 
     private final static int GALLERY_CODE = 1;
-    private final static int CAMERA_CODE = 2;
+    private final static int CAMERA_CODE = 400;
 
     List<ContactItem> orgList;
 
@@ -76,6 +77,7 @@ public class AddContactActivity extends Activity {
 
     private String imageFilePath;
     private Uri photoUri;
+    private CameraProcessing cameraProcessing;
 
     private String state;
     private File file;
@@ -84,6 +86,7 @@ public class AddContactActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_addcontact);
+        cameraProcessing = new CameraProcessing(this);
 
         addProfile = (ImageButton)findViewById(R.id.profile_button);
         preview = (ImageView)findViewById(R.id.preview);
@@ -117,7 +120,7 @@ public class AddContactActivity extends Activity {
                                 if (permissionCheck == PackageManager.PERMISSION_DENIED) {
                                     checkCameraPermission();
                                 } else {
-                                    sendTakePhotoIntent();
+                                    cameraProcessing.sendTakePhotoIntent();
                                 }
                             }
                         })
@@ -182,7 +185,7 @@ public class AddContactActivity extends Activity {
                     int grantResult = grantResults[i];
                     if (permission.equals(Manifest.permission.CAMERA)) {
                         if(grantResult == PackageManager.PERMISSION_GRANTED) {
-                            sendTakePhotoIntent();
+                            cameraProcessing.sendTakePhotoIntent();
                         } else {
                             Toast.makeText(this,R.string.require_camera, Toast.LENGTH_LONG).show();
 //                            finish();
@@ -258,7 +261,9 @@ public class AddContactActivity extends Activity {
                     new getImage(data.getData()).execute();
                 } break;
                 case CAMERA_CODE: {
-                    processPicture();
+                    Bitmap result = cameraProcessing.resultProcessing();
+                    preview.setImageBitmap(result);
+                    imagePath = cameraProcessing.imagePath;
                 }
             }
         }
@@ -279,67 +284,6 @@ public class AddContactActivity extends Activity {
         Bitmap bitmap = rotate(BitmapFactory.decodeFile(imagePath), exifDegree);
 //        preview.setImageBitmap(rotate(bitmap, exifDegree));
         return bitmap;
-    }
-
-    private Bitmap processPicture() {
-        Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
-        ExifInterface exif = null;
-
-        try {
-            exif = new ExifInterface(imageFilePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int exifOrientation;
-        int exifDegree;
-
-        if(exif != null) {
-            exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-            exifDegree = exifOrientationToDegrees(exifOrientation);
-        } else {
-            exifDegree = 0;
-        }
-
-        Bitmap savedImage = rotate(bitmap, exifDegree);
-        preview.setImageBitmap(savedImage);
-        saveImage(savedImage);
-        new File(imageFilePath).delete();
-        return savedImage;
-    }
-
-    private File createImageFile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "TEST_" + timeStamp + "_";
-        File storageDir = getCacheDir();
-        if (!storageDir.exists()) {
-            storageDir.mkdirs();
-        }
-        File image = File.createTempFile(
-                imageFileName,
-                ".jpg",
-                storageDir
-        );
-        imageFilePath = image.getAbsolutePath();
-        return image;
-    }
-
-    private void sendTakePhotoIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-
-            if (photoFile != null) {
-                photoUri = FileProvider.getUriForFile(this, getPackageName(), photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(takePictureIntent, CAMERA_CODE);
-            }
-        }
     }
 
     private int exifOrientationToDegrees(int exifOrientation) {
@@ -370,55 +314,4 @@ public class AddContactActivity extends Activity {
         return cursor.getString(columnIdx);
     }
 
-    private void saveImage(Bitmap finalBitmap) {
-        OutputStream fout = null;
-        try {
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            File saveDir = new File("/sdcard/DCIM/");
-            if (!saveDir.exists()) { saveDir.mkdirs(); }
-
-            File internalImage = new File(saveDir, "image_" + timeStamp + ".jpg");
-            imagePath = internalImage.toString();
-            Log.e("FILE", internalImage.toString());
-            if(!internalImage.exists()) { internalImage.createNewFile(); }
-
-            fout = new FileOutputStream(internalImage);
-            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
-            fout.flush();
-            fout.close();
-            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                    Uri.parse("file://" + internalImage.getPath())));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode,
-//                                           String permissions[], int[] grantResults) {
-//        switch (requestCode) {
-//            case MY_PERMISSIONS_REQUEST_WRITE_EXTERNAL_STORAGE:
-//                if (grantResults.length > 0
-//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//
-//                } else {
-//
-//                }
-//                return;
-//        }
-//    }
-
-//    public boolean checkExternalStorage() {
-//        state = Environment.getExternalStorageState();
-//        if (Environment.MEDIA_MOUNTED.equals(state)) {
-//            Toast.makeText(AddContactActivity.this, "External Storage r/w available", Toast.LENGTH_SHORT).show();
-//            return true;
-//        } else if (Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-//            Toast.makeText(AddContactActivity.this, "External Storage ro available", Toast.LENGTH_SHORT).show();
-//            return false;
-//        } else {
-//            Toast.makeText(AddContactActivity.this, "External Storage can't use", Toast.LENGTH_SHORT).show();
-//            return false;
-//        }
-//    }
 }

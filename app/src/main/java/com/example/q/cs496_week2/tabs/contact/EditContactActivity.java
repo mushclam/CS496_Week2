@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Camera;
 import android.graphics.Color;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
@@ -32,6 +33,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.example.q.cs496_week2.CameraProcessing;
 import com.example.q.cs496_week2.MainActivity;
 import com.example.q.cs496_week2.R;
 import com.google.gson.Gson;
@@ -52,10 +54,9 @@ import java.util.List;
 public class EditContactActivity extends Activity {
     private final static int MY_PERMISSION_CAMERA = 300;
     private final static int GALLERY_CODE = 0;
-    private final static int CAMERA_CODE = 1;
+    private final static int CAMERA_CODE = 400;
 
-    private String imageFilePath;
-    private Uri photoUri;
+    private CameraProcessing cameraProcessing;
 
     private String imagePath;
     private ImageView editPreview;
@@ -79,6 +80,7 @@ public class EditContactActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_editcontact);
+        cameraProcessing = new CameraProcessing(this);
 
         Intent intent = new Intent(this.getIntent());
 
@@ -132,7 +134,7 @@ public class EditContactActivity extends Activity {
                                 if (permissionCheck == PackageManager.PERMISSION_DENIED) {
                                     checkCameraPermission();
                                 } else {
-                                    sendTakePhotoIntent();
+                                    cameraProcessing.sendTakePhotoIntent();
                                 }
                             }
                         })
@@ -203,7 +205,7 @@ public class EditContactActivity extends Activity {
                     int grantResult = grantResults[i];
                     if (permission.equals(Manifest.permission.CAMERA)) {
                         if(grantResult == PackageManager.PERMISSION_GRANTED) {
-                            sendTakePhotoIntent();
+                            cameraProcessing.sendTakePhotoIntent();
                         } else {
                             Toast.makeText(this,R.string.require_camera, Toast.LENGTH_LONG).show();
                         }
@@ -278,7 +280,9 @@ public class EditContactActivity extends Activity {
                     new EditContactActivity.getImage(data.getData()).execute();
                 } break;
                 case CAMERA_CODE: {
-                    processPicture();
+                    Bitmap result = cameraProcessing.resultProcessing();
+                    editPreview.setImageBitmap(result);
+                    imagePath = cameraProcessing.imagePath;
                 }
             }
         }
@@ -301,69 +305,7 @@ public class EditContactActivity extends Activity {
         return bitmap;
     }
 
-    private Bitmap processPicture() {
-        Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
-        Log.e("IFP", imageFilePath);
-        ExifInterface exif = null;
-
-        try {
-            exif = new ExifInterface(imageFilePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        int exifOrientation;
-        int exifDegree;
-
-        if(exif != null) {
-            exifOrientation = exif.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
-            exifDegree = exifOrientationToDegrees(exifOrientation);
-        } else {
-            exifDegree = 0;
-        }
-
-        Bitmap savedImage = rotate(bitmap, exifDegree);
-        editPreview.setImageBitmap(savedImage);
-        saveImage(savedImage);
-        new File(imageFilePath).delete();
-        return savedImage;
-    }
-
-    private File createImageFile() throws IOException {
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "TEST_" + timeStamp + "_";
-        File storageDir = getCacheDir();
-        if (!storageDir.exists()) {
-            storageDir.mkdirs();
-        }
-        File image = File.createTempFile(
-                imageFileName,
-                ".jpg",
-                storageDir
-        );
-        imageFilePath = image.getAbsolutePath();
-        return image;
-    }
-
-    private void sendTakePhotoIntent() {
-        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-            File photoFile = null;
-            try {
-                photoFile = createImageFile();
-            } catch (IOException ex) {
-                ex.printStackTrace();
-            }
-
-            if (photoFile != null) {
-                photoUri = FileProvider.getUriForFile(this, getPackageName(), photoFile);
-                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                startActivityForResult(takePictureIntent, CAMERA_CODE);
-            }
-        }
-    }
-
-    private int exifOrientationToDegrees(int exifOrientation) {
+    public int exifOrientationToDegrees(int exifOrientation) {
         if(exifOrientation == ExifInterface.ORIENTATION_ROTATE_90) {
             return 90;
         } else if (exifOrientation == ExifInterface.ORIENTATION_ROTATE_180) {
@@ -374,7 +316,7 @@ public class EditContactActivity extends Activity {
         return 0;
     }
 
-    private Bitmap rotate(Bitmap bitmap, float degree) {
+    public Bitmap rotate(Bitmap bitmap, float degree) {
         Matrix matrix = new Matrix();
         matrix.postRotate(degree);
         return Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), matrix, true);
@@ -389,28 +331,5 @@ public class EditContactActivity extends Activity {
         }
 
         return cursor.getString(columnIdx);
-    }
-
-    private void saveImage(Bitmap finalBitmap) {
-        OutputStream fout = null;
-        try {
-            String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-            File saveDir = new File("/sdcard/DCIM");
-            if (!saveDir.exists()) { saveDir.mkdirs(); }
-
-            File internalImage = new File(saveDir, "image_" + timeStamp + ".jpg");
-            imagePath = internalImage.toString();
-            Log.e("FILE", internalImage.toString());
-            if(!internalImage.exists()) { internalImage.createNewFile(); }
-
-            fout = new FileOutputStream(internalImage);
-            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, fout);
-            fout.flush();
-            fout.close();
-            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                    Uri.parse("file://" + internalImage.getPath())));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

@@ -21,9 +21,10 @@ import java.util.Date;
 
 public class CameraProcessing {
 
-    private final static int REQUEST_IMAGE_CAPTURE = 400;
+    private final static int CAMERA_CODE = 400;
 
-    private String imageFilePath;
+    private String imageTempPath;
+    public String imagePath;
     private Uri photoUri;
 
     private Context mContext;
@@ -32,12 +33,12 @@ public class CameraProcessing {
         this.mContext = mContext;
     }
 
-    public void resultProcessing() {
-        Bitmap bitmap = BitmapFactory.decodeFile(imageFilePath);
+    public Bitmap resultProcessing() {
+        Bitmap bitmap = BitmapFactory.decodeFile(imageTempPath);
         ExifInterface exif = null;
 
         try {
-            exif = new ExifInterface(imageFilePath);
+            exif = new ExifInterface(imageTempPath);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -54,7 +55,8 @@ public class CameraProcessing {
 
         Bitmap savedImage = rotate(bitmap, exifDegree);
         saveImage(savedImage);
-        new File(imageFilePath).delete();
+        new File(imageTempPath).delete();
+        return savedImage;
     }
 
     public void sendTakePhotoIntent() {
@@ -70,7 +72,7 @@ public class CameraProcessing {
             if (photoFile != null) {
                 photoUri = FileProvider.getUriForFile(mContext, mContext.getPackageName(), photoFile);
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoUri);
-                ((Activity)mContext).startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
+                ((Activity)mContext).startActivityForResult(takePictureIntent, CAMERA_CODE);
             }
         }
     }
@@ -87,8 +89,8 @@ public class CameraProcessing {
                 ".jpg",
                 storageDir
         );
-        imageFilePath = image.getAbsolutePath();
-        Log.e("createImageFile", imageFilePath);
+        imageTempPath = image.getAbsolutePath();
+        Log.e("createImageFile", imageTempPath);
         return image;
     }
 
@@ -117,6 +119,7 @@ public class CameraProcessing {
             if (!saveDir.exists()) { saveDir.mkdirs(); }
 
             File internalImage = new File(saveDir, "image_" + timeStamp + ".jpg");
+            imagePath = internalImage.toString();
             Log.e("FILE", internalImage.toString());
             if(!internalImage.exists()) { internalImage.createNewFile(); }
 
