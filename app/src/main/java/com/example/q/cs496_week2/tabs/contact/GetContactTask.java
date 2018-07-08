@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.util.Pair;
 
 import com.example.q.cs496_week2.R;
@@ -42,7 +43,6 @@ public class GetContactTask extends AsyncTask<String, String, ContactList> {
                 .setMessage("Fetching Contacts...")
                 .setCancelable(false)
                 .create();
-        pDialog.show();
     }
 
     @Override
@@ -61,7 +61,7 @@ public class GetContactTask extends AsyncTask<String, String, ContactList> {
                 String starred = "";
 
                 if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                    System.out.println("name : " + name + ", ID : " + id);
+                    Log.d("HAS_PHONE_NUMBER","name : " + name + ", ID : " + id);
 
                     // get the phone number
                     Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
@@ -72,7 +72,7 @@ public class GetContactTask extends AsyncTask<String, String, ContactList> {
                                 pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                         String data_id = pCur.getString(
                                 pCur.getColumnIndex(ContactsContract.Data._ID));
-                        System.out.println("phone" + phone);
+                        Log.d("PHONE", phone);
                         phone_numbers.add(new Pair<String, String>(phone, data_id));
                     }
                     pCur.close();
@@ -93,7 +93,7 @@ public class GetContactTask extends AsyncTask<String, String, ContactList> {
                                 emailCur.getColumnIndex(ContactsContract.Data._ID)
                         );
 
-                        System.out.println("Email " + email + " Email Type : " + emailType + " data_id : " + data_id);
+                        Log.d("EMAIL","Email " + email + " Email Type : " + emailType + " data_id : " + data_id);
 
                         emails.add(new Triplet<String, String, String>(email, emailType, data_id));
                     }
@@ -106,7 +106,7 @@ public class GetContactTask extends AsyncTask<String, String, ContactList> {
                     Cursor noteCur = cr.query(ContactsContract.Data.CONTENT_URI, null, noteWhere, noteWhereParams, null);
                     if (noteCur.moveToFirst()) {
                         note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
-                        System.out.println("Note " + note);
+                        Log.d("Note ", note);
                     }
                     noteCur.close();
 
@@ -114,7 +114,7 @@ public class GetContactTask extends AsyncTask<String, String, ContactList> {
                     Cursor starCur = cr.query(ContactsContract.Contacts.CONTENT_URI, null, ContactsContract.Contacts._ID + " =?", new String[]{id}, null);
                     if (starCur.moveToFirst()) {
                         starred = starCur.getString(starCur.getColumnIndex(ContactsContract.Contacts.STARRED));
-                        System.out.println("Starred " + starred);
+                        Log.d("Starred ", starred);
                     }
 
 //                    try {

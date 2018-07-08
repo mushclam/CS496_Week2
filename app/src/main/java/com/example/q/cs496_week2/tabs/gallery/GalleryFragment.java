@@ -250,7 +250,6 @@ public class GalleryFragment extends Fragment {
 
     private boolean checkPermission() {
         int resultW = ContextCompat.checkSelfPermission(activity, WRITE_EXTERNAL_STORAGE);
-
         return resultW == PackageManager.PERMISSION_GRANTED;
     }
 
