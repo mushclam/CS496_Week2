@@ -37,6 +37,10 @@ public class DetailsContactActivity extends Activity {
     Button editButton;
     Button deleteButton;
 
+    ContactTestItem item;
+    String phoneNumber;
+    String email;
+
     ImageView tvImage;
     TextView tvName;
 
@@ -54,21 +58,24 @@ public class DetailsContactActivity extends Activity {
         CONTACT_CONTEXT = this;
 
         Intent intent = new Intent(this.getIntent());
-        final String image = intent.getStringExtra("image");
-        final String name = intent.getStringExtra("name");
-        final String phoneNumber = intent.getStringExtra("phoneNumber");
-        final String email = intent.getStringExtra("email");
         itemPosition = intent.getIntExtra("itemPosition", 0);
+        item = (ContactTestItem)intent.getSerializableExtra("item");
+        if (!item.getPhoneNumbers().isEmpty()) {
+            phoneNumber = item.getPhoneNumbers().get(0).getPhoneNumber();
+        }
+        if (!item.getEmails().isEmpty()) {
+            email = item.getEmails().get(0).getEmailAddress();
+        }
 
         tvImage = (ImageView)findViewById(R.id.ind_preview);
         tvName = (TextView)findViewById(R.id.ind_name);
         tvPhoneNumber = (TextView)findViewById(R.id.ind_phoneNumber);
         tvEmail = (TextView)findViewById(R.id.ind_email);
 
-        Glide.with(DetailsContactActivity.this).load(image).into(tvImage);
-        tvImage.setColorFilter(Color.argb(128,0,0,0));tvName.setText(name);
-
-        tvPhoneNumber.setText(phoneNumber);
+//        Glide.with(DetailsContactActivity.this).load(image).into(tvImage);
+        tvImage.setColorFilter(Color.argb(128,0,0,0));
+        tvName.setText(item.getName());
+        tvPhoneNumber.setText(item.getPhoneNumbers().get(0).getPhoneNumber());
         tvEmail.setText(email);
 
         phoneNumberLayout = (RelativeLayout)findViewById(R.id.phoneNumberLayout);
@@ -94,10 +101,8 @@ public class DetailsContactActivity extends Activity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(DetailsContactActivity.this, EditContactActivity.class);
-                intent.putExtra("image", image);
                 intent.putExtra("itemPosition", itemPosition);
-                intent.putExtra("name", tvName.getText());
-                intent.putExtra("phoneNumber", tvPhoneNumber.getText());
+                intent.putExtra("item", item);
                 startActivity(intent);
             }
         });

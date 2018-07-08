@@ -44,14 +44,14 @@ import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHolder>{
     private Context context;
-    private ArrayList mItems;
+    private ArrayList<ContactTestItem> mItems;
     private RecyclerViewClickListener listener;
     private static ContactFragment fragment;
     private ArrayList<Integer> expandedItems = new ArrayList<>();
 
     private int lastPosition = -1;
 
-    public ContactAdapter(Context context, ArrayList mItems, RecyclerViewClickListener listener, ContactFragment fragment) {
+    public ContactAdapter(Context context, ArrayList<ContactTestItem> mItems, RecyclerViewClickListener listener, ContactFragment fragment) {
         this.context = context;
         this.mItems = mItems;
         this.listener = listener;
@@ -68,12 +68,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
-        ContactItem item = (ContactItem)mItems.get(position);
+        ContactTestItem item = (ContactTestItem)mItems.get(position);
 
-        Glide.with(context).load(item.image).into(holder.image);
+//        Glide.with(context).load(item.image).into(holder.image);
 
         holder.name.setText(item.getName());
-        holder.phoneNumber.setText(item.getPhoneNumber());
+        holder.phoneNumber.setText(item.getPhoneNumbers().get(0).getPhoneNumber());
         holder.image.setBackground(new ShapeDrawable(new OvalShape()));
         holder.image.setClipToOutline(true);
         if (fragment.isSelectingMode()) {
@@ -158,7 +158,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
         public void onClick(View v) {
             itemPosition = getAdapterPosition();
             Log.e("OnClick ", String.valueOf(itemPosition));
-            ContactItem item = (ContactItem) mItems.get(itemPosition);
+            ContactTestItem item = (ContactTestItem) mItems.get(itemPosition);
 
             if (fragment.isSelectingMode()) {
                 if (v.getId() == upperMenu.getId()) {
@@ -184,9 +184,9 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                 } else if (v.getId() == buttonEdit.getId()) {
                     Intent intent = new Intent(context, EditContactActivity.class);
                     intent.putExtra("itemPosition", itemPosition);
-                    intent.putExtra("image", String.valueOf(item.getImage()));
+//                    intent.putExtra("image", String.valueOf(item.getImage()));
                     intent.putExtra("name", String.valueOf(item.getName()));
-                    intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
+                    intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumbers().get(0).getPhoneNumber()));
 
                     context.startActivity(intent);
 
@@ -226,10 +226,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ViewHold
                 } else if (v.getId() == buttonDetails.getId()) {
                     Intent intent = new Intent(context, DetailsContactActivity.class);
                     intent.putExtra("itemPosition", itemPosition);
-                    intent.putExtra("image", String.valueOf(item.getImage()));
-                    intent.putExtra("name", String.valueOf(item.getName()));
-                    intent.putExtra("phoneNumber", String.valueOf(item.getPhoneNumber()));
-                    intent.putExtra("email", String.valueOf(item.getEmail()));
+                    intent.putExtra("item", item);
 
                     context.startActivity(intent);
 

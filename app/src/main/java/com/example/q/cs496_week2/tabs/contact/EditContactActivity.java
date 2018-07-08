@@ -67,6 +67,10 @@ public class EditContactActivity extends Activity {
     private Button save_button;
 
     private int itemPosition;
+    private ContactTestItem item;
+    private String phoneNumber;
+    private String email;
+
     private String orgImage;
     private String orgName;
     private String orgPhoneNumber;
@@ -86,22 +90,25 @@ public class EditContactActivity extends Activity {
         editEmail = (EditText)findViewById(R.id.editEmail);
         save_button = (Button)findViewById(R.id.save_button);
 
-        orgImage = intent.getStringExtra("image");
-        orgName = intent.getStringExtra("name");
-        orgPhoneNumber = intent.getStringExtra("phoneNumber");
-        orgEmail = intent.getStringExtra("email");
         itemPosition = intent.getIntExtra("itemPosition", 0);
+        item = (ContactTestItem) intent.getSerializableExtra("item");
+        if (!item.getPhoneNumbers().isEmpty()) {
+            phoneNumber = item.getPhoneNumbers().get(0).getPhoneNumber();
+        }
+        if (!item.getEmails().isEmpty()) {
+            email = item.getEmails().get(0).getEmailAddress();
+        }
 
         if (orgImage != null) {
 //            Glide.with(EditContactActivity.this).load(orgImage).into(editPreview);
-            Bitmap bitmap = new BitmapFactory().decodeFile(orgImage);
-            editPreview.setImageBitmap(bitmap);
-            editPreview.setColorFilter(Color.argb(128,0,0,0));
+//            Bitmap bitmap = new BitmapFactory().decodeFile(orgImage);
+//            editPreview.setImageBitmap(bitmap);
+//            editPreview.setColorFilter(Color.argb(128,0,0,0));
         }
-        imagePath = orgImage;
-        editName.setText(orgName);
-        editPhoneNumber.setText(orgPhoneNumber);
-        editEmail.setText(orgEmail);
+//        imagePath = orgImage;
+        editName.setText(item.getName());
+        editPhoneNumber.setText(phoneNumber);
+        editEmail.setText(email);
 
         editPhoneNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 

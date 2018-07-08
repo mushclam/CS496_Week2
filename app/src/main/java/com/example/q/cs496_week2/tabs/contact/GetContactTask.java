@@ -5,35 +5,35 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
+import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.util.Pair;
 
-import com.example.q.cs496_week2.R;
 import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
-import org.json.JSONException;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class GetContactTask extends AsyncTask<String, String, ContactList> {
+public class GetContactTask extends AsyncTask<String, String, ArrayList<ContactTestItem>> {
 
     private Context mContext;
+    private ContactAdapter adapter;
+    private Fragment fragment;
+    private RecyclerView recyclerView;
+
     private ContactList contactList;
+    public ArrayList<ContactTestItem> contactTestItemList = new ArrayList<>();
 
     private AlertDialog pDialog;
 
-    public GetContactTask(Context mContext) {
+    public GetContactTask(Context mContext, ContactAdapter adapter, Fragment fragment, RecyclerView recyclerView) {
         this.mContext = mContext;
+        this.adapter = adapter;
+        this.fragment = fragment;
+        this.recyclerView = recyclerView;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class GetContactTask extends AsyncTask<String, String, ContactList> {
     }
 
     @Override
-    protected ContactList doInBackground(String... Params) {
+    protected ArrayList<ContactTestItem> doInBackground(String... Params) {
         ContentResolver cr = mContext.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
@@ -55,13 +55,12 @@ public class GetContactTask extends AsyncTask<String, String, ContactList> {
             while (cur.moveToNext()) {
                 String id = cur.getString(cur.getColumnIndex(ContactsContract.Contacts._ID));
                 String name = cur.getString(cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
-                ArrayList<Pair<String, String>> phone_numbers = new ArrayList<>();
-                ArrayList<Triplet<String, String, String>> emails = new ArrayList<>();
+                ArrayList<Phone> phone_numbers = new ArrayList<>();
+                ArrayList<Email> emails = new ArrayList<>();
                 String note = "";
                 String starred = "";
 
                 if (Integer.parseInt(cur.getString(cur.getColumnIndex(ContactsContract.Contacts.HAS_PHONE_NUMBER))) > 0) {
-                    Log.d("HAS_PHONE_NUMBER","name : " + name + ", ID : " + id);
 
                     // get the phone number
                     Cursor pCur = cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
@@ -72,8 +71,7 @@ public class GetContactTask extends AsyncTask<String, String, ContactList> {
                                 pCur.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
                         String data_id = pCur.getString(
                                 pCur.getColumnIndex(ContactsContract.Data._ID));
-                        Log.d("PHONE", phone);
-                        phone_numbers.add(new Pair<String, String>(phone, data_id));
+                        phone_numbers.add(new Phone(phone, data_id));
                     }
                     pCur.close();
 
@@ -92,10 +90,7 @@ public class GetContactTask extends AsyncTask<String, String, ContactList> {
                         String data_id = emailCur.getString(
                                 emailCur.getColumnIndex(ContactsContract.Data._ID)
                         );
-
-                        Log.d("EMAIL","Email " + email + " Email Type : " + emailType + " data_id : " + data_id);
-
-                        emails.add(new Triplet<String, String, String>(email, emailType, data_id));
+                        emails.add(new Email(email, emailType, data_id));
                     }
                     emailCur.close();
 
@@ -106,7 +101,6 @@ public class GetContactTask extends AsyncTask<String, String, ContactList> {
                     Cursor noteCur = cr.query(ContactsContract.Data.CONTENT_URI, null, noteWhere, noteWhereParams, null);
                     if (noteCur.moveToFirst()) {
                         note = noteCur.getString(noteCur.getColumnIndex(ContactsContract.CommonDataKinds.Note.NOTE));
-                        Log.d("Note ", note);
                     }
                     noteCur.close();
 
@@ -114,28 +108,52 @@ public class GetContactTask extends AsyncTask<String, String, ContactList> {
                     Cursor starCur = cr.query(ContactsContract.Contacts.CONTENT_URI, null, ContactsContract.Contacts._ID + " =?", new String[]{id}, null);
                     if (starCur.moveToFirst()) {
                         starred = starCur.getString(starCur.getColumnIndex(ContactsContract.Contacts.STARRED));
-                        Log.d("Starred ", starred);
                     }
 
-//                    try {
-//                        contactList.addContact(id, name, phone_numbers, emails, note, starred);
-//                    } catch (JSONException e) {
-//                        e.printStackTrace();
-//                    }
+                    ContactTestItem contactTestItem = new ContactTestItem(
+                            id,
+                            name,
+                            phone_numbers,
+                            emails,
+                            note,
+                            starred
+                    );
+                    contactTestItemList.add(contactTestItem);
+
                 }
             }
         }
-        return contactList;
+        Gson gson = new Gson();
+        String result = gson.toJson(contactTestItemList);
+        Log.d("RESULT", result);
+
+        return contactTestItemList;
     }
 
     @Override
-    protected void onPostExecute(ContactList result) {
+    protected void onPostExecute(ArrayList<ContactTestItem> result) {
         super.onPostExecute(result);
 
 //        contactList.sorting(false);
 //        contactList.sorting(true);
 
-        if (pDialog.isShowing())
-            pDialog.dismiss();
+        if(result != null) {
+            Collections.sort(result, new ContactTestSorting());
+        }
+
+        if (pDialog.isShowing()) { pDialog.dismiss(); }
+
+        adapter = new ContactAdapter(mContext, result, new RecyclerViewClickListener() {
+            @Override
+            public void onClicked(int position) {
+
+            }
+
+            @Override
+            public void onLongClicked(int position) {
+
+            }
+        }, (ContactFragment)fragment);
+        recyclerView.setAdapter(adapter);
     }
 }

@@ -194,7 +194,7 @@ public class ContactFragment extends Fragment {
     }
 
     public void locationAndContactsTask() {
-        new GetContactTask(activity).execute();
+        new GetContactTask(activity, (ContactAdapter)adapter, ContactFragment.this, recyclerView).execute();
     }
 
     @Override
