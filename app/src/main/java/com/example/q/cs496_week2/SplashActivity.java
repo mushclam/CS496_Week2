@@ -16,7 +16,10 @@ import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 public class SplashActivity extends AppCompatActivity {
 
     int permsRequestCode = 200;
-    String[] perms = {"android.permission.WRITE_EXTERNAL_STORAGE"};
+    String[] perms = {
+            "android.permission.WRITE_EXTERNAL_STORAGE",
+            "android.permission.WRITE_CONTACTS"
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
