@@ -2,6 +2,7 @@ package com.example.q.cs496_week2.tabs.contact;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.provider.ContactsContract;
@@ -12,11 +13,19 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Array;
+import java.nio.Buffer;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class GetContactTask extends AsyncTask<String, String, ArrayList<ContactTestItem>> {
 
@@ -44,10 +53,47 @@ public class GetContactTask extends AsyncTask<String, String, ArrayList<ContactT
                 .setMessage("Fetching Contacts...")
                 .setCancelable(false)
                 .create();
+
+        try {
+            Gson gson = new Gson();
+            File file = new File(mContext.getFilesDir() + "/test.json");
+            if (file.exists()) {
+                StringBuilder data = new StringBuilder();
+                FileInputStream fis = mContext.openFileInput("test.json");
+                BufferedReader br = new BufferedReader(new InputStreamReader(fis));
+                String str = br.readLine();
+                while (str != null) {
+                    data.append(str).append("\n");
+                    str = br.readLine();
+                }
+
+                Log.d("PRE_RESULT", data.toString());
+                contactTestItemList = gson.fromJson(data.toString(), new TypeToken<List<ContactTestItem>>(){}.getType());
+                if(contactTestItemList != null) {
+                    Collections.sort(contactTestItemList, new ContactTestSorting());
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        adapter = new ContactAdapter(mContext, contactTestItemList, new RecyclerViewClickListener() {
+            @Override
+            public void onClicked(int position) {
+
+            }
+
+            @Override
+            public void onLongClicked(int position) {
+
+            }
+        }, (ContactFragment)fragment);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
     protected ArrayList<ContactTestItem> doInBackground(String... Params) {
+        ArrayList<ContactTestItem> tempList = new ArrayList<>();
         ContentResolver cr = mContext.getContentResolver();
         Cursor cur = cr.query(ContactsContract.Contacts.CONTENT_URI,
                 null, null, null, null);
@@ -120,13 +166,13 @@ public class GetContactTask extends AsyncTask<String, String, ArrayList<ContactT
                             note,
                             starred
                     );
-                    contactTestItemList.add(contactTestItem);
+                    tempList.add(contactTestItem);
 
                 }
             }
         }
         Gson gson = new Gson();
-        String result = gson.toJson(contactTestItemList);
+        String result = gson.toJson(tempList);
         Log.d("RESULT", result);
 
         try {
@@ -138,7 +184,7 @@ public class GetContactTask extends AsyncTask<String, String, ArrayList<ContactT
             e.printStackTrace();
         }
 
-        return contactTestItemList;
+        return tempList;
     }
 
     @Override
@@ -154,17 +200,19 @@ public class GetContactTask extends AsyncTask<String, String, ArrayList<ContactT
 
         if (pDialog.isShowing()) { pDialog.dismiss(); }
 
-        adapter = new ContactAdapter(mContext, result, new RecyclerViewClickListener() {
-            @Override
-            public void onClicked(int position) {
+        contactTestItemList = result;
 
-            }
-
-            @Override
-            public void onLongClicked(int position) {
-
-            }
-        }, (ContactFragment)fragment);
-        recyclerView.setAdapter(adapter);
+//        adapter = new ContactAdapter(mContext, result, new RecyclerViewClickListener() {
+//            @Override
+//            public void onClicked(int position) {
+//
+//            }
+//
+//            @Override
+//            public void onLongClicked(int position) {
+//
+//            }
+//        }, (ContactFragment)fragment);
+//        recyclerView.setAdapter(adapter);
     }
 }
