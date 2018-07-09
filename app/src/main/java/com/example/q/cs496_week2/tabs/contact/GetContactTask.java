@@ -9,13 +9,14 @@ import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.Pair;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class GetContactTask extends AsyncTask<String, String, ArrayList<ContactTestItem>> {
 
@@ -127,6 +128,15 @@ public class GetContactTask extends AsyncTask<String, String, ArrayList<ContactT
         Gson gson = new Gson();
         String result = gson.toJson(contactTestItemList);
         Log.d("RESULT", result);
+
+        try {
+            FileOutputStream fos = mContext.openFileOutput("test.json", Context.MODE_PRIVATE);
+            fos.write(result.getBytes());
+            fos.close();
+            Log.e("JSON_SAVE", "SUCCESS");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         return contactTestItemList;
     }

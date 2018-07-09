@@ -2,13 +2,18 @@ package com.example.q.cs496_week2.tabs.contact;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentProviderOperation;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.OperationApplicationException;
 import android.graphics.Color;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.RemoteException;
+import android.provider.ContactsContract;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -27,6 +32,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -116,33 +122,7 @@ public class DetailsContactActivity extends Activity {
                         .setPositiveButton("Confirm", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialogInterface, int i) {
-                                Gson gson = new Gson();
-
-                                try {
-                                    StringBuffer data = new StringBuffer();
-                                    FileInputStream org = openFileInput("test.json");
-                                    BufferedReader br = new BufferedReader(new InputStreamReader(org));
-                                    String str = br.readLine();
-                                    while (str != null) {
-                                        data.append(str + "\n");
-                                        str = br.readLine();
-                                    }
-
-                                    List<ContactItem> orgList =  gson.fromJson(data.toString(),
-                                            new TypeToken<List<ContactItem>>(){}.getType());
-                                    Collections.sort(orgList, new ContactSorting());
-
-                                    orgList.remove(itemPosition);
-
-                                    String json = gson.toJson(orgList);
-
-                                    FileOutputStream fos = openFileOutput("test.json", Context.MODE_PRIVATE);
-                                    fos.write(json.getBytes());
-                                    fos.close();
-                                    Toast.makeText(DetailsContactActivity.this, "Delete Success", Toast.LENGTH_SHORT).show();
-                                } catch (IOException e) {
-                                    Toast.makeText(DetailsContactActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                }
+                                deleteContact();
                                 onStop();
                             }
                         })
@@ -168,5 +148,20 @@ public class DetailsContactActivity extends Activity {
         super.onRestart();
         finish();
         startActivity(getIntent());
+    }
+
+    private void deleteContact() {
+        ContentResolver contactHelper = getApplicationContext().getContentResolver();
+        ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
+        String[] args = new String[]{item.getId()};
+        ops.add(ContentProviderOperation.newDelete(ContactsContract.RawContacts.CONTENT_URI)
+                .withSelection(ContactsContract.RawContacts.CONTACT_ID + "=?", args).build());
+        try{
+            contactHelper.applyBatch(ContactsContract.AUTHORITY, ops);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (OperationApplicationException e) {
+            e.printStackTrace();
+        }
     }
 }

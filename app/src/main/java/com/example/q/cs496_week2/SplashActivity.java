@@ -29,6 +29,7 @@ public class SplashActivity extends AppCompatActivity {
                 WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         if(checkPermission()) {
+
             startActivity(new Intent(this, MainActivity.class));
             finish();
         } else {

@@ -3,6 +3,7 @@ package com.example.q.cs496_week2.tabs.contact;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.ContentProviderOperation;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -18,6 +19,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
@@ -47,6 +49,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -151,44 +154,25 @@ public class EditContactActivity extends Activity {
                 }
                 Gson gson = new Gson();
 
-                ContactItem editContact = new ContactItem(
+                ArrayList<Phone> savePhone = new ArrayList<>();
+                item.getPhoneNumbers().get(0).setPhoneNumber(editPhoneNumber.getText().toString());
+                savePhone.add(item.getPhoneNumbers().get(0));
+
+                ArrayList<Email> saveEmail = new ArrayList<>();
+                item.getEmails().get(0).setEmailAddress(editEmail.getText().toString());
+                saveEmail.add(item.getEmails().get(0));
+
+                ContactTestItem editItem = new ContactTestItem(
+                        item.getId(),
                         imagePath,
                         editName.getText().toString(),
-                        editPhoneNumber.getText().toString(),
-                        editEmail.getText().toString()
+                        savePhone,
+                        saveEmail,
+                        item.getNote(),
+                        item.getStarred()
                         );
 
-                try {
-                    StringBuffer data = new StringBuffer();
-                    FileInputStream org = openFileInput("test.json");
-                    BufferedReader br = new BufferedReader(new InputStreamReader(org));
-                    String str = br.readLine();
-                    while (str != null) {
-                        data.append(str + "\n");
-                        str = br.readLine();
-                    }
-
-                    List<ContactItem> orgList =  gson.fromJson(data.toString(),
-                            new TypeToken<List<ContactItem>>(){}.getType());
-                    Collections.sort(orgList, new ContactSorting());
-                    if(orgName.equals(orgList.get(itemPosition).getName())) {
-                        orgList.set(itemPosition, editContact);
-                    } else {
-                        Toast.makeText(EditContactActivity.this,
-                                "Not exist contact : " + orgName + " != " +
-                                        itemPosition + "=" + orgList.get(itemPosition).getName(),
-                                Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    String json = gson.toJson(orgList);
-
-                    FileOutputStream fos = openFileOutput("test.json", Context.MODE_PRIVATE);
-                    fos.write(json.getBytes());
-                    fos.close();
-                    Toast.makeText(EditContactActivity.this, R.string.success_edit, Toast.LENGTH_SHORT).show();
-                } catch (IOException e) {
-                    Toast.makeText(EditContactActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
+                updateContact(editItem);
 
                 finish();
             }
@@ -331,5 +315,72 @@ public class EditContactActivity extends Activity {
         }
 
         return cursor.getString(columnIdx);
+    }
+
+    public boolean updateContact(ContactTestItem item) {
+        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+
+
+        ops.add(ContentProviderOperation
+                .newUpdate(ContactsContract.Data.CONTENT_URI)
+                .withSelection(ContactsContract.Data.CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE
+                        + "=?", new String[]{item.getId(), ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE})
+                .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, item.getName())
+                .build());
+
+
+        for (int i = 0; i < item.getPhoneNumbers().size(); ++i){
+            Phone pair = item.getPhoneNumbers().get(i);
+            String number = pair.getPhoneNumber();
+            String data_id = pair.getDataId();
+            assert data_id != null;
+            ops.add(ContentProviderOperation
+                    .newUpdate(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(ContactsContract.Data.CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE
+                                    + "=? AND " + ContactsContract.CommonDataKinds.Organization.TYPE + "=? AND " + ContactsContract.Data._ID + "=?"
+                            , new String[]{item.getId(), ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE,
+                                    String.valueOf(ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE), data_id})
+                    .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, number)
+                    .build());
+        }
+
+        for (int i = 0; i < item.getEmails().size(); ++i){
+            Email email_info = item.getEmails().get(i);
+            String contactEmail = email_info.getEmailAddress();
+            String contactEmailType = email_info.getEmailType();
+            String data_id = email_info.getDataId();
+            int emailType = ContactsContract.CommonDataKinds.Email.TYPE_OTHER;
+            switch (contactEmailType) {
+                case "개인":
+                    emailType = ContactsContract.CommonDataKinds.Email.TYPE_HOME;
+                    break;
+                case "직장":
+                    emailType = ContactsContract.CommonDataKinds.Email.TYPE_WORK;
+                    break;
+            }
+            System.out.println("Updated string : " + contactEmail);
+
+            assert data_id != null;
+            ops.add(ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
+                    .withSelection(ContactsContract.Data.CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=? AND " + ContactsContract.Data._ID + "=?"
+                            , new String[]{item.getId(), ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE, data_id})
+                    .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, contactEmail)
+                    .withValue(ContactsContract.CommonDataKinds.Email.TYPE, emailType)
+                    .build());
+        }
+
+        ops.add(ContentProviderOperation
+                .newUpdate(ContactsContract.Data.CONTENT_URI)
+                .withSelection(ContactsContract.Data.CONTACT_ID + "=? AND " + ContactsContract.Data.MIMETYPE + "=?"
+                        , new String[]{item.getId(), ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE})
+                .withValue(ContactsContract.CommonDataKinds.Note.NOTE, item.getNote())
+                .build());
+        try {
+            getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+        return true;
     }
 }
